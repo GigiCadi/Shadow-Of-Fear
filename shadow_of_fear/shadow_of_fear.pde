@@ -1,12 +1,16 @@
-PImage logo, fondo1, fondo2, fondo3, pc, web;
+PImage logo, fondo1, fondo2, fondo3, pc, web, btneliminar, btnreemplazar, emotionbar, wordbank, btnmenu;
+PImage[] emojis = new PImage[4];
+PImage[] bars = new PImage[4];
+PImage[] btnmusic = new PImage[2];
+PImage[] btnpause = new PImage[2];
 PFont fuente;
 
 float tiempo = 0;
 
-// 🔥 Control de pantallas
+//  Control de pantallas
 int pantalla = 0;
 
-// 🔒 Progreso del juego
+// Progreso del juego
 boolean nivel1Completado = false;
 
 void setup() {
@@ -21,6 +25,29 @@ void setup() {
   pc = loadImage("imagenes/fondo/pc2.png");
   web = loadImage("imagenes/fondo/web.png");
   fuente = createFont("fuentes/PressStart2P-Regular.ttf", 24);
+  btneliminar = loadImage("imagenes/UI/ELIMINAR.png");
+  btnreemplazar = loadImage("imagenes/UI/reemplazar.png");
+  emotionbar = loadImage("imagenes/UI/emotionbar.png");
+  wordbank = loadImage("imagenes/UI/wordbank.png");
+  btnmenu = loadImage("imagenes/UI/menu.png");
+  //Estados emojis
+  emojis[0] = loadImage("imagenes/UI/feliz.png");
+  emojis[1] = loadImage("imagenes/UI/bien.png");
+  emojis[2] = loadImage("imagenes/UI/mal.png");
+  emojis[3] = loadImage("imagenes/UI/triste.png");
+  // Estados Boton de Música
+  btnmusic[0]= loadImage("imagenes/UI/musicon.png");
+  btnmusic[1] = loadImage("imagenes/UI/musicoff.png");
+  // Estados Botón de pausa
+  btnpause[0] = loadImage("imagenes/UI/unpause.png");
+  btnpause[1] = loadImage("imagenes/UI/pause.png");
+  
+  // Barras de colores emocionales
+  bars[0] = loadImage("imagenes/UI/green.png");
+  bars[1] = loadImage("imagenes/UI/yellow.png");
+  bars[2] = loadImage("imagenes/UI/orange.png");
+  bars[3] = loadImage("imagenes/UI/red.png");
+
 
   textFont(fuente);
   textSize(18);
@@ -37,7 +64,7 @@ void draw() {
     menuPrincipal();
   }
   else if (pantalla == 2) {
-    nivel1(); // 👈 ya está bien conectado
+    nivel1();
   }
 }
 

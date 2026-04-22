@@ -27,7 +27,7 @@ boolean nivel1Terminado = false;
 // DIBUJAR NIVEL 1
 // ==========================
 void nivel1() {
-
+  imageMode(CORNER);
   image(fondo3, 0, 0, width, height);
   image(pc, 372, 164, 793, 476);
   image(web, 412, 194, 693, 376);
@@ -42,12 +42,16 @@ void nivel1() {
   text("> " + mensajeActual, 620, 350);
 
   // Opciones
-  text("[1] Eliminar mensaje", 100, 350);
-  text("[2] Responder positivamente", 100, 400);
-
-  // Indicador
-  text("Mensaje " + (indiceMensaje + 1) + " de " + mensajes.length, 100, 500);
-}
+  imageMode(CENTER);
+  image(btneliminar, width/3, height - 70, 470, 94);
+  image(btnreemplazar, width - width/3, height - 70, 470, 94);
+  image(emotionbar, 100, height/2, 139, 642);
+  
+//UI botones
+  imageMdde(LEFT);
+  image(btnmenu, width - 300, 80, 100, 100);
+  image(btnmusic[k], width - 200, 80, 100, 100);
+  image(btnmenu, width - 100, 80, 100, 100);
 
 // ==========================
 // CONTROL NIVEL 1
