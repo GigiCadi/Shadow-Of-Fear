@@ -17,6 +17,8 @@ String[] opciones = {
 // DIBUJAR MENU
 // ==========================
 void menuPrincipal() {
+  
+  imageMode(CORNER);
 
   // Fondo
   image(fondo2, 0, 0, width, height);
@@ -86,6 +88,7 @@ void ejecutarOpcion() {
   // Iniciar juego
   if (opcionSeleccionada == 0) {
     pantalla = 2; // luego nivel1
+    iniciarNivel1();
   }
 
   // Niveles
