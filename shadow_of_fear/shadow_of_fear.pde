@@ -1,5 +1,5 @@
 PImage logo, fondo1, fondo2, fondo3, pc, web, btneliminar, btnreemplazar, emotionbar, wordbank;
-PImage[] emojis = new PImage[4];
+PImage[] emojis = new PImage[5];
 PImage[] bars = new PImage[4];
 PImage[] btnmusic = new PImage[2];
 PImage[] btnpause = new PImage[2];
@@ -8,8 +8,23 @@ PFont fuente;
 float tiempo = 0;
 
 //  Control de pantallas
-int pantalla = 0;
+//int pantalla = 0;
+//PRUEBA PANTALLAS---------------------------------
+final int PANTALLA_NIVEL2 = 3;
+final int PANTALLA_NIVEL3 = 4;
+final int PANTALLA_CONFIG = 5;
 
+int pantalla = 0;
+int pantallaDestino = 0;
+int dificultadNivel1 = 1;
+// ==========================
+// TRANSICIÓN
+// ==========================
+boolean enTransicion = false;
+boolean mitadTransicion = false;
+float alphaTransicion = 0;
+float velocidadTransicion = 12;
+//----------------------------------------------
 // Progreso del juego
 boolean nivel1Completado = false;
 
@@ -17,6 +32,23 @@ boolean nivel1Completado = false;
   int estadoMusica = 0;
   int estadoPausa = 0;
   int opcionPausa = 0;
+  int estadoFinal = 0;
+int opcionFinal = 0;
+//-----------------------------------------------
+// ==========================
+// CONFIGURACIÓN
+// ==========================
+float brilloPantalla = 1.0;
+
+boolean arrastrandoVolumen = false;
+boolean arrastrandoBrillo = false;
+
+float sliderX = 0;
+float sliderW = 0;
+float sliderVolY = 0;
+float sliderBriY = 0;
+
+//-------------------------------------------------------
 
 void setup() {
   fullScreen();
@@ -39,6 +71,7 @@ void setup() {
   emojis[1] = loadImage("imagenes/UI/good.png");
   emojis[2] = loadImage("imagenes/UI/mal.png");
   emojis[3] = loadImage("imagenes/UI/triste.png");
+  emojis[4] = loadImage("imagenes/UI/lose.png");
   // Estados Boton de Música
   btnmusic[0]= loadImage("imagenes/UI/musicon.png");
   btnmusic[1] = loadImage("imagenes/UI/musicoff.png");
@@ -57,9 +90,20 @@ void setup() {
   textSize(18);
   fill(255);
   textAlign(CENTER);
+  
+  //---------------------------------------
+    // --------------------------
+  // SLIDERS CONFIG
+  // --------------------------
+  sliderW = 400;
+  sliderX = width/2 - sliderW/2;
+  sliderVolY = height/2 - 40;
+  sliderBriY = height/2 + 80;
+  //----------------------------------------
 }
 
 void draw() {
+  background(0);
 
   if (pantalla == 0) {
     pantallaInicio();
@@ -67,20 +111,66 @@ void draw() {
   else if (pantalla == 1) {
     menuPrincipal();
   }
-  else if (pantalla == 2) {
+if (pantalla == 2) {
 
-    nivel1(); // dibuja el nivel SIEMPRE
+  nivel1();
 
-    // ENCIMA del nivel
-    if (estadoPausa == 1) {
-      dibujarPause();
-    }
+  if (estadoPausa == 1) {
+    dibujarPause();
+  }
+
+  if (estadoFinal != 0) {
+    dibujarFinal();
   }
 }
 
-// ==========================
-// CONTROL GLOBAL
-// ==========================
+  aplicarBrillo();
+  actualizarTransicion();
+}
+
+//PRUEBA TRANSCISION--------------------------------
+void iniciarTransicion(int destino) {
+  enTransicion = true;
+  mitadTransicion = false;
+  alphaTransicion = 0;
+  pantallaDestino = destino;
+}
+
+void actualizarTransicion() {
+  if (!enTransicion) return;
+
+  if (!mitadTransicion) {
+    alphaTransicion += velocidadTransicion;
+
+    if (alphaTransicion >= 255) {
+      alphaTransicion = 255;
+      pantalla = pantallaDestino;
+      //cambiarMusicaSegunPantalla();
+      mitadTransicion = true;
+    }
+  } else {
+    alphaTransicion -= velocidadTransicion;
+
+    if (alphaTransicion <= 0) {
+      alphaTransicion = 0;
+      enTransicion = false;
+      mitadTransicion = false;
+    }
+  }
+
+  noStroke();
+  fill(0, alphaTransicion);
+  rect(0, 0, width, height);
+}
+//--------------------------------------------------------------------------
+//PRUEBA BRILLO-----------------------------------------
+void aplicarBrillo() {
+  float oscuridad = map(brilloPantalla, 0, 1, 220, 0);
+  noStroke();
+  fill(0, oscuridad);
+  rect(0, 0, width, height);
+}
+//------------------------------------------------------------
 void keyPressed() {
 
   // PRIMERO: controlar pausa
@@ -108,7 +198,10 @@ void keyPressed() {
       }
 
       else if (opcionPausa == 2) { // configuración
-        println("configuración");
+        //println("configuración");
+        //AQUI
+        estadoPausa = 0;
+        iniciarTransicion(PANTALLA_CONFIG);
       }
 
       else if (opcionPausa == 3) { // salir
@@ -119,10 +212,44 @@ void keyPressed() {
 
     return; //  BLOQUEA TODO LO DEMÁS
   }
+  
+    // POPUP FINAL
+  if (estadoFinal != 0) {
 
-  //  Flujo normal del juego
+    if (keyCode == UP || keyCode == DOWN) {
+      opcionFinal = 1 - opcionFinal;
+    }
+
+    if (key == ' ') {
+
+      if (opcionFinal == 0) {
+
+        if (estadoFinal == 1) { // derrota
+          estadoFinal = 0;
+          estadoPausa = 0;
+          dificultadNivel1 = 1;
+          reiniciarNivel1();
+        }
+        else if (estadoFinal == 2) { // victoria
+          estadoFinal = 0;
+          estadoPausa = 0;
+          dificultadNivel1++;
+          iniciarNivel1Dificil();
+        }
+      }
+
+      else if (opcionFinal == 1) {
+        estadoFinal = 0;
+        estadoPausa = 0;
+        pantalla = 1;
+      }
+    }
+
+    return;
+  }
+  
   if (pantalla == 0) {
-    pantalla = 1;
+    iniciarTransicion(1);
   }
   else if (pantalla == 1) {
     controlarMenu();
@@ -130,11 +257,60 @@ void keyPressed() {
   else if (pantalla == 2) {
     controlarNivel1();
   }
+  else if (pantalla == PANTALLA_CONFIG) {
+    if (keyCode == ESC) {
+      key = 0;
+      iniciarTransicion(1);
+    }
+  }
 }
 
 
 void mousePressed() {
+//AQUI
+if (enTransicion) return;
 
+  // ==========================
+  // POPUP FINAL
+  // ==========================
+  if (estadoFinal != 0) {
+
+    int ancho = 250;
+    int alto = 50;
+    int xCentro = width/2;
+
+    int y1 = height/2 - 10;
+    if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
+        mouseY > y1 - alto/2 && mouseY < y1 + alto/2) {
+
+      if (estadoFinal == 1) { // derrota
+        estadoFinal = 0;
+        estadoPausa = 0;
+        dificultadNivel1 = 1;
+        reiniciarNivel1();
+      }
+      else if (estadoFinal == 2) { // victoria
+        estadoFinal = 0;
+        estadoPausa = 0;
+        dificultadNivel1++;
+        iniciarNivel1Dificil();
+      }
+
+      return;
+    }
+
+    int y2 = height/2 + 50;
+    if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
+        mouseY > y2 - alto/2 && mouseY < y2 + alto/2) {
+      estadoFinal = 0;
+      estadoPausa = 0;
+      pantalla = 1;
+      return;
+    }
+
+    return;
+  }
+  
   // ==========================
   // PAUSA ACTIVA
   // ==========================

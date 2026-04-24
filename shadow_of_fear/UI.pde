@@ -60,3 +60,49 @@ void dibujarPause() {
     }
   }
 }
+
+void dibujarFinal() {
+
+  fill(0, 180);
+  rect(0, 0, width, height);
+
+  textAlign(CENTER);
+  fill(255);
+
+  textSize(28);
+  if (estadoFinal == 1) {
+    text("PERDISTE", width/2, height/2 - 110);
+  } 
+  else if (estadoFinal == 2) {
+    text("GANASTE", width/2, height/2 - 110);
+  }
+
+  textSize(20);
+
+  String[] opciones;
+
+  if (estadoFinal == 2) {
+    opciones = new String[] {
+      "Continuar",
+      "Regresar al menú"
+    };
+  } 
+  else {
+    opciones = new String[] {
+      "Volver a jugar",
+      "Regresar al menú"
+    };
+  }
+
+  int x = width/2;
+
+  for (int i = 0; i < opciones.length; i++) {
+    int y = height/2 - 10 + i * 60;
+
+    if (i == opcionFinal) {
+      text("> " + opciones[i], x, y);
+    } else {
+      text(opciones[i], x, y);
+    }
+  }
+}
