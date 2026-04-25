@@ -42,7 +42,7 @@ void menuPrincipal() {
 
     int y = 480 + i * 60;
 
-    if (i == 1 && !nivel1Completado) {
+    if (i == 1 && !verNivelesDesbloqueado) {
       fill(120);
     } else {
       fill(255);
@@ -87,13 +87,12 @@ void ejecutarOpcion() {
 
   // Iniciar juego
   if (opcionSeleccionada == 0) {
-    pantalla = 2; // luego nivel1
-    iniciarNivel1();
+iniciarModoJuego1(MODO_FACIL);
   }
 
   // Niveles
   if (opcionSeleccionada == 1) {
-    if (nivel1Completado) {
+    if (verNivelesDesbloqueado) {
       pantalla = 3;
     }
   }

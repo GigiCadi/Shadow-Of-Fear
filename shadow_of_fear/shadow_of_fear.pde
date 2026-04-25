@@ -100,6 +100,8 @@ void setup() {
   sliderVolY = height/2 - 40;
   sliderBriY = height/2 + 80;
   //----------------------------------------
+  
+  inicializarProgresoJuego1();
 }
 
 void draw() {
@@ -173,104 +175,15 @@ void aplicarBrillo() {
 //------------------------------------------------------------
 void keyPressed() {
 
-  // PRIMERO: controlar pausa
-  if (estadoPausa == 1) {
-
-    if (keyCode == UP) {
-      opcionPausa--;
-      if (opcionPausa < 0) opcionPausa = 3;
-    }
-
-    if (keyCode == DOWN) {
-      opcionPausa++;
-      if (opcionPausa > 3) opcionPausa = 0;
-    }
-
-    if (keyCode == ' ') {
-
-      if (opcionPausa == 0) { // continuar
-        estadoPausa = 0;
-      }
-
-      else if (opcionPausa == 1) { // reiniciar
-        reiniciarNivel1();
-        estadoPausa = 0;
-      }
-
-      else if (opcionPausa == 2) { // configuración
-        //println("configuración");
-        //AQUI
-        estadoPausa = 0;
-        iniciarTransicion(PANTALLA_CONFIG);
-      }
-
-      else if (opcionPausa == 3) { // salir
-        pantalla = 1;
-        estadoPausa = 0;
-      }
-    }
-
-    return; //  BLOQUEA TODO LO DEMÁS
-  }
+// PRIMERO: controlar pausa
+if (estadoPausa == 1) {
+  controlarPausaJuego1Teclado();
+  return;
+}
   
-    // POPUP FINAL
+// POPUP FINAL
 if (estadoFinal != 0) {
-
-  if (keyCode == UP) {
-    opcionFinal--;
-    if (opcionFinal < 0) opcionFinal = 2;
-  }
-
-  if (keyCode == DOWN) {
-    opcionFinal++;
-    if (opcionFinal > 2) opcionFinal = 0;
-  }
-
-  if (key == ' ') {
-
-    if (opcionFinal == 0) {
-      if (estadoFinal == 1) { // derrota
-        estadoFinal = 0;
-        estadoPausa = 0;
-if (dificultadNivel1 > 1) {
-  estadoFinal = 0;
-  estadoPausa = 0;
-  iniciarNivel1Dificil();
-} else {
-  estadoFinal = 0;
-  estadoPausa = 0;
-  reiniciarNivel1();
-}
-      } 
-      else if (estadoFinal == 2) { // victoria
-        estadoFinal = 0;
-        estadoPausa = 0;
-        dificultadNivel1++;
-        iniciarNivel1Dificil();
-      }
-    }
-
-    else if (opcionFinal == 1) { // reiniciar
-      estadoFinal = 0;
-      estadoPausa = 0;
-if (dificultadNivel1 > 1) {
-  estadoFinal = 0;
-  estadoPausa = 0;
-  iniciarNivel1Dificil();
-} else {
-  estadoFinal = 0;
-  estadoPausa = 0;
-  reiniciarNivel1();
-}
-    }
-
-    else if (opcionFinal == 2) { // menú
-      estadoFinal = 0;
-      estadoPausa = 0;
-      pantalla = 1;
-    }
-  }
-
+  controlarMenuFinalJuego1Teclado();
   return;
 }
   
@@ -296,108 +209,24 @@ void mousePressed() {
 //AQUI
 if (enTransicion) return;
 
-  // ==========================
-  // POPUP FINAL
-  // ==========================
+// ==========================
+// POPUP FINAL
+// ==========================
 if (estadoFinal != 0) {
-
-  int ancho = 280;
-  int alto = 45;
-  int xCentro = width/2;
-
-  int y1 = height/2 + 20;
-  if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
-      mouseY > y1 - alto/2 && mouseY < y1 + alto/2) {
-
-    if (estadoFinal == 1) { // derrota
-      estadoFinal = 0;
-      estadoPausa = 0;
-if (dificultadNivel1 > 1) {
-  estadoFinal = 0;
-  estadoPausa = 0;
-  iniciarNivel1Dificil();
-} else {
-  estadoFinal = 0;
-  estadoPausa = 0;
-  reiniciarNivel1();
-}
-    } 
-    else if (estadoFinal == 2) { // victoria
-      estadoFinal = 0;
-      estadoPausa = 0;
-      dificultadNivel1++;
-      iniciarNivel1Dificil();
-    }
-
-    return;
-  }
-
-  int y2 = height/2 + 75;
-  if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
-      mouseY > y2 - alto/2 && mouseY < y2 + alto/2) {
-    estadoFinal = 0;
-    estadoPausa = 0;
-if (dificultadNivel1 > 1) {
-  estadoFinal = 0;
-  estadoPausa = 0;
-  iniciarNivel1Dificil();
-} else {
-  estadoFinal = 0;
-  estadoPausa = 0;
-  reiniciarNivel1();
-}
-    return;
-  }
-
-  int y3 = height/2 + 130;
-  if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
-      mouseY > y3 - alto/2 && mouseY < y3 + alto/2) {
-    estadoFinal = 0;
-    estadoPausa = 0;
-    pantalla = 1;
-    return;
-  }
-
+  controlarMenuFinalJuego1Mouse();
   return;
 }
   
   // ==========================
   // PAUSA ACTIVA
   // ==========================
-  if (estadoPausa == 1) {
-
-    int ancho = 250;
-    int alto = 50;
-    int xCentro = width/2;
-
-    int y1 = height/2 - 40;
-    if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
-        mouseY > y1 - alto/2 && mouseY < y1 + alto/2) {
-      estadoPausa = 0;
-    }
-
-    int y2 = height/2 + 10;
-    if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
-        mouseY > y2 - alto/2 && mouseY < y2 + alto/2) {
-      reiniciarNivel1();
-      estadoPausa = 0;
-    }
-
-    int y3 = height/2 + 60;
-    if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
-        mouseY > y3 - alto/2 && mouseY < y3 + alto/2) {
-      println("Configuración");
-    }
-
-    int y4 = height/2 + 110;
-    if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
-        mouseY > y4 - alto/2 && mouseY < y4 + alto/2) {
-      pantalla = 1;
-      estadoPausa = 0;
-    }
-
-    return;
-  }
+// ==========================
+// POPUP PAUSA
+// ==========================
+if (estadoPausa == 1) {
+  controlarPausaJuego1Mouse();
+  return;
+}
 
   // ==========================
   // BOTÓN PAUSA (PRIMERO)

@@ -32,32 +32,65 @@ void dibujarBarras() {
 
 void dibujarPause() {
 
-  fill(0, 180);
+  fill(0, 190);
   rect(0, 0, width, height);
 
-  textAlign(CENTER);
-  textSize(20);
+  textAlign(CENTER, CENTER);
 
-  String[] opciones = {
-    "Continuar",
-    "Reiniciar",
-    "Configuración",
-    "Regresar al menú"
-  };
+  fill(255);
+  textSize(28);
+  text("PAUSA", width / 2, height / 2 - 120);
 
-  int x = width/2;
+  textSize(16);
 
-  for (int i = 0; i < opciones.length; i++) {
+  int total = totalOpcionesPausaJuego1();
 
-    int y = height/2 - 40 + i * 60;
+  int x = width / 2;
+  int yInicial = height / 2 - 10;
+  int espacioY = 55;
 
-    fill(255);
+  for (int i = 0; i < total; i++) {
+    int y = yInicial + i * espacioY;
 
     if (i == opcionPausa) {
-      text("> " + opciones[i], x, y);
+      fill(255, 230, 120);
     } else {
-      text(opciones[i], x, y);
+      fill(255);
     }
+
+    String texto = "";
+
+    if (i == 0) {
+      texto = "Continuar";
+    }
+
+    else if (i == 1) {
+      texto = "Reiniciar modo actual";
+    }
+
+    else if (verNivelesDesbloqueado && i == 2) {
+      texto = "<  Modo [" + nombresModos[modoPausaSeleccionado] + "]  >";
+    }
+
+    else if (verNivelesDesbloqueado && i == 3) {
+      texto = "Volver al menú";
+    }
+
+    else if (!verNivelesDesbloqueado && i == 2) {
+      texto = "Volver al menú";
+    }
+
+    if (i == opcionPausa) {
+      text("> " + texto, x, y);
+    } else {
+      text(texto, x, y);
+    }
+  }
+
+  if (verNivelesDesbloqueado && opcionPausa == 2) {
+    fill(180);
+    textSize(12);
+    text("Usa LEFT / RIGHT para cambiar de modo", width / 2, height / 2 + 170);
   }
 }
 
@@ -70,40 +103,55 @@ void dibujarFinal() {
   fill(255);
 
   textSize(24);
-  text(mensajeFinalTitulo, width/2, height/2 - 120);
+  text(mensajeFinalTitulo, width/2, height/2 - 150);
 
   textSize(14);
-  dibujarTextoCentrado(mensajeFinalSubtexto, width/2, height/2 - 70, 420, 22);
+  dibujarTextoCentrado(mensajeFinalSubtexto, width/2, height/2 - 100, 520, 22);
 
-  textSize(20);
-
-  String[] opciones;
-
-  if (estadoFinal == 2) {
-    opciones = new String[] {
-      "Continuar",
-      "Reiniciar",
-      "Regresar al menú"
-    };
-  } 
-  else {
-    opciones = new String[] {
-      "Volver a jugar",
-      "Reiniciar",
-      "Regresar al menú"
-    };
+  if (opcionesFinalJuego1 == null || opcionesFinalJuego1.length == 0) {
+    prepararMenuFinalJuego1();
   }
 
-  int x = width/2;
+  textSize(16);
 
-  for (int i = 0; i < opciones.length; i++) {
-    int y = height/2 + 20 + i * 55;
+  int x = width / 2;
+  int yInicial = height / 2 + 10;
+  int espacioY = 55;
 
-    if (i == opcionFinal) {
-      text("> " + opciones[i], x, y);
+  for (int i = 0; i < opcionesFinalJuego1.length; i++) {
+    int y = yInicial + i * espacioY;
+
+    if (!opcionesFinalActivasJuego1[i]) {
+      fill(120);
+    } else if (i == opcionFinalJuego1) {
+      fill(255, 230, 120);
     } else {
-      text(opciones[i], x, y);
+      fill(255);
     }
+
+    String texto = "";
+
+    if (i == 1) {
+      texto = "<  Modo [" + nombresModos[modoFinalSeleccionado] + "]  >";
+
+      if (!modoEstaDesbloqueado(modoFinalSeleccionado)) {
+        texto += " [Bloqueado]";
+      }
+    } else {
+      texto = opcionesFinalJuego1[i];
+    }
+
+    if (i == opcionFinalJuego1) {
+      text("> " + texto, x, y);
+    } else {
+      text(texto, x, y);
+    }
+  }
+
+  if (opcionFinalJuego1 == 1) {
+    fill(180);
+    textSize(12);
+    text("Usa LEFT / RIGHT para cambiar de modo", width / 2, height / 2 + 200);
   }
 }
 

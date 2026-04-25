@@ -150,39 +150,9 @@ void iniciarNivel1() {
   feedback = "";
   tiempoFeedback = 0;
   esperandoSiguienteMensaje = false;
-  temporizadorSiguienteMensaje = 0;
-
-  mensajes = new String[] {
-    "Eres raro",
-    "Nadie te quiere",
-    "No encajas",
-    "Eres inutil",
-    "Eres feo",
-    "Eres tonto",
-    "No vales",
-    "Eres debil"
-  };
-  respuestas = new String[] {
-    "Eres unico",
-    "Todos te quieren",
-    "Si encajas",
-    "Eres capaz",
-    "Eres especial",
-    "Eres inteligente",
-    "Si vales",
-    "Eres fuerte"
-  };
-  accionCorrecta  = new int[] {2, 2, 2, 2, 2, 2, 2, 2};
-  palabraCorrecta = new int[] {1, 0, 0, 1, 1, 1, 0, 1};
-  bancoPalabras = new String[] {
-    "unico", "todos", "si", "capaz",
-    "especial", "inteligente", "fuerte"
-  };
-
-  mezclarMensajes();
-  generarUsuariosAnonimos();
-  inicializarComentariosMostrados();
-  cargarMensaje();
+  temporizadorSiguienteMensaje = 60;
+  palabraSeleccionada = -1;
+  palabraBancoSeleccionada = -1;
 }
 
 void inicializarComentariosMostrados() {
@@ -211,51 +181,107 @@ void generarMensajeFinal(int tipoFinal) {
 void iniciarNivel1Dificil() {
   iniciarNivel1();
 
+  // FACIL
   if (dificultadNivel1 == 1) {
+    mensajes = new String[] {
+      "Eres raro",
+      "Nadie te quiere",
+      "No encajas",
+      "Eres inutil",
+      "Eres feo",
+      "Eres tonto",
+      "No vales",
+      "Eres debil"
+    };
+
+    respuestas = new String[] {
+      "Eres unico",
+      "Todos te quieren",
+      "Encajas",
+      "Eres capaz",
+      "Eres especial",
+      "Eres inteligente",
+      "Vales",
+      "Eres fuerte"
+    };
+
+    bancoPalabras = new String[] {
+      "unico", "todos", "capaz", "especial",
+      "inteligente", "fuerte", "vales"
+    };
+
+    accionCorrecta = new int[] {2, 2, 1, 2, 2, 2, 1, 2};
+    palabraCorrecta = new int[] {1, 0, 0, 1, 1, 1, 0, 1};
+  }
+
+  // NORMAL
+  else if (dificultadNivel1 == 2) {
     mensajes = new String[] {
       "No mereces respeto",
       "Eres incapaz de aprender",
       "No puedes mejorar",
       "Eres debil ante los problemas",
       "No tienes derecho a opinar",
-      "Nadie aprecia tu esfuerzo"
+      "Nadie aprecia tu esfuerzo",
+      "No deberias expresar tus ideas",
+      "Eres inutil resolviendo esto",
+      "Nadie valora lo que haces",
+      "No puedes lograrlo"
     };
+
     respuestas = new String[] {
       "Mereces respeto",
       "Eres capaz de aprender",
       "Puedes mejorar",
       "Eres fuerte ante los problemas",
       "Tienes derecho a opinar",
-      "Todos aprecian tu esfuerzo"
+      "Todos aprecian tu esfuerzo",
+      "Deberias expresar tus ideas",
+      "Eres capaz resolviendo esto",
+      "Todos valoran lo que haces",
+      "Puedes lograrlo"
     };
+
     bancoPalabras = new String[] {
-      "capaz", "fuerte", "todos", "valioso", "importante", "respetan"
+      "capaz", "fuerte", "todos", "valioso",
+      "importante", "respetan", "puedes"
     };
-    accionCorrecta  = new int[] {1, 2, 1, 2, 1, 2};
-    palabraCorrecta = new int[] {0, 1, 0, 1, 0, 0};
+
+    accionCorrecta = new int[] {1, 2, 1, 2, 1, 2, 1, 2, 2, 1};
+    palabraCorrecta = new int[] {0, 1, 0, 1, 0, 0, 0, 1, 0, 0};
   }
-  else if (dificultadNivel1 == 2) {
+
+  // DIFICIL
+  else if (dificultadNivel1 == 3) {
     mensajes = new String[] {
       "No deberias expresar tus ideas",
       "Eres incapaz de resolver problemas complejos",
       "No mereces participar en el grupo",
       "Nadie valora tu esfuerzo constante",
       "No puedes aprender cosas nuevas",
-      "Eres debil frente a la presion"
+      "Eres debil frente a la presion",
+      "No tienes nada valioso que aportar",
+      "Nadie reconoce lo mucho que te esfuerzas"
     };
+
     respuestas = new String[] {
       "Deberias expresar tus ideas",
       "Eres capaz de resolver problemas complejos",
       "Mereces participar en el grupo",
       "Todos valoran tu esfuerzo constante",
       "Puedes aprender cosas nuevas",
-      "Eres fuerte frente a la presion"
+      "Eres fuerte frente a la presion",
+      "Tienes algo valioso que aportar",
+      "Todos reconocen lo mucho que te esfuerzas"
     };
+
     bancoPalabras = new String[] {
-      "capaz", "todos", "fuerte", "importante", "creativo", "valioso"
+      "capaz", "todos", "fuerte", "algo",
+      "valioso", "importante", "reconocen"
     };
-    accionCorrecta  = new int[] {1, 2, 1, 2, 1, 2};
-    palabraCorrecta = new int[] {0, 1, 0, 0, 0, 1};
+
+    accionCorrecta = new int[] {1, 2, 1, 2, 1, 2, 2, 2};
+    palabraCorrecta = new int[] {0, 1, 0, 0, 0, 1, 2, 0};
   }
 
   mezclarMensajes();
@@ -535,22 +561,15 @@ void siguienteMensaje() {
   palabraSeleccionada = -1;
   palabraBancoSeleccionada = -1;
 
-  if (estadoEmocion >= 4) {
-    nivel1Terminado = true;
-    estadoFinal = 1;
-    opcionFinal = 0;
-    generarMensajeFinal(1);
-    return;
-  }
+if (estadoEmocion >= 4) {
+  terminarModoJuego1(false);
+  return;
+}
 
-  if (indiceMensaje >= mensajes.length) {
-    nivel1Terminado = true;
-    nivel1Completado = true;
-    estadoFinal = 2;
-    opcionFinal = 0;
-    generarMensajeFinal(2);
-    return;
-  }
+if (indiceMensaje >= mensajes.length) {
+  terminarModoJuego1(true);
+  return;
+}
 
   cargarMensaje();
 }
@@ -559,9 +578,7 @@ void siguienteMensaje() {
 // REINICIAR
 // ==========================
 void reiniciarNivel1() {
-  estadoFinal = 0;
-  opcionFinal = 0;
-  iniciarNivel1();
+  reiniciarModoActual();
 }
 
 // ==========================
