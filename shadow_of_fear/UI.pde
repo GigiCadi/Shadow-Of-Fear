@@ -66,16 +66,14 @@ void dibujarFinal() {
   fill(0, 180);
   rect(0, 0, width, height);
 
-  textAlign(CENTER);
+  textAlign(CENTER, CENTER);
   fill(255);
 
-  textSize(28);
-  if (estadoFinal == 1) {
-    text("PERDISTE", width/2, height/2 - 110);
-  } 
-  else if (estadoFinal == 2) {
-    text("GANASTE", width/2, height/2 - 110);
-  }
+  textSize(24);
+  text(mensajeFinalTitulo, width/2, height/2 - 120);
+
+  textSize(14);
+  dibujarTextoCentrado(mensajeFinalSubtexto, width/2, height/2 - 70, 420, 22);
 
   textSize(20);
 
@@ -84,12 +82,14 @@ void dibujarFinal() {
   if (estadoFinal == 2) {
     opciones = new String[] {
       "Continuar",
+      "Reiniciar",
       "Regresar al menú"
     };
   } 
   else {
     opciones = new String[] {
       "Volver a jugar",
+      "Reiniciar",
       "Regresar al menú"
     };
   }
@@ -97,12 +97,42 @@ void dibujarFinal() {
   int x = width/2;
 
   for (int i = 0; i < opciones.length; i++) {
-    int y = height/2 - 10 + i * 60;
+    int y = height/2 + 20 + i * 55;
 
     if (i == opcionFinal) {
       text("> " + opciones[i], x, y);
     } else {
       text(opciones[i], x, y);
     }
+  }
+}
+
+void dibujarTextoCentrado(String texto, float cx, float yInicial, float anchoMax, float interlineado) {
+  String[] palabras = split(texto, " ");
+  String linea = "";
+  float y = yInicial;
+
+  textAlign(CENTER, CENTER);
+
+  for (int i = 0; i < palabras.length; i++) {
+    String prueba;
+
+    if (linea.equals("")) {
+      prueba = palabras[i];
+    } else {
+      prueba = linea + " " + palabras[i];
+    }
+
+    if (textWidth(prueba) > anchoMax) {
+      text(linea, cx, y);
+      linea = palabras[i];
+      y += interlineado;
+    } else {
+      linea = prueba;
+    }
+  }
+
+  if (!linea.equals("")) {
+    text(linea, cx, y);
   }
 }

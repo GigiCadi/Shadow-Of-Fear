@@ -214,39 +214,65 @@ void keyPressed() {
   }
   
     // POPUP FINAL
-  if (estadoFinal != 0) {
+if (estadoFinal != 0) {
 
-    if (keyCode == UP || keyCode == DOWN) {
-      opcionFinal = 1 - opcionFinal;
-    }
+  if (keyCode == UP) {
+    opcionFinal--;
+    if (opcionFinal < 0) opcionFinal = 2;
+  }
 
-    if (key == ' ') {
+  if (keyCode == DOWN) {
+    opcionFinal++;
+    if (opcionFinal > 2) opcionFinal = 0;
+  }
 
-      if (opcionFinal == 0) {
+  if (key == ' ') {
 
-        if (estadoFinal == 1) { // derrota
-          estadoFinal = 0;
-          estadoPausa = 0;
-          dificultadNivel1 = 1;
-          reiniciarNivel1();
-        }
-        else if (estadoFinal == 2) { // victoria
-          estadoFinal = 0;
-          estadoPausa = 0;
-          dificultadNivel1++;
-          iniciarNivel1Dificil();
-        }
-      }
-
-      else if (opcionFinal == 1) {
+    if (opcionFinal == 0) {
+      if (estadoFinal == 1) { // derrota
         estadoFinal = 0;
         estadoPausa = 0;
-        pantalla = 1;
+if (dificultadNivel1 > 1) {
+  estadoFinal = 0;
+  estadoPausa = 0;
+  iniciarNivel1Dificil();
+} else {
+  estadoFinal = 0;
+  estadoPausa = 0;
+  reiniciarNivel1();
+}
+      } 
+      else if (estadoFinal == 2) { // victoria
+        estadoFinal = 0;
+        estadoPausa = 0;
+        dificultadNivel1++;
+        iniciarNivel1Dificil();
       }
     }
 
-    return;
+    else if (opcionFinal == 1) { // reiniciar
+      estadoFinal = 0;
+      estadoPausa = 0;
+if (dificultadNivel1 > 1) {
+  estadoFinal = 0;
+  estadoPausa = 0;
+  iniciarNivel1Dificil();
+} else {
+  estadoFinal = 0;
+  estadoPausa = 0;
+  reiniciarNivel1();
+}
+    }
+
+    else if (opcionFinal == 2) { // menú
+      estadoFinal = 0;
+      estadoPausa = 0;
+      pantalla = 1;
+    }
   }
+
+  return;
+}
   
   if (pantalla == 0) {
     iniciarTransicion(1);
@@ -273,43 +299,67 @@ if (enTransicion) return;
   // ==========================
   // POPUP FINAL
   // ==========================
-  if (estadoFinal != 0) {
+if (estadoFinal != 0) {
 
-    int ancho = 250;
-    int alto = 50;
-    int xCentro = width/2;
+  int ancho = 280;
+  int alto = 45;
+  int xCentro = width/2;
 
-    int y1 = height/2 - 10;
-    if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
-        mouseY > y1 - alto/2 && mouseY < y1 + alto/2) {
+  int y1 = height/2 + 20;
+  if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
+      mouseY > y1 - alto/2 && mouseY < y1 + alto/2) {
 
-      if (estadoFinal == 1) { // derrota
-        estadoFinal = 0;
-        estadoPausa = 0;
-        dificultadNivel1 = 1;
-        reiniciarNivel1();
-      }
-      else if (estadoFinal == 2) { // victoria
-        estadoFinal = 0;
-        estadoPausa = 0;
-        dificultadNivel1++;
-        iniciarNivel1Dificil();
-      }
-
-      return;
-    }
-
-    int y2 = height/2 + 50;
-    if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
-        mouseY > y2 - alto/2 && mouseY < y2 + alto/2) {
+    if (estadoFinal == 1) { // derrota
       estadoFinal = 0;
       estadoPausa = 0;
-      pantalla = 1;
-      return;
+if (dificultadNivel1 > 1) {
+  estadoFinal = 0;
+  estadoPausa = 0;
+  iniciarNivel1Dificil();
+} else {
+  estadoFinal = 0;
+  estadoPausa = 0;
+  reiniciarNivel1();
+}
+    } 
+    else if (estadoFinal == 2) { // victoria
+      estadoFinal = 0;
+      estadoPausa = 0;
+      dificultadNivel1++;
+      iniciarNivel1Dificil();
     }
 
     return;
   }
+
+  int y2 = height/2 + 75;
+  if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
+      mouseY > y2 - alto/2 && mouseY < y2 + alto/2) {
+    estadoFinal = 0;
+    estadoPausa = 0;
+if (dificultadNivel1 > 1) {
+  estadoFinal = 0;
+  estadoPausa = 0;
+  iniciarNivel1Dificil();
+} else {
+  estadoFinal = 0;
+  estadoPausa = 0;
+  reiniciarNivel1();
+}
+    return;
+  }
+
+  int y3 = height/2 + 130;
+  if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
+      mouseY > y3 - alto/2 && mouseY < y3 + alto/2) {
+    estadoFinal = 0;
+    estadoPausa = 0;
+    pantalla = 1;
+    return;
+  }
+
+  return;
+}
   
   // ==========================
   // PAUSA ACTIVA
