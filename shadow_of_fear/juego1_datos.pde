@@ -21,7 +21,7 @@ String[] respuestasFacil = {
   "Todos te quieren",
   "Encajas",
   "Eres capaz",
-  "Eres especial",
+  "Eres hermoso",
   "Eres inteligente",
   "Vales",
   "Eres fuerte"
@@ -31,7 +31,7 @@ String[] bancoPalabrasFacil = {
   "unico",
   "todos",
   "capaz",
-  "especial",
+  "hermoso",
   "inteligente",
   "fuerte",
   "vales"

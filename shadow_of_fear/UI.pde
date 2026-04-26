@@ -36,8 +36,10 @@ void dibujarPause() {
   rect(0, 0, width, height);
 
   textAlign(CENTER, CENTER);
+  textFont(fuente);
 
-  fill(255);
+  // Título del menú de pausa.
+  fill(245, 235, 255);
   textSize(28);
   text("PAUSA", width / 2, height / 2 - 120);
 
@@ -51,12 +53,6 @@ void dibujarPause() {
 
   for (int i = 0; i < total; i++) {
     int y = yInicial + i * espacioY;
-
-    if (i == opcionPausa) {
-      fill(255, 230, 120);
-    } else {
-      fill(255);
-    }
 
     String texto = "";
 
@@ -80,15 +76,18 @@ void dibujarPause() {
       texto = "Volver al menú";
     }
 
+    // Color de la opción seleccionada y de las opciones normales.
     if (i == opcionPausa) {
+      fill(190, 165, 255); // lila claro, reemplaza el amarillo
       text("> " + texto, x, y);
     } else {
+      fill(245, 235, 255); // lila muy claro para opciones normales
       text(texto, x, y);
     }
   }
 
   if (verNivelesDesbloqueado && opcionPausa == 2) {
-    fill(180);
+    fill(190, 165, 255);
     textSize(12);
     text("Usa LEFT / RIGHT para cambiar de modo", width / 2, height / 2 + 170);
   }
@@ -100,11 +99,15 @@ void dibujarFinal() {
   rect(0, 0, width, height);
 
   textAlign(CENTER, CENTER);
-  fill(255);
+  textFont(fuente);
 
+  // Título del mensaje final.
+  fill(245, 235, 255);
   textSize(24);
   text(mensajeFinalTitulo, width/2, height/2 - 150);
 
+  // Subtexto del mensaje final.
+  fill(245, 235, 255);
   textSize(14);
   dibujarTextoCentrado(mensajeFinalSubtexto, width/2, height/2 - 100, 520, 22);
 
@@ -121,12 +124,13 @@ void dibujarFinal() {
   for (int i = 0; i < opcionesFinalJuego1.length; i++) {
     int y = yInicial + i * espacioY;
 
+    // Color de cada opción del menú final.
     if (!opcionesFinalActivasJuego1[i]) {
-      fill(120);
+      fill(110, 95, 140);       // morado grisáceo para opciones bloqueadas
     } else if (i == opcionFinalJuego1) {
-      fill(255, 230, 120);
+      fill(190, 165, 255);      // lila claro para opción seleccionada
     } else {
-      fill(255);
+      fill(245, 235, 255);      // lila muy claro para opciones normales
     }
 
     String texto = "";
@@ -149,7 +153,7 @@ void dibujarFinal() {
   }
 
   if (opcionFinalJuego1 == 1) {
-    fill(180);
+    fill(190, 165, 255);
     textSize(12);
     text("Usa LEFT / RIGHT para cambiar de modo", width / 2, height / 2 + 200);
   }

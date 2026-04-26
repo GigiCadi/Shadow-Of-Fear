@@ -414,16 +414,30 @@ void nivel1() {
 
   image(wordbank, width, height/2, 700, 680);
 
-  textAlign(LEFT);
-  textSize(20);
-  float xWB = width - 250;
-  float yWB = height/2 - 200;
+// ==========================
+// BANCO DE PALABRAS
+// ==========================
+// Dibuja las palabras centradas dentro del banco de palabras.
+// Las palabras normales usan morado oscuro.
+// La palabra seleccionada usa un lila suave.
+textAlign(CENTER, CENTER);
+textSize(20);
+textFont(fuente);
 
-  for (int i = 0; i < bancoPalabras.length; i++) {
-    if (i == palabraBancoSeleccionada) fill(200, 255, 200);
-    else fill(0);
-    text(bancoPalabras[i], xWB, yWB + i * 60);
+// Centro horizontal del papel del banco de palabras.
+// Ajusta este valor si quieres mover TODO el texto un poco.
+float xWB = width - 170;
+float yWB = height / 2 - 200;
+
+for (int i = 0; i < bancoPalabras.length; i++) {
+  if (i == palabraBancoSeleccionada) {
+    fill(155, 125, 210); // lila suave para palabra seleccionada
+  } else {
+    fill(55, 40, 100);   // morado oscuro normal
   }
+
+  text(bancoPalabras[i], xWB, yWB + i * 60);
+}
 
   image(emotionbar, 150, height/2, 139, 642);
   image(emojis[estadoEmocion], 150, height/2 + 230, 90, 90);
@@ -432,11 +446,7 @@ void nivel1() {
   dibujarUI();
 
   if (tiempoFeedback > 0) {
-    textAlign(CENTER);
-    textSize(22);
-    if (feedback.equals("¡Bien!")) fill(0, 255, 0);
-    else fill(255, 0, 0);
-    text(feedback, width/2, 100);
+    dibujarFeedbackJuego1();
     tiempoFeedback--;
   }
 
@@ -449,6 +459,58 @@ void nivel1() {
   }
 }
 
+// ==========================
+// FEEDBACK VISUAL DEL JUEGO 1
+// ==========================
+void dibujarFeedbackJuego1() {
+  float x = width / 2;
+  float y = 100;
+
+  boolean esBien = feedback.equals("¡Bien!");
+
+  float anchoCaja;
+  float altoCaja;
+
+  if (esBien) {
+    anchoCaja = 320;
+    altoCaja = 62;
+  } else {
+    anchoCaja = 690;
+    altoCaja = 72;
+  }
+
+  pushStyle();
+
+  rectMode(CENTER);
+  textAlign(CENTER, CENTER);
+  textFont(fuente);
+
+  noStroke();
+  fill(30, 25, 55, 180);
+  rect(x + 5, y + 5, anchoCaja, altoCaja, 10);
+
+  fill(190, 165, 255, 235);
+  rect(x, y, anchoCaja, altoCaja, 10);
+
+  stroke(55, 40, 100);
+  strokeWeight(4);
+  noFill();
+  rect(x, y, anchoCaja, altoCaja, 10);
+
+  if (esBien) {
+    textSize(22);
+  } else {
+    textSize(16);
+  }
+
+  fill(45, 35, 85);
+  text(feedback, x + 3, y + 5);
+
+  fill(245, 235, 255);
+  text(feedback, x, y + 4);
+
+  popStyle();
+}
 // ==========================
 // MOUSE NIVEL
 // ==========================
@@ -522,16 +584,22 @@ void eliminarPalabra() {
 // REEMPLAZAR
 // ==========================
 void reemplazarPalabra() {
+  // Verifica que el jugador haya seleccionado una palabra del comentario.
   if (palabraSeleccionada == -1) {
     feedback = "Selecciona una palabra";
     tiempoFeedback = 60;
     return;
   }
+
+  // Verifica que el jugador haya seleccionado una palabra del banco de palabras.
   if (palabraBancoSeleccionada == -1) {
     feedback = "Selecciona una palabra del banco";
     tiempoFeedback = 60;
     return;
   }
+
+  // Verifica que la palabra seleccionada en el comentario sea la palabra ofensiva correcta.
+  // Por ejemplo: en "Eres debil", la palabra correcta para seleccionar sería "debil".
   if (palabraSeleccionada != palabraCorrecta[indiceMensaje]) {
     feedback = "Selecciona la palabra ofensiva";
     tiempoFeedback = 60;
@@ -539,6 +607,9 @@ void reemplazarPalabra() {
     siguienteMensaje();
     return;
   }
+
+  // Verifica que este mensaje realmente se resuelva con la acción "reemplazar".
+  // En tu sistema: accionCorrecta == 2 significa reemplazar.
   if (accionCorrecta[indiceMensaje] != 2) {
     feedback = "Debes eliminar, no reemplazar";
     tiempoFeedback = 60;
@@ -546,11 +617,79 @@ void reemplazarPalabra() {
     siguienteMensaje();
     return;
   }
+
+  // Obtiene la palabra que el jugador eligió desde el banco.
+  // Ejemplo: "unico", "fuerte", "capaz", etc.
+  String palabraElegida = normalizarPalabra(bancoPalabras[palabraBancoSeleccionada]);
+
+  // Obtiene la palabra correcta que debería usarse para reemplazar.
+  // Se toma desde la respuesta correcta del mensaje actual.
+  String palabraCorrectaBanco = normalizarPalabra(obtenerPalabraCorrectaDelBanco());
+
+  // Compara la palabra elegida con la palabra correcta esperada.
+  // Si no coinciden, el juego marca error.
+  if (!palabraElegida.equals(palabraCorrectaBanco)) {
+    feedback = "Esa palabra no corresponde";
+    tiempoFeedback = 60;
+    estadoEmocion++;
+    siguienteMensaje();
+    return;
+  }
+
+  // Si todo está correcto, reemplaza el comentario ofensivo por su versión positiva.
   comentariosMostrados[indiceMensaje] = respuestas[indiceMensaje];
+
+  // Actualiza el arreglo de palabras visibles en pantalla.
   palabrasActuales = split(comentariosMostrados[indiceMensaje], " ");
+
+  // Muestra feedback positivo y avanza al siguiente mensaje después de una pausa.
   feedback = "¡Bien!";
   tiempoFeedback = 60;
   programarSiguienteMensaje();
+}
+
+String normalizarPalabra(String palabra) {
+  // Convierte la palabra a minúsculas y quita espacios extra.
+  // Esto evita errores por diferencias como "Fuerte" vs "fuerte".
+  palabra = palabra.toLowerCase();
+  palabra = palabra.trim();
+
+  // Elimina signos de puntuación comunes.
+  // Así "fuerte!" y "fuerte" se consideran iguales.
+  palabra = palabra.replace(".", "");
+  palabra = palabra.replace(",", "");
+  palabra = palabra.replace("!", "");
+  palabra = palabra.replace("¡", "");
+  palabra = palabra.replace("?", "");
+  palabra = palabra.replace("¿", "");
+
+  // Reemplaza vocales con tilde por vocales normales.
+  // Así "único" y "unico" se pueden comparar correctamente.
+  palabra = palabra.replace("á", "a");
+  palabra = palabra.replace("é", "e");
+  palabra = palabra.replace("í", "i");
+  palabra = palabra.replace("ó", "o");
+  palabra = palabra.replace("ú", "u");
+
+  return palabra;
+}
+
+String obtenerPalabraCorrectaDelBanco() {
+  // Divide la respuesta correcta en palabras.
+  // Ejemplo: "Eres fuerte" se convierte en ["Eres", "fuerte"].
+  String[] palabrasRespuesta = split(respuestas[indiceMensaje], " ");
+
+  // Usa el mismo índice de palabraCorrecta para buscar la palabra positiva
+  // dentro de la respuesta correcta.
+  int indiceCorrecto = palabraCorrecta[indiceMensaje];
+
+  // Verifica que el índice exista dentro del arreglo para evitar errores.
+  if (indiceCorrecto >= 0 && indiceCorrecto < palabrasRespuesta.length) {
+    return palabrasRespuesta[indiceCorrecto];
+  }
+
+  // Si algo sale mal, devuelve texto vacío para evitar que el juego se rompa.
+  return "";
 }
 
 // ==========================
