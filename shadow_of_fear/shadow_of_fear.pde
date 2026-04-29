@@ -1,8 +1,9 @@
-PImage logo, fondo1, fondo2, fondo3, pc, web, btneliminar, btnreemplazar, emotionbar, wordbank;
+PImage logo, fondo1, fondo2, fondo3, pc, web, btneliminar, btnreemplazar, emotionbar, wordbank, btnext, btnback;
 PImage[] emojis = new PImage[5];
 PImage[] bars = new PImage[4];
 PImage[] btnmusic = new PImage[2];
 PImage[] btnpause = new PImage[2];
+PImage[] manual = new PImage[1];
 PFont fuente;
 
 float tiempo = 0;
@@ -85,6 +86,10 @@ void setup() {
   bars[2] = loadImage("imagenes/UI/orange.png");
   bars[3] = loadImage("imagenes/UI/red.png");
 
+  // Imagenes manual
+  manual[0] = loadImage("imagenes/UI/juego1.png");
+  btnext = loadImage("imagenes/UI/siguiente.png");
+  btnback = loadImage("imagenes/UI/anterior.png");
 
   textFont(fuente);
   textSize(18);
@@ -113,10 +118,14 @@ void draw() {
   else if (pantalla == 1) {
     menuPrincipal();
   }
-if (pantalla == 2) {
+  else if (pantalla == 2) {
+    nivel1();
+  }
+  else if (pantalla == 4) {
+    pantallaManual();
+  }
 
-  nivel1();
-
+  // Pausa y final se dibujan encima en cualquier pantalla que los use
   if (estadoPausa == 1) {
     dibujarPause();
   }
@@ -124,7 +133,6 @@ if (pantalla == 2) {
   if (estadoFinal != 0) {
     dibujarFinal();
   }
-}
 
   aplicarBrillo();
   actualizarTransicion();

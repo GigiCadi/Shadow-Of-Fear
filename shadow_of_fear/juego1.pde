@@ -728,9 +728,6 @@ void controlarNivel1() {
   if (esperandoSiguienteMensaje) return;
   if (indiceMensaje >= mensajes.length) return;
 
-  if (key == '1') eliminarPalabra();
-  if (key == '2') reemplazarPalabra();
-
   if (keyCode == ESC) {
     key = 0;
     estadoPausa = 1;
