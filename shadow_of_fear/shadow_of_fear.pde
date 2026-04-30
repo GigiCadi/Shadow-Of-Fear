@@ -1,4 +1,4 @@
-PImage logo, fondo1, fondo2, fondo3,fondoJuego2, pc, web, btneliminar, btnreemplazar, emotionbar, wordbank, btnext, btnback, btnvolver, fondoniveles, platano, reptor;
+PImage logo, fondo1, fondo2, fondo3,fondoJuego2, pc, web, btneliminar, btnreemplazar, emotionbar, wordbank, btnext, btnback, btnvolver, fondoniveles, platano, reptor, protamareada;
 PImage[] emojis = new PImage[5];
 PImage[] bars = new PImage[4];
 PImage[] btnmusic = new PImage[2];
@@ -33,6 +33,9 @@ int pantalla = 0;
 int pantallaDestino = 0;
 int dificultadNivel1 = 1;
 int pantallaOrigen = 0; // pantalla desde donde se abrió la pausa
+int tipoPausa = 0; 
+// 0 = juego1
+// 1 = juego2
 // ==========================
 // TRANSICIÓN
 // ==========================
@@ -136,7 +139,7 @@ void setup() {
   protaright[0] = loadImage("imagenes/personajes/protacaminandoderecha1.png");
   protaright[1] = loadImage("imagenes/personajes/protacaminandoderecha2.png");  // este no solo se va a usar durante la animación, también cuando el jugador se quede quieto mirando derecha
   protaright[2] = loadImage("imagenes/personajes/protacaminandoderecha3.png");
-
+  protamareada = loadImage("imagenes/personajes/protamerada.png");
   
 
 
@@ -263,13 +266,23 @@ void keyPressed() {
 
   // PAUSA activa
   if (estadoPausa == 1) {
-    controlarPausaJuego1Teclado();
+    if (tipoPausa == 0) {
+      controlarPausaJuego1Teclado();
+    } else {
+      controlarPausaJuego2Teclado();
+    }
     return;
   }
 
-  // POPUP FINAL activo
-  if (estadoFinal != 0) {
+  // POPUP FINAL activo - Juego 1
+  if (estadoFinal != 0 && pantalla == 2) {
     controlarMenuFinalJuego1Teclado();
+    return;
+  }
+  
+  // POPUP FINAL activo - Juego 2
+  if (j2_estado != 0 && pantalla == 5) {
+    controlarFinalJuego2Teclado();
     return;
   }
 
@@ -288,9 +301,7 @@ void keyPressed() {
     }
   }
   else if (pantalla == 4) {
-    if (escPresionado) {
-      pantalla = 1;
-    }
+    controlarManualTeclado();  // Cambiar a nueva función
   }
   else if (pantalla == 5) {
     j2_keyPressed();
@@ -306,10 +317,14 @@ void mousePressed() {
     return;
   }
 
-  if (estadoPausa == 1) {
+if (estadoPausa == 1) {
+  if (tipoPausa == 0) {
     controlarPausaJuego1Mouse();
-    return;
+  } else {
+    controlarPausaJuego2Mouse(); // 👈 nuevo
   }
+  return;
+}
 
   // Botón pausa — solo en pantalla 2
   if (pantalla == 2) {
@@ -324,6 +339,7 @@ void mousePressed() {
       pantallaOrigen = pantalla;
       estadoPausa = 1;
       opcionPausa = 0;
+      tipoPausa = 0;
       return;
     }
 
@@ -346,7 +362,10 @@ void mousePressed() {
     int xPause = xBase + (sz + esp) * 2;
     if (dist(mouseX, mouseY, xPause, yUI) < sz/2) {
       if (j2_estado == 0) {
-        pantallaOrigen = 5; estadoPausa = 1; opcionPausa = 0; 
+        pantallaOrigen = 5;
+        estadoPausa = 1;
+        opcionPausa = 0; 
+        tipoPausa = 1;
       }
       return;
     }

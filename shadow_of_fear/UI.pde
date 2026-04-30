@@ -31,6 +31,8 @@ void dibujarBarras() {
 }
 
 void dibujarPause() {
+  pushStyle();  // ← AÑADIR: guardar estilos actuales
+  
   fill(0, 190);
   rect(0, 0, width, height);
 
@@ -45,7 +47,30 @@ void dibujarPause() {
   int yInicial = height / 2 - 10;
   int espacioY = 55;
 
-  // ── Pausa desde el MANUAL: solo 2 opciones ──
+  // =========================
+  // PAUSA JUEGO 2
+  // =========================
+  if (tipoPausa == 1) {
+    String[] opciones = {"Continuar", "Reiniciar", "Volver al menú"};
+
+    for (int i = 0; i < opciones.length; i++) {
+      int y = yInicial + i * espacioY;
+
+      if (i == opcionPausa) {
+        fill(190, 165, 255);
+        text("> " + opciones[i], x, y);
+      } else {
+        fill(245, 235, 255);
+        text(opciones[i], x, y);
+      }
+    }
+    popStyle();  // ← AÑADIR: restaurar estilos antes de salir
+    return;      // ← IMPORTANTE: salir para no seguir al juego 1
+  }
+
+  // =========================
+  // PAUSA JUEGO 1
+  // =========================
   if (pantallaOrigen == 4) {
     String[] opcionesManual = {"Continuar", "Volver al menú"};
     for (int i = 0; i < opcionesManual.length; i++) {
@@ -58,10 +83,10 @@ void dibujarPause() {
         text(opcionesManual[i], x, y);
       }
     }
-    return; // no dibuja nada más
+    popStyle();  // ← AÑADIR
+    return;
   }
 
-  // ── Pausa normal desde el JUEGO ──
   int total = totalOpcionesPausaJuego1();
 
   for (int i = 0; i < total; i++) {
@@ -88,10 +113,13 @@ void dibujarPause() {
     textSize(12);
     text("Usa LEFT / RIGHT para cambiar de modo", width / 2, height / 2 + 170);
   }
+  
+  popStyle(); 
 }
 
 void dibujarFinal() {
-
+  pushStyle();  
+  
   fill(0, 180);
   rect(0, 0, width, height);
 
@@ -154,6 +182,8 @@ void dibujarFinal() {
     textSize(12);
     text("Usa LEFT / RIGHT para cambiar de modo", width / 2, height / 2 + 200);
   }
+  
+  popStyle(); 
 }
 
 void dibujarTextoCentrado(String texto, float cx, float yInicial, float anchoMax, float interlineado) {

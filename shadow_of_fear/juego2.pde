@@ -43,11 +43,13 @@ int       b2_wp  = 0;
 float[][] b2_wps;
 
 // ----- Plátanos -----
-final int   J2_N_PLAT = 5;
+final int   J2_N_PLAT = 8;
 float[]     j2_px  = new float[J2_N_PLAT];
 float[]     j2_py  = new float[J2_N_PLAT];
 boolean[]   j2_pOn = new boolean[J2_N_PLAT];
-final float J2_PLAT_R = 14;  // radio reducido
+int[]       j2_pTimer = new int[J2_N_PLAT];  // ← NUEVO: timer para reaparición
+final int   J2_PLAT_RESPAWN = 600;           // ← NUEVO: frames hasta reaparecer (10 segundos si va a 60 FPS)
+final float J2_PLAT_R = 14;
 
 // ----- Rector -----
 float j2_rx, j2_ry;
@@ -181,13 +183,43 @@ void iniciarJuego2() {
     {394,  217},   // WP9  cierra loop
   };
 
-  // Platanos en loop perimetral
-  j2_px[0] = 560;  j2_py[0] = 217;   // pasillo superior izq
-  j2_px[1] = 900;  j2_py[1] = 217;   // pasillo superior der
-  j2_px[2] = 1040; j2_py[2] = 395;   // pasillo derecho
-  j2_px[3] = 720;  j2_py[3] = 573;   // pasillo inferior
-  j2_px[4] = 394;  j2_py[4] = 395;   // pasillo izquierdo
-  for (int i = 0; i < J2_N_PLAT; i++) j2_pOn[i] = true;
+  // ================================================================
+  // PLÁTANOS - Posiciones aleatorias dentro de zonas caminables
+  // ================================================================
+  
+  // Banco de posiciones válidas (todas dentro de pasillos)
+  float[][] posicionesValidas = {
+    // Pasillo superior
+    {480, 217}, {550, 217}, {620, 217}, {690, 217}, {760, 217}, 
+    {830, 217}, {900, 217}, {970, 217},
+    
+    // Pasillo derecho
+    {1040, 260}, {1040, 300}, {1040, 340}, {1040, 380}, {1040, 420},
+    {1040, 460}, {1040, 500}, {1040, 540},
+    
+    // Pasillo inferior
+    {450, 573}, {520, 573}, {590, 573}, {660, 573}, {730, 573},
+    {800, 573}, {870, 573}, {940, 573},
+    
+    // Pasillo izquierdo
+    {394, 250}, {394, 290}, {394, 330}, {394, 370}, {394, 410},
+    {394, 450}, {394, 490}, {394, 530}
+  };
+  
+  // Mezclar aleatoriamente
+  for (int i = 0; i < posicionesValidas.length; i++) {
+    int j = (int) random(posicionesValidas.length);
+    float[] temp = posicionesValidas[i];
+    posicionesValidas[i] = posicionesValidas[j];
+    posicionesValidas[j] = temp;
+  }
+  
+  // Asignar las primeras J2_N_PLAT posiciones
+  for (int i = 0; i < J2_N_PLAT && i < posicionesValidas.length; i++) {
+    j2_px[i] = posicionesValidas[i][0];
+    j2_py[i] = posicionesValidas[i][1];
+    j2_pOn[i] = true;
+  }
 
   estadoPausa = 0;
   estadoFinal = 0;
@@ -305,10 +337,24 @@ void verificarColisionesJ2() {
   if (!j2_cong) {
     for (int i = 0; i < J2_N_PLAT; i++) {
       if (j2_pOn[i] && dist(j2_x, j2_y, j2_px[i], j2_py[i]) < J2_PLAT_R + 8) {
-        j2_cong = true; j2_timerCong = J2_CONG_MAX; j2_pOn[i] = false;
+        j2_cong = true; 
+        j2_timerCong = J2_CONG_MAX; 
+        j2_pOn[i] = false;
+        j2_pTimer[i] = J2_PLAT_RESPAWN;  // ← NUEVO: iniciar timer de reaparición
       }
     }
   }
+  
+  // ← NUEVO: actualizar timers de reaparición
+  for (int i = 0; i < J2_N_PLAT; i++) {
+    if (!j2_pOn[i] && j2_pTimer[i] > 0) {
+      j2_pTimer[i]--;
+      if (j2_pTimer[i] <= 0) {
+        j2_pOn[i] = true;
+      }
+    }
+  }
+  
   if (dist(j2_x, j2_y, b2_x, b2_y) < 46) { j2_estado = 1; return; }
   if (dist(j2_x, j2_y, j2_rx, j2_ry) < J2_RECT_R + 20) j2_estado = 2;
 }
@@ -332,6 +378,12 @@ void animarBullyJ2() {
 // SPRITES
 // ================================================================
 PImage spriteJugadorJ2() {
+  // Si está mareado, mostrar sprite de mareo
+  if (j2_cong) {
+    return protamareada;  // Usar la imagen de mareo cargada
+  }
+  
+  // Comportamiento normal
   switch (j2_dir) {
     case 0: return protadown[j2_frameA];
     case 1: return protaup[j2_frameA];
@@ -363,17 +415,78 @@ void dibujarElementosJ2() {
 
   image(reptor, j2_rx, j2_ry, J2_SW, J2_SH);
   image(spriteBullyJ2(), b2_x, b2_y, B2_SW, B2_SH);
-  image(spriteJugadorJ2(), j2_x, j2_y, J2_SW, J2_SH);
-
+  
+  // Dibujar jugador con tamaño según estado
   if (j2_cong) {
+    image(spriteJugadorJ2(), j2_x, j2_y, J2_SW + 10, J2_SH + 8);  // un poco más grande cuando está mareada
+  } else {
+    image(spriteJugadorJ2(), j2_x, j2_y, J2_SW, J2_SH);
+  }
+
+  // Efecto visual de mareo (amarillo) en lugar de congelamiento (azul)
+  if (j2_cong) {
+    pushStyle();
+    
+    // Círculos de vértigo alrededor de la cabeza
     noFill();
-    stroke(120, 200, 255, 170);
-    strokeWeight(3);
-    ellipse(j2_x, j2_y + J2_SH*0.15, J2_SW+18, J2_SH+14);
+    for (int i = 0; i < 3; i++) {
+      float radio = 30 + i * 6 + sin(frameCount * 0.15) * 5;
+      stroke(255, 200, 80, 120 - i * 30);
+      strokeWeight(2);
+      ellipse(j2_x, j2_y + J2_SH*0.15, radio, radio);
+    }
+    
+    // Líneas de mareo (espirales)
+    stroke(255, 180, 60, 180);
+    strokeWeight(2);
+    for (int i = 0; i < 6; i++) {
+      float angle = frameCount * 0.1 + i * PI / 3;
+      float x1 = j2_x + cos(angle) * 28;
+      float y1 = j2_y - 15 + sin(angle * 2) * 5;
+      float x2 = j2_x + cos(angle + 0.3) * 38;
+      float y2 = j2_y - 20 + sin(angle * 2 + 1) * 5;
+      line(x1, y1, x2, y2);
+    }
+    
+    // Estrellitas/espirales pequeñas alrededor
     noStroke();
-    fill(120, 200, 255, 230);
-    textFont(fuente); textSize(12); textAlign(CENTER, CENTER);
-    text(nf(j2_timerCong/60.0,1,1)+"s", j2_x, j2_y - J2_SH*0.5 - 14);
+    for (int i = 0; i < 4; i++) {
+      float angle = frameCount * 0.2 + i * PI / 2;
+      float radius = 40 + sin(frameCount * 0.1) * 5;
+      float xOff = cos(angle) * radius;
+      float yOff = sin(angle) * radius;
+      
+      fill(255, 220, 100, 150);
+      ellipse(j2_x + xOff, j2_y + J2_SH*0.15 - 10 + yOff, 6, 6);
+      fill(255, 180, 60, 120);
+      ellipse(j2_x + xOff - 2, j2_y + J2_SH*0.15 - 8 + yOff, 3, 3);
+    }
+    
+    // Texto de tiempo mareado
+    noStroke();
+    fill(255, 200, 80, 230);
+    textFont(fuente); 
+    textSize(12); 
+    textAlign(CENTER, CENTER);
+    
+    float segundos = j2_timerCong / 60.0;
+    String tiempoTexto = nf(segundos, 1, 1) + "s";
+    
+    // Fondo del texto
+    fill(80, 50, 20, 180);
+    rect(j2_x - textWidth(tiempoTexto)/2 - 10, j2_y - J2_SH*0.5 - 20, textWidth(tiempoTexto) + 20, 22, 8);
+    
+    fill(255, 220, 100);
+    text(tiempoTexto, j2_x, j2_y - J2_SH*0.5 - 14);
+    
+    // Texto "¡RESBALASTE!" que aparece al inicio y se desvanece
+    if (j2_timerCong > 240) {
+      fill(255, 180, 60, 200 - j2_timerCong);
+      textSize(10);
+      text("¡RESBALASTE!", j2_x, j2_y - J2_SH*0.5 - 35);
+    }
+    
+    popStyle();
   }
 }
 
@@ -395,41 +508,95 @@ void dibujarUIJuego2() {
 // ================================================================
 // PANTALLA FINAL
 // ================================================================
+int opcionFinalJuego2 = 0;
+String[] opcionesFinalJuego2 = {"Volver a intentar", "Volver al menú"};
+
 void dibujarFinalJuego2() {
-  fill(0, 190); noStroke(); rect(0, 0, width, height);
-  textFont(fuente); textAlign(CENTER, CENTER);
+  pushStyle();  // ← AÑADIR
+  
+  fill(0, 190);
+  noStroke();
+  rect(0, 0, width, height);
+  textFont(fuente);
+  textAlign(CENTER, CENTER);
 
   if (j2_estado == 2) {
-    fill(120, 255, 160); textSize(26);
+    fill(120, 255, 160);
+    textSize(26);
     text("¡LLEGASTE A LA OFICINA!", width/2, height/2-110);
-    fill(230, 245, 230); textSize(13);
+    fill(230, 245, 230);
+    textSize(13);
     text("Encontraste ayuda. Eres más valiente de lo que crees.", width/2, height/2-58);
   } else if (j2_estado == 1) {
-    fill(255, 80, 80); textSize(26);
+    fill(255, 80, 80);
+    textSize(26);
     text("EL BULLY TE ATRAPÓ", width/2, height/2-110);
-    fill(245, 220, 220); textSize(13);
+    fill(245, 220, 220);
+    textSize(13);
     text("Busca otro camino. No te rindas.", width/2, height/2-58);
   }
 
-  String[] opcF = {"Volver a intentar", "Volver al menú"};
-  int yBase = height/2-10, espacioY = 55;
-  for (int i = 0; i < opcF.length; i++) {
-    int yOpc = yBase + i*espacioY;
-    boolean hover = mouseX > width/2-220 && mouseX < width/2+220 &&
-                    mouseY > yOpc-22 && mouseY < yOpc+22;
-    fill(hover ? color(190,165,255) : color(245,235,255));
-    text(hover ? "> "+opcF[i] : opcF[i], width/2, yOpc);
+  int yBase = height/2 - 10;
+  int espacioY = 55;
+  
+  for (int i = 0; i < opcionesFinalJuego2.length; i++) {
+    int yOpc = yBase + i * espacioY;
+    
+    if (i == opcionFinalJuego2) {
+      fill(190, 165, 255);
+      text("> " + opcionesFinalJuego2[i], width/2, yOpc);
+    } else {
+      fill(245, 235, 255);
+      text(opcionesFinalJuego2[i], width/2, yOpc);
+    }
   }
+  
+  popStyle();  // ← AÑADIR
 }
 
 void clicFinalJuego2() {
-  int yBase = height/2-10, espacioY = 55;
-  if (mouseX > width/2-220 && mouseX < width/2+220 &&
-      mouseY > yBase-22 && mouseY < yBase+22) { iniciarJuego2(); return; }
-  int yMenu = yBase+espacioY;
-  if (mouseX > width/2-220 && mouseX < width/2+220 &&
-      mouseY > yMenu-22 && mouseY < yMenu+22) {
-    j2_estado=0; j2_iniciado=false; estadoPausa=0; pantalla=1;
+  int yBase = height/2 - 10;
+  int espacioY = 55;
+  
+  // Opción 1: Volver a intentar
+  if (mouseX > width/2 - 220 && mouseX < width/2 + 220 &&
+      mouseY > yBase - 22 && mouseY < yBase + 22) {
+    iniciarJuego2();
+    return;
+  }
+  // Opción 2: Volver al menú
+  int yMenu = yBase + espacioY;
+  if (mouseX > width/2 - 220 && mouseX < width/2 + 220 &&
+      mouseY > yMenu - 22 && mouseY < yMenu + 22) {
+    j2_estado = 0;
+    j2_iniciado = false;
+    estadoPausa = 0;
+    pantalla = 1;
+  }
+}
+
+void controlarFinalJuego2Teclado() {
+  if (keyCode == UP) {
+    opcionFinalJuego2--;
+    if (opcionFinalJuego2 < 0) {
+      opcionFinalJuego2 = opcionesFinalJuego2.length - 1;
+    }
+  }
+  else if (keyCode == DOWN) {
+    opcionFinalJuego2++;
+    if (opcionFinalJuego2 >= opcionesFinalJuego2.length) {
+      opcionFinalJuego2 = 0;
+    }
+  }
+  else if (key == ' ' || keyCode == ENTER) {
+    if (opcionFinalJuego2 == 0) {
+      iniciarJuego2();
+    } else if (opcionFinalJuego2 == 1) {
+      j2_estado = 0;
+      j2_iniciado = false;
+      estadoPausa = 0;
+      pantalla = 1;
+    }
   }
 }
 
@@ -439,7 +606,12 @@ void clicFinalJuego2() {
 void j2_keyPressed() {
   if (keyCode == ESC) {
     if (j2_estado != 0) { j2_estado=0; j2_iniciado=false; pantalla=1; }
-    else { pantallaOrigen=5; estadoPausa=1; opcionPausa=0; }
+    else { 
+      pantallaOrigen=5;
+      estadoPausa=1;
+      opcionPausa=0; 
+      tipoPausa = 1;
+    }
     return;
   }
   if (j2_estado != 0) return;
@@ -512,4 +684,62 @@ void debugColisiones() {
   text("Mouse: "+mouseX+", "+mouseY, MAP_ABS_X0+6, MAP_ABS_Y0+6);
 
   popStyle();
+}
+
+void controlarPausaJuego2Teclado() {
+  String[] opciones = {"Continuar", "Reiniciar", "Volver al menú"};
+  
+  if (keyCode == UP) {
+    opcionPausa--;
+    if (opcionPausa < 0) opcionPausa = opciones.length - 1;
+  }
+  else if (keyCode == DOWN) {
+    opcionPausa++;
+    if (opcionPausa >= opciones.length) opcionPausa = 0;
+  }
+  else if (key == ' ' || keyCode == ENTER) {
+    if (opcionPausa == 0) {
+      estadoPausa = 0;
+    }
+    else if (opcionPausa == 1) {
+      estadoPausa = 0;
+      iniciarJuego2();
+    }
+    else if (opcionPausa == 2) {
+      estadoPausa = 0;
+      pantalla = 1;
+    }
+  }
+}
+
+void controlarPausaJuego2Mouse() {
+  String[] opciones = {"Continuar", "Reiniciar", "Volver al menú"};
+  int ancho = 430;
+  int alto = 42;
+  int xCentro = width / 2;
+  int yInicial = height / 2 - 10;
+  int espacioY = 55;
+
+  for (int i = 0; i < opciones.length; i++) {
+    int y = yInicial + i * espacioY;
+    if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
+        mouseY > y - alto/2 && mouseY < y + alto/2) {
+      opcionPausa = i;
+      if (i == 0) estadoPausa = 0;
+      else if (i == 1) {
+        estadoPausa = 0;
+        iniciarJuego2();
+      }
+      else if (i == 2) {
+        estadoPausa = 0;
+        pantalla = 1;
+      }
+      return;
+    }
+  }
+}
+
+
+void reiniciarJuego2() {
+  iniciarJuego2();
 }

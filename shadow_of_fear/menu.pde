@@ -17,29 +17,28 @@ String[] opciones = {
 // DIBUJAR MENU
 // ==========================
 void menuPrincipal() {
+  pushStyle();  
   
   imageMode(CORNER);
 
   // Fondo
   image(fondo2, 0, 0, width, height);
 
-
-  // 🔥 (OPCIONAL) Fondo menú
-  // PImage fondoMenu = loadImage("ruta/a/tu/fondo.png");
-  // image(fondoMenu, 0, 0, width, height);
-
   // Logo
-  float ancho = logo.width * 0.45;   // 50% del tamaño
+  float ancho = logo.width * 0.45;
   float alto = logo.height * 0.45;
-
   float xLogo = 340 - ancho/2;
-
   image(logo, xLogo, 40, ancho, alto);
+  
+  // ← RESTAURAR configuraciones de texto para el menú
+  textFont(fuente);
   textAlign(LEFT);
+  textSize(18);
+  
   int x = 150;
+  
   // Opciones
   for (int i = 0; i < opciones.length; i++) {
-
     int y = 480 + i * 60;
 
     if (i == 1 && !verNivelesDesbloqueado) {
@@ -54,6 +53,8 @@ void menuPrincipal() {
       text(opciones[i], x, y);
     }
   }
+  
+  popStyle();  
 }
 
 // ==========================
