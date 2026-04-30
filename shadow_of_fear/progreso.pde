@@ -49,7 +49,7 @@ void inicializarProgresoJuego1() {
   // Al inicio solo está desbloqueado el modo fácil
   modosDesbloqueados[MODO_FACIL] = true;
 
-  verNivelesDesbloqueado = false;
+  verNivelesDesbloqueado = true; //cambio temporal
 
   // Compatibilidad con tu variable antigua
   nivel1Completado = false;
@@ -426,40 +426,65 @@ void cambiarModoFinal(int direccion) {
 }
 
 void controlarPausaJuego1Teclado() {
+
+  // ── Manual: solo 2 opciones ──
+  if (pantallaOrigen == 4) {
+    if (keyCode == UP || keyCode == DOWN) {
+      opcionPausa = (opcionPausa == 0) ? 1 : 0;
+    }
+    else if (key == ' ' || keyCode == ENTER) {
+      ejecutarOpcionPausaJuego1();
+    }
+    return;
+  }
+
+  // ── Juego normal ──
   int total = totalOpcionesPausaJuego1();
 
   if (keyCode == UP) {
     opcionPausa--;
-
-    if (opcionPausa < 0) {
-      opcionPausa = total - 1;
-    }
+    if (opcionPausa < 0) opcionPausa = total - 1;
   }
-
   else if (keyCode == DOWN) {
     opcionPausa++;
-
-    if (opcionPausa >= total) {
-      opcionPausa = 0;
-    }
+    if (opcionPausa >= total) opcionPausa = 0;
   }
-
   else if (verNivelesDesbloqueado && opcionPausa == 2 && keyCode == LEFT) {
     cambiarModoPausa(-1);
   }
-
   else if (verNivelesDesbloqueado && opcionPausa == 2 && keyCode == RIGHT) {
     cambiarModoPausa(1);
   }
-
   else if (key == ' ' || keyCode == ENTER) {
     ejecutarOpcionPausaJuego1();
   }
 }
 
 void controlarPausaJuego1Mouse() {
-  int total = totalOpcionesPausaJuego1();
 
+  // ── Manual: solo 2 opciones ──
+  if (pantallaOrigen == 4) {
+    String[] opcionesManual = {"Continuar", "Volver al menú"};
+    int ancho = 430;
+    int alto = 42;
+    int xCentro = width / 2;
+    int yInicial = height / 2 - 10;
+    int espacioY = 55;
+
+    for (int i = 0; i < opcionesManual.length; i++) {
+      int y = yInicial + i * espacioY;
+      if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
+          mouseY > y - alto/2 && mouseY < y + alto/2) {
+        opcionPausa = i;
+        ejecutarOpcionPausaJuego1();
+        return;
+      }
+    }
+    return;
+  }
+
+  // ── Juego normal ──
+  int total = totalOpcionesPausaJuego1();
   int ancho = 430;
   int alto = 42;
   int xCentro = width / 2;
@@ -468,35 +493,15 @@ void controlarPausaJuego1Mouse() {
 
   for (int i = 0; i < total; i++) {
     int y = yInicial + i * espacioY;
-
-    if (
-      mouseX > xCentro - ancho / 2 &&
-      mouseX < xCentro + ancho / 2 &&
-      mouseY > y - alto / 2 &&
-      mouseY < y + alto / 2
-    ) {
+    if (mouseX > xCentro - ancho/2 && mouseX < xCentro + ancho/2 &&
+        mouseY > y - alto/2 && mouseY < y + alto/2) {
       opcionPausa = i;
-
-      // Si hizo click en la opción Modo [...]
       if (verNivelesDesbloqueado && opcionPausa == 2) {
-
-        // Botón izquierdo <
-        if (mouseX < xCentro - 120) {
-          cambiarModoPausa(-1);
-          return;
-        }
-
-        // Botón derecho >
-        if (mouseX > xCentro + 120) {
-          cambiarModoPausa(1);
-          return;
-        }
-
-        // Si hace click en el centro, entra al modo seleccionado
+        if (mouseX < xCentro - 120) { cambiarModoPausa(-1); return; }
+        if (mouseX > xCentro + 120) { cambiarModoPausa(1); return; }
         ejecutarOpcionPausaJuego1();
         return;
       }
-
       ejecutarOpcionPausaJuego1();
       return;
     }
@@ -505,31 +510,24 @@ void controlarPausaJuego1Mouse() {
 
 void ejecutarOpcionPausaJuego1() {
 
-  // Continuar
+
+
+  // ── Juego normal ──
   if (opcionPausa == 0) {
     estadoPausa = 0;
   }
-
-  // Reiniciar modo actual
   else if (opcionPausa == 1) {
     estadoPausa = 0;
     reiniciarModoActual();
   }
-
-  // Si Ver Niveles ya está desbloqueado,
-  // la opción 2 es el selector de modo.
   else if (verNivelesDesbloqueado && opcionPausa == 2) {
     estadoPausa = 0;
     iniciarModoJuego1(modoPausaSeleccionado);
   }
-
-  // Volver al menú cuando Ver Niveles está desbloqueado
   else if (verNivelesDesbloqueado && opcionPausa == 3) {
     estadoPausa = 0;
     pantalla = 1;
   }
-
-  // Volver al menú antes de desbloquear Ver Niveles
   else if (!verNivelesDesbloqueado && opcionPausa == 2) {
     estadoPausa = 0;
     pantalla = 1;

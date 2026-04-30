@@ -1,0 +1,515 @@
+// ================================================================
+// JUEGO 2: HALLWAYS OF SILENCE
+// ================================================================
+
+boolean DEBUG_MODE = false;
+
+// ================================================================
+
+int j2_estado = 0;
+boolean j2_iniciado = false;
+
+boolean j2_kUp    = false;
+boolean j2_kDown  = false;
+boolean j2_kLeft  = false;
+boolean j2_kRight = false;
+
+// ----- Jugador -----
+float j2_x, j2_y;
+int   j2_dir    = 0;
+boolean j2_mov  = false;
+int j2_frameA   = 0;
+int j2_timerA   = 0;
+final int   J2_VEL_ANIM = 8;
+final float J2_SPD      = 4.0;
+final int   J2_SW       = 52;
+final int   J2_SH       = 68;
+
+// ----- Congelamiento -----
+boolean j2_cong      = false;
+int     j2_timerCong = 0;
+final int J2_CONG_MAX = 300;
+
+// ----- Bully -----
+float b2_x, b2_y;
+int   b2_dir    = 3;
+int   b2_frameA = 0;
+int   b2_timerA = 0;
+final int   B2_VEL_ANIM = 14;
+final float B2_SPD      = 2.0;
+final int   B2_SW       = 52;
+final int   B2_SH       = 68;
+int       b2_wp  = 0;
+float[][] b2_wps;
+
+// ----- Plátanos -----
+final int   J2_N_PLAT = 5;
+float[]     j2_px  = new float[J2_N_PLAT];
+float[]     j2_py  = new float[J2_N_PLAT];
+boolean[]   j2_pOn = new boolean[J2_N_PLAT];
+final float J2_PLAT_R = 14;  // radio reducido
+
+// ----- Rector -----
+float j2_rx, j2_ry;
+final float J2_RECT_R = 28;
+
+// ================================================================
+// PAREDES — coordenadas absolutas en píxeles (de vercolisiones)
+// ================================================================
+final float[][] J2_WALL_ABS = {
+  {300,  20,  970,  90},
+  {300, 110,  140, 100},
+  {495,  20,   10, 190},
+  {440, 185,   15,  25},
+  {505, 180,   32,  30},
+  {310, 210,   10,  65},
+  {292, 270,   70,  35},
+  {292, 305,   10, 315},
+  {280, 615,  130,  35},
+  {280, 650,   10, 150},
+  {290, 650,   38,  60},
+  {280, 800,  990,  30},
+  {300, 350,   60,  55},
+  {300, 400,   50, 215},
+  {1260, 110,  12, 690},
+  {690, 110,   10,  75},
+  {655, 178,   50,  35},
+  {740, 180,  270,  30},
+  {745, 110,  180,  70},
+  {1065, 110,  10,  85},
+  {1043, 180,  48,  50},
+  {1125, 190, 135,  38},
+  {455, 265,   10, 300},
+  {465, 265,   43,  55},
+  {534, 264,   68,  57},
+  {640, 264,   52,  57},
+  {725, 264,  280,  57},
+  {465, 345,  220,  40},
+  {670, 385,   15, 165},
+  {455, 550,  105,  35},
+  {610, 550,   75,  35},
+  {725, 370,   14, 165},
+  {725, 530,  167,  55},
+  {960, 530,   45,  55},
+  {798, 358,   40,  45},
+  {830, 416,   30,  58},
+  {896, 348,   30, 142},
+  {964, 348,   30, 142},
+  {995, 320,   10, 220},
+  {454, 615,  120,  40},
+  {450, 654,  100,  50},
+  {572, 615,   10, 185},
+  {640, 615,  165, 145},
+  {330, 745,  210,  55},
+  {852, 635,  180, 126},
+  {1030, 616,  10, 190},
+  {1075, 616, 195,  90},
+  {1072, 552, 100,  30},
+  {1072, 527,  35,  25},
+  {1220, 552,  40,  30},
+  {1075, 444,  18,  34},
+  {1075, 270,  12, 180},
+  {1087, 270, 180,  80},
+  {1127, 350, 140, 130},
+  {1135, 705,  80,  60},
+  {1235, 760,  20,  25},
+  {1055, 780,  30,  20},
+  {1105, 125,  60,  50},
+  {1165, 125,  60,  20},
+  {1235, 165,  20,  20},
+  {520,  428,  86,  92},
+  {778,  788,  40,  12},
+};
+
+// Límites del área jugable en píxeles absolutos
+// Tomados del borde del mapa (rectángulo exterior en vercolisiones)
+final float MAP_ABS_X0 = 280;
+final float MAP_ABS_X1 = 1272;
+final float MAP_ABS_Y0 = 20;
+final float MAP_ABS_Y1 = 830;
+
+// Estas funciones se mantienen para compatibilidad con waypoints y posiciones iniciales
+final float MAP_X0 = 0.198f;
+final float MAP_X1 = 0.824f;
+final float MAP_Y0 = 0.020f;
+final float MAP_Y1 = 0.950f;
+
+float mx(float f) { return MAP_X0 * width  + f * (MAP_X1 - MAP_X0) * width;  }
+float my(float f) { return MAP_Y0 * height + f * (MAP_Y1 - MAP_Y0) * height; }
+
+// ================================================================
+// INICIALIZAR
+// ================================================================
+void iniciarJuego2() {
+  j2_estado    = 0;
+  j2_iniciado  = true;
+  j2_cong      = false;
+  j2_timerCong = 0;
+  j2_kUp = j2_kDown = j2_kLeft = j2_kRight = false;
+
+  // Jugador: pasillo izquierdo, zona media
+  j2_x = 395;
+  j2_y = 470;
+  j2_dir    = 3;
+  j2_mov    = false;
+  j2_frameA = 1;
+  j2_timerA = 0;
+
+  // Rector: oficina de orientación (abajo derecha del mapa)
+  j2_rx = 1130;
+  j2_ry = 680;
+
+  // Bully: empieza en pasillo superior
+  b2_x      = 394;
+  b2_y      = 217;
+  b2_dir    = 3;
+  b2_frameA = 0;
+  b2_timerA = 0;
+  b2_wp     = 0;
+
+  // Waypoints del bully - coordenadas de PIES (centro sprite = pie_y - 27)
+  b2_wps = new float[][] {
+    {394,  217},   // WP0  esquina sup-izq
+    {710,  217},   // WP1  pasillo sup centro
+    {1040, 217},   // WP2  esquina sup-der
+    {1040, 395},   // WP3  pasillo der alto
+    {1040, 573},   // WP4  esquina inf-der
+    {834,  573},   // WP5  pasillo inf der
+    {614,  573},   // WP6  pasillo inf centro
+    {394,  573},   // WP7  esquina inf-izq
+    {394,  395},   // WP8  pasillo izq medio
+    {394,  217},   // WP9  cierra loop
+  };
+
+  // Platanos en loop perimetral
+  j2_px[0] = 560;  j2_py[0] = 217;   // pasillo superior izq
+  j2_px[1] = 900;  j2_py[1] = 217;   // pasillo superior der
+  j2_px[2] = 1040; j2_py[2] = 395;   // pasillo derecho
+  j2_px[3] = 720;  j2_py[3] = 573;   // pasillo inferior
+  j2_px[4] = 394;  j2_py[4] = 395;   // pasillo izquierdo
+  for (int i = 0; i < J2_N_PLAT; i++) j2_pOn[i] = true;
+
+  estadoPausa = 0;
+  estadoFinal = 0;
+  pantalla    = 5;
+}
+
+// ================================================================
+// PANTALLA PRINCIPAL
+// ================================================================
+void nivelJuego2() {
+  imageMode(CORNER);
+  image(fondoJuego2, 0, 0, width, height);
+
+  if (!j2_iniciado) return;
+
+  if (j2_estado == 0) actualizarJuego2();
+
+  dibujarElementosJ2();
+  dibujarUIJuego2();
+
+  if (j2_estado != 0) dibujarFinalJuego2();
+
+  if (DEBUG_MODE) debugColisiones();
+}
+
+// ================================================================
+// ACTUALIZAR
+// ================================================================
+void actualizarJuego2() {
+  if (!j2_cong) {
+    moverJugadorJ2();
+  } else {
+    j2_timerCong--;
+    if (j2_timerCong <= 0) { j2_cong = false; j2_timerCong = 0; }
+    j2_mov    = false;
+    j2_frameA = 1;
+  }
+  moverBullyJ2();
+  verificarColisionesJ2();
+  animarJugadorJ2();
+  animarBullyJ2();
+}
+
+// ================================================================
+// MOVIMIENTO DEL JUGADOR — límites absolutos
+// ================================================================
+void moverJugadorJ2() {
+  float dx = 0, dy = 0;
+  if (j2_kUp)    { dy = -J2_SPD; j2_dir = 1; }
+  if (j2_kDown)  { dy =  J2_SPD; j2_dir = 0; }
+  if (j2_kLeft)  { dx = -J2_SPD; j2_dir = 2; }
+  if (j2_kRight) { dx =  J2_SPD; j2_dir = 3; }
+
+  j2_mov = (dx != 0 || dy != 0);
+  if (!j2_mov) return;
+
+  // Límites del área jugable en píxeles absolutos
+  float minX = MAP_ABS_X0 + J2_SW * 0.32;
+  float maxX = MAP_ABS_X1 - J2_SW * 0.32;
+  float minY = MAP_ABS_Y0 + J2_SH * 0.27;
+  float maxY = MAP_ABS_Y1 - J2_SH * 0.49;
+
+  float nx = constrain(j2_x + dx, minX, maxX);
+  float ny = constrain(j2_y + dy, minY, maxY);
+
+  if (!colisionaParedJ2(nx, j2_y)) j2_x = nx;
+  if (!colisionaParedJ2(j2_x, ny)) j2_y = ny;
+}
+
+// ================================================================
+// AABB — usa coordenadas absolutas directamente
+// ================================================================
+boolean colisionaParedJ2(float px, float py) {
+  float hw  = J2_SW * 0.16;
+  float top = py + J2_SH * 0.27;
+  float bot = py + J2_SH * 0.49;
+  float lft = px - hw;
+  float rgt = px + hw;
+
+  for (float[] w : J2_WALL_ABS) {
+    if (lft < w[0] + w[2] && rgt > w[0] &&
+        top < w[1] + w[3] && bot > w[1]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// ================================================================
+// MOVIMIENTO DEL BULLY
+// ================================================================
+void moverBullyJ2() {
+  float tx = b2_wps[b2_wp][0];
+  float ty = b2_wps[b2_wp][1];
+  float dx = tx - b2_x;
+  float dy = ty - b2_y;
+  float d  = sqrt(dx*dx + dy*dy);
+
+  if (d < B2_SPD + 1) {
+    b2_x  = tx; b2_y = ty;
+    b2_wp = (b2_wp + 1) % b2_wps.length;
+  } else {
+    float vx = dx/d * B2_SPD;
+    float vy = dy/d * B2_SPD;
+    b2_x += vx; b2_y += vy;
+    if (abs(vx) >= abs(vy)) b2_dir = (vx > 0) ? 3 : 2;
+    else                    b2_dir = (vy > 0) ? 0 : 1;
+  }
+}
+
+// ================================================================
+// COLISIONES
+// ================================================================
+void verificarColisionesJ2() {
+  if (!j2_cong) {
+    for (int i = 0; i < J2_N_PLAT; i++) {
+      if (j2_pOn[i] && dist(j2_x, j2_y, j2_px[i], j2_py[i]) < J2_PLAT_R + 8) {
+        j2_cong = true; j2_timerCong = J2_CONG_MAX; j2_pOn[i] = false;
+      }
+    }
+  }
+  if (dist(j2_x, j2_y, b2_x, b2_y) < 46) { j2_estado = 1; return; }
+  if (dist(j2_x, j2_y, j2_rx, j2_ry) < J2_RECT_R + 20) j2_estado = 2;
+}
+
+// ================================================================
+// ANIMACIONES
+// ================================================================
+void animarJugadorJ2() {
+  if (j2_mov && !j2_cong) {
+    j2_timerA++;
+    if (j2_timerA >= J2_VEL_ANIM) { j2_timerA = 0; j2_frameA = (j2_frameA+1)%3; }
+  } else { j2_frameA = 1; j2_timerA = 0; }
+}
+
+void animarBullyJ2() {
+  b2_timerA++;
+  if (b2_timerA >= B2_VEL_ANIM) { b2_timerA = 0; b2_frameA = (b2_frameA+1)%2; }
+}
+
+// ================================================================
+// SPRITES
+// ================================================================
+PImage spriteJugadorJ2() {
+  switch (j2_dir) {
+    case 0: return protadown[j2_frameA];
+    case 1: return protaup[j2_frameA];
+    case 2: return protaleft[j2_frameA];
+    case 3: return protaright[min(j2_frameA,1)];
+    default: return protadown[1];
+  }
+}
+
+PImage spriteBullyJ2() {
+  switch (b2_dir) {
+    case 0: return bullydown[b2_frameA];
+    case 1: return bullyup[b2_frameA];
+    case 2: return bullyleft[b2_frameA];
+    case 3: return bullyright[b2_frameA];
+    default: return bullydown[0];
+  }
+}
+
+// ================================================================
+// DIBUJAR ELEMENTOS
+// ================================================================
+void dibujarElementosJ2() {
+  imageMode(CENTER);
+
+  for (int i = 0; i < J2_N_PLAT; i++) {
+    if (j2_pOn[i]) image(platano, j2_px[i], j2_py[i], 34, 34);
+  }
+
+  image(reptor, j2_rx, j2_ry, J2_SW, J2_SH);
+  image(spriteBullyJ2(), b2_x, b2_y, B2_SW, B2_SH);
+  image(spriteJugadorJ2(), j2_x, j2_y, J2_SW, J2_SH);
+
+  if (j2_cong) {
+    noFill();
+    stroke(120, 200, 255, 170);
+    strokeWeight(3);
+    ellipse(j2_x, j2_y + J2_SH*0.15, J2_SW+18, J2_SH+14);
+    noStroke();
+    fill(120, 200, 255, 230);
+    textFont(fuente); textSize(12); textAlign(CENTER, CENTER);
+    text(nf(j2_timerCong/60.0,1,1)+"s", j2_x, j2_y - J2_SH*0.5 - 14);
+  }
+}
+
+// ================================================================
+// UI
+// ================================================================
+void dibujarUIJuego2() {
+  dibujarUI();
+  if (j2_cong && j2_estado == 0) {
+    noStroke();
+    fill(30, 100, 200, 190);
+    rect(width/2-240, 16, 480, 46, 8);
+    fill(200, 230, 255);
+    textFont(fuente); textSize(12); textAlign(CENTER, CENTER);
+    text("¡RESBALASTE CON UN PLÁTANO!   "+nf(j2_timerCong/60.0,1,1)+"s", width/2, 39);
+  }
+}
+
+// ================================================================
+// PANTALLA FINAL
+// ================================================================
+void dibujarFinalJuego2() {
+  fill(0, 190); noStroke(); rect(0, 0, width, height);
+  textFont(fuente); textAlign(CENTER, CENTER);
+
+  if (j2_estado == 2) {
+    fill(120, 255, 160); textSize(26);
+    text("¡LLEGASTE A LA OFICINA!", width/2, height/2-110);
+    fill(230, 245, 230); textSize(13);
+    text("Encontraste ayuda. Eres más valiente de lo que crees.", width/2, height/2-58);
+  } else if (j2_estado == 1) {
+    fill(255, 80, 80); textSize(26);
+    text("EL BULLY TE ATRAPÓ", width/2, height/2-110);
+    fill(245, 220, 220); textSize(13);
+    text("Busca otro camino. No te rindas.", width/2, height/2-58);
+  }
+
+  String[] opcF = {"Volver a intentar", "Volver al menú"};
+  int yBase = height/2-10, espacioY = 55;
+  for (int i = 0; i < opcF.length; i++) {
+    int yOpc = yBase + i*espacioY;
+    boolean hover = mouseX > width/2-220 && mouseX < width/2+220 &&
+                    mouseY > yOpc-22 && mouseY < yOpc+22;
+    fill(hover ? color(190,165,255) : color(245,235,255));
+    text(hover ? "> "+opcF[i] : opcF[i], width/2, yOpc);
+  }
+}
+
+void clicFinalJuego2() {
+  int yBase = height/2-10, espacioY = 55;
+  if (mouseX > width/2-220 && mouseX < width/2+220 &&
+      mouseY > yBase-22 && mouseY < yBase+22) { iniciarJuego2(); return; }
+  int yMenu = yBase+espacioY;
+  if (mouseX > width/2-220 && mouseX < width/2+220 &&
+      mouseY > yMenu-22 && mouseY < yMenu+22) {
+    j2_estado=0; j2_iniciado=false; estadoPausa=0; pantalla=1;
+  }
+}
+
+// ================================================================
+// TECLADO
+// ================================================================
+void j2_keyPressed() {
+  if (keyCode == ESC) {
+    if (j2_estado != 0) { j2_estado=0; j2_iniciado=false; pantalla=1; }
+    else { pantallaOrigen=5; estadoPausa=1; opcionPausa=0; }
+    return;
+  }
+  if (j2_estado != 0) return;
+  if (keyCode==UP    || key=='w' || key=='W') j2_kUp    = true;
+  if (keyCode==DOWN  || key=='s' || key=='S') j2_kDown  = true;
+  if (keyCode==LEFT  || key=='a' || key=='A') j2_kLeft  = true;
+  if (keyCode==RIGHT || key=='d' || key=='D') j2_kRight = true;
+}
+
+void j2_keyReleased() {
+  if (keyCode==UP    || key=='w' || key=='W') j2_kUp    = false;
+  if (keyCode==DOWN  || key=='s' || key=='S') j2_kDown  = false;
+  if (keyCode==LEFT  || key=='a' || key=='A') j2_kLeft  = false;
+  if (keyCode==RIGHT || key=='d' || key=='D') j2_kRight = false;
+}
+
+// ================================================================
+// VISUAL DEBUG — pon DEBUG_MODE = true arriba para activar
+// ================================================================
+void debugColisiones() {
+  pushStyle();
+
+  // Paredes absolutas — ROJO
+  noFill(); stroke(255, 50, 50, 200); strokeWeight(1.5);
+  for (float[] w : J2_WALL_ABS) rect(w[0], w[1], w[2], w[3]);
+
+  // Ruta del bully — AMARILLO
+  stroke(255, 210, 0, 220); strokeWeight(1.5);
+  for (int i = 0; i < b2_wps.length; i++) {
+    float[] a = b2_wps[i];
+    float[] b = b2_wps[(i+1) % b2_wps.length];
+    line(a[0], a[1], b[0], b[1]);
+  }
+  noStroke();
+  for (int i = 0; i < b2_wps.length; i++) {
+    fill(255, 210, 0);
+    ellipse(b2_wps[i][0], b2_wps[i][1], 9, 9);
+    fill(255, 240, 100);
+    textSize(10); textAlign(CENTER, BOTTOM);
+    text("WP"+i, b2_wps[i][0], b2_wps[i][1] - 6);
+  }
+
+  // Radio bully — NARANJA
+  noFill(); stroke(255, 140, 0, 200); strokeWeight(1.5);
+  ellipse(b2_x, b2_y, 92, 92);
+
+  // Plátanos — VERDE
+  for (int i = 0; i < J2_N_PLAT; i++) {
+    if (j2_pOn[i]) {
+      noFill(); stroke(60, 220, 60, 200); strokeWeight(1.5);
+      ellipse(j2_px[i], j2_py[i], (J2_PLAT_R+18)*2, (J2_PLAT_R+18)*2);
+      noStroke(); fill(150, 255, 150);
+      ellipse(j2_px[i], j2_py[i], 7, 7);
+    }
+  }
+
+  // Rector — AZUL
+  noFill(); stroke(80, 150, 255, 220); strokeWeight(1.5);
+  ellipse(j2_rx, j2_ry, (J2_RECT_R+20)*2, (J2_RECT_R+20)*2);
+
+  // Hitbox pies jugador — MAGENTA
+  float hw = J2_SW * 0.32;
+  noFill(); stroke(255, 80, 255, 230); strokeWeight(1.5);
+  rect(j2_x - hw, j2_y + J2_SH*0.27, hw*2, J2_SH*0.22);
+
+  // Coordenadas del mouse en píxeles absolutos
+  noStroke(); fill(20, 20, 20, 180);
+  rect(MAP_ABS_X0 + 4, MAP_ABS_Y0 + 4, 260, 16, 3);
+  fill(100, 255, 200); textSize(10); textAlign(LEFT, TOP);
+  text("Mouse: "+mouseX+", "+mouseY, MAP_ABS_X0+6, MAP_ABS_Y0+6);
+
+  popStyle();
+}

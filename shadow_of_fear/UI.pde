@@ -31,57 +31,54 @@ void dibujarBarras() {
 }
 
 void dibujarPause() {
-
   fill(0, 190);
   rect(0, 0, width, height);
 
   textAlign(CENTER, CENTER);
   textFont(fuente);
-
-  // Título del menú de pausa.
   fill(245, 235, 255);
   textSize(28);
   text("PAUSA", width / 2, height / 2 - 120);
-
   textSize(16);
-
-  int total = totalOpcionesPausaJuego1();
 
   int x = width / 2;
   int yInicial = height / 2 - 10;
   int espacioY = 55;
 
+  // ── Pausa desde el MANUAL: solo 2 opciones ──
+  if (pantallaOrigen == 4) {
+    String[] opcionesManual = {"Continuar", "Volver al menú"};
+    for (int i = 0; i < opcionesManual.length; i++) {
+      int y = yInicial + i * espacioY;
+      if (i == opcionPausa) {
+        fill(190, 165, 255);
+        text("> " + opcionesManual[i], x, y);
+      } else {
+        fill(245, 235, 255);
+        text(opcionesManual[i], x, y);
+      }
+    }
+    return; // no dibuja nada más
+  }
+
+  // ── Pausa normal desde el JUEGO ──
+  int total = totalOpcionesPausaJuego1();
+
   for (int i = 0; i < total; i++) {
     int y = yInicial + i * espacioY;
-
     String texto = "";
 
-    if (i == 0) {
-      texto = "Continuar";
-    }
+    if (i == 0) texto = "Continuar";
+    else if (i == 1) texto = "Reiniciar modo actual";
+    else if (verNivelesDesbloqueado && i == 2) texto = "<  Modo [" + nombresModos[modoPausaSeleccionado] + "]  >";
+    else if (verNivelesDesbloqueado && i == 3) texto = "Volver al menú";
+    else if (!verNivelesDesbloqueado && i == 2) texto = "Volver al menú";
 
-    else if (i == 1) {
-      texto = "Reiniciar modo actual";
-    }
-
-    else if (verNivelesDesbloqueado && i == 2) {
-      texto = "<  Modo [" + nombresModos[modoPausaSeleccionado] + "]  >";
-    }
-
-    else if (verNivelesDesbloqueado && i == 3) {
-      texto = "Volver al menú";
-    }
-
-    else if (!verNivelesDesbloqueado && i == 2) {
-      texto = "Volver al menú";
-    }
-
-    // Color de la opción seleccionada y de las opciones normales.
     if (i == opcionPausa) {
-      fill(190, 165, 255); // lila claro, reemplaza el amarillo
+      fill(190, 165, 255);
       text("> " + texto, x, y);
     } else {
-      fill(245, 235, 255); // lila muy claro para opciones normales
+      fill(245, 235, 255);
       text(texto, x, y);
     }
   }
