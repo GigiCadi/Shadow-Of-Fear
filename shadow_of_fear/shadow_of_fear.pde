@@ -1,4 +1,4 @@
-PImage logo, fondo1, fondo2, fondo3,fondoJuego2, pc, web, btneliminar, btnreemplazar, emotionbar, wordbank, btnext, btnback, btnvolver, fondoniveles, platano, reptor, protamareada;
+  PImage logo, fondo1, fondo2, fondo3,fondoJuego2, pc, web, btneliminar, btnreemplazar, emotionbar, wordbank, btnext, btnback, btnvolver, fondoniveles, platano, reptor, protamareada;
 PImage[] emojis = new PImage[5];
 PImage[] bars = new PImage[4];
 PImage[] btnmusic = new PImage[2];
