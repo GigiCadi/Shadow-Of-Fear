@@ -70,31 +70,46 @@ boolean modoEstaDesbloqueado(int modo) {
 // INICIAR UN MODO DEL JUEGO 1
 // ==========================
 void iniciarModoJuego1(int modo) {
+  println("=== iniciarModoJuego1 ===");
+  println("Modo seleccionado: " + modo);
+  
   if (!modoEstaDesbloqueado(modo)) {
+    println("Modo bloqueado");
     feedback = "Modo bloqueado";
     tiempoFeedback = 60;
     return;
   }
 
   modoActual = modo;
-
-  // Compatibilidad con la variable antigua dificultadNivel1
-  // Antes: 1 = fácil, 2 = normal, 3 = difícil
   dificultadNivel1 = modoActual + 1;
+  println("dificultadNivel1: " + dificultadNivel1);
 
   estadoFinal = 0;
   estadoPausa = 0;
   opcionFinal = 0;
   opcionFinalJuego1 = 0;
 
+  println("1. iniciarNivel1()");
   iniciarNivel1();
+  
+  println("2. cargarDatosModoJuego1()");
   cargarDatosModoJuego1(modoActual);
+  
+  println("3. mezclarMensajes()");
   mezclarMensajes();
+  
+  println("4. generarUsuariosAnonimos()");
   generarUsuariosAnonimos();
+  
+  println("5. inicializarComentariosMostrados()");
   inicializarComentariosMostrados();
+  
+  println("6. cargarMensaje()");
   cargarMensaje();
 
+  println("7. Cambiando pantalla a 2");
   pantalla = 2;
+  println("=== fin iniciarModoJuego1 ===");
 }
 
 // ==========================

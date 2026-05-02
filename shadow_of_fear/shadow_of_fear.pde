@@ -1,4 +1,4 @@
-  PImage logo, fondo1, fondo2, fondo3,fondoJuego2, pc, web, btneliminar, btnreemplazar, emotionbar, wordbank, btnext, btnback, btnvolver, fondoniveles, platano, reptor, protamareada;
+PImage logo, fondo1, fondo2, fondo3,fondoJuego2, pc, web, btneliminar, btnreemplazar, emotionbar, wordbank, btnext, btnback, btnvolver, fondoniveles, platano, reptor, protamareada,fondoVictoria,fondoDerrota;
 PImage[] emojis = new PImage[5];
 PImage[] bars = new PImage[4];
 PImage[] btnmusic = new PImage[2];
@@ -8,6 +8,18 @@ PImage[] btnjuegos = new PImage[3];
 PImage[] corazon = new PImage [2];
 PFont fuente;
 
+// Pantalla de créditos
+PImage fondoCreditos;
+PImage popupRuth, popupGilarys, popupNashed;
+
+// Estados de créditos
+boolean mostrarPopup = false;
+int popupActual = 0; // 0=ruth, 1=gilarys, 2=nashed
+
+// Textos de los popups
+String textoRuth = "LÍDER: RUTH BELTRÁN\n\nSoy la líder del equipo. Me encargué de organizar el proyecto, coordinar el trabajo y guiar el desarrollo del juego para que todo avanzara correctamente.";
+String textoGilarys = "DISEÑADORA UX: GILARYS CASTILLEJO\n\nMe encargué del diseño de interfaz, la experiencia de usuario y la creación de los assets visuales del juego.";
+String textoNashed = "PROGRAMADOR: NASHED KAMELL\n\nMe encargué de la implementación técnica, la programación de las mecánicas y la documentación del código.";
 
 // vectores animaciones
 PImage[]protaup = new PImage[3];
@@ -71,6 +83,10 @@ float sliderW = 0;
 float sliderVolY = 0;
 float sliderBriY = 0;
 
+
+
+
+
 //-------------------------------------------------------
 
 void setup() {
@@ -78,6 +94,9 @@ void setup() {
   pixelDensity(1);
   noSmooth();
 
+  // ========================================
+  // CARGAR IMÁGENES PRINCIPALES
+  // ========================================
   logo = loadImage("imagenes/Titulos/titulo.png");
   fondo1 = loadImage("imagenes/fondo/fondoprincipal2.2.png");
   fondo2 = loadImage("imagenes/fondo/fondoprincipal2.0.png");
@@ -90,15 +109,18 @@ void setup() {
   btnreemplazar = loadImage("imagenes/UI/reemplazar.png");
   emotionbar = loadImage("imagenes/UI/emotionbar.png");
   wordbank = loadImage("imagenes/UI/wordbank.png");
-  //Estados emojis
+  
+  // Estados emojis
   emojis[0] = loadImage("imagenes/UI/happy.png");
   emojis[1] = loadImage("imagenes/UI/good.png");
   emojis[2] = loadImage("imagenes/UI/mal.png");
   emojis[3] = loadImage("imagenes/UI/triste.png");
   emojis[4] = loadImage("imagenes/UI/lose.png");
+  
   // Estados Boton de Música
-  btnmusic[0]= loadImage("imagenes/UI/musicon.png");
+  btnmusic[0] = loadImage("imagenes/UI/musicon.png");
   btnmusic[1] = loadImage("imagenes/UI/musicoff.png");
+  
   // Estados Botón de pausa
   btnpause[0] = loadImage("imagenes/UI/unpause.png");
   btnpause[1] = loadImage("imagenes/UI/pause.png");
@@ -116,39 +138,51 @@ void setup() {
   btnback = loadImage("imagenes/UI/anterior.png");
   btnvolver = loadImage("imagenes/UI/volver.png");
   
-  // imagenes botnoes niveles
+  // imagenes botones niveles
   btnjuegos[0] = loadImage("imagenes/UI/wordreset.png");
   btnjuegos[1] = loadImage("imagenes/UI/HallwaysofSilence.png");
   btnjuegos[2] = loadImage("imagenes/UI/mortalHit.png");  
   fondoniveles = loadImage("imagenes/fondo/niveles.png");
+  
+  // Fondo de victoria y derrota juego 2
+  fondoVictoria = loadImage("imagenes/fondo/victoria.jpeg");
+  fondoDerrota = loadImage("imagenes/fondo/derrota.jpeg");
 
-  ///________________________________
+ // ========================================
+// CARGAR IMÁGENES DE CRÉDITOS
+// ========================================
+fondoCreditos = loadImage("imagenes/fondo/popup_creditos.png");
+println("Cargando fondoCreditos: " + (fondoCreditos != null ? "OK" : "ERROR"));
+
+popupRuth = loadImage("imagenes/fondo/popup_ruth.png");
+println("Cargando popupRuth: " + (popupRuth != null ? "OK" : "ERROR"));
+
+popupGilarys = loadImage("imagenes/fondo/popup_gigi.png");
+println("Cargando popupGilarys: " + (popupGilarys != null ? "OK" : "ERROR"));
+
+popupNashed = loadImage("imagenes/fondo/popup_nashed.png");
+println("Cargando popupNashed: " + (popupNashed != null ? "OK" : "ERROR"));
   
-  ///  cargar sprite animaciones  
+  // ========================================
+  // CARGAR SPRITES DE ANIMACIONES
+  // ========================================
   
-  ///________________________________
-  
-  
-  
-  /// ------ PROTAGONSITA (JUGADOR)
+  // ------ PROTAGONISTA (JUGADOR)
   protaup[0] = loadImage("imagenes/personajes/protacaminadoarriba1.png");
-  protaup[1] = loadImage("imagenes/personajes/protacaminadoarriba2.png");  // este no solo se va a usar durante la animación, también cuando el jugador se quede quieto mirando arriba
+  protaup[1] = loadImage("imagenes/personajes/protacaminadoarriba2.png");
   protaup[2] = loadImage("imagenes/personajes/protacaminadoarriba3.png");
   protadown[0] = loadImage("imagenes/personajes/protacaminadoabajo1.png");
-  protadown[1] = loadImage("imagenes/personajes/protacaminadoabajo2.png");   // este no solo se va a usar durante la animación, también cuando el jugador se quede quieto mirando abajo
+  protadown[1] = loadImage("imagenes/personajes/protacaminadoabajo2.png");
   protadown[2] = loadImage("imagenes/personajes/protacaminadoabajo3.png");
   protaleft[0] = loadImage("imagenes/personajes/protacaminandoizquierda1.png");
-  protaleft[1] = loadImage("imagenes/personajes/protacaminandoizquierda2.png");   // este no solo se va a usar durante la animación, también cuando el jugador se quede quieto mirando izquierda
+  protaleft[1] = loadImage("imagenes/personajes/protacaminandoizquierda2.png");
   protaleft[2] = loadImage("imagenes/personajes/protacaminandoizquierda3.png");
   protaright[0] = loadImage("imagenes/personajes/protacaminandoderecha1.png");
-  protaright[1] = loadImage("imagenes/personajes/protacaminandoderecha2.png");  // este no solo se va a usar durante la animación, también cuando el jugador se quede quieto mirando derecha
+  protaright[1] = loadImage("imagenes/personajes/protacaminandoderecha2.png");
   protaright[2] = loadImage("imagenes/personajes/protacaminandoderecha3.png");
   protamareada = loadImage("imagenes/personajes/protamerada.png");
   
-
-
-
-  /// ______ BULLY (ENEMIGO) el enemigo nunca se quda quieto
+  // ------ BULLY (ENEMIGO)
   bullyup[0] = loadImage("imagenes/personajes/bullycaminandoarriba1.png"); 
   bullyup[1] = loadImage("imagenes/personajes/bullycaminandoarriba2.png"); 
   bullydown[0] = loadImage("imagenes/personajes/bullycaminandoabajo1.png"); 
@@ -158,39 +192,38 @@ void setup() {
   bullyright[0] = loadImage("imagenes/personajes/bullycaminandoderecha1.png"); 
   bullyright[1] = loadImage("imagenes/personajes/bullycaminandoderecha2.png"); 
   
-  reptor = loadImage("imagenes/personajes/reptor.png");  // el objetivo es llegar a donde está el reptor
-  
-  platano = loadImage("imagenes/UI/platano.png");  // ---- si el prota choca con uno se queda bloqueado
-  
+  reptor = loadImage("imagenes/personajes/reptor.png");
+  platano = loadImage("imagenes/UI/platano.png");
 
+  // ========================================
+  // CONFIGURACIÓN DE TEXTO Y SONIDO
+  // ========================================
   textFont(fuente);
   textSize(18);
   fill(255);
   textAlign(CENTER);
 
-    // --------------------------
-  // SLIDERS CONFIG
-  // --------------------------
+  // Sliders configuración
   sliderW = 400;
   sliderX = width/2 - sliderW/2;
   sliderVolY = height/2 - 40;
   sliderBriY = height/2 + 80;
-  //----------------------------------------
   
+  // Inicializar progreso y lore
   inicializarProgresoJuego1();
+  imagenes();           // ← AGREGAR ESTA LÍNEA
+  cargarTextoLore();
+  
+  //sonido
   musicaMenu = new SoundFile(this, "musica/menu.mp3");
   musicaNivel1 = new SoundFile(this, "musica/nivel1.mp3");
-sonidoVoz = new SoundFile(this, "musica/voz.mp3");
-SoundFile musicaMenu;
-SoundFile musicaNivel1;
-  imagenes();      
-  cargarTextoLore(); 
+  sonidoVoz = new SoundFile(this, "musica/voz.mp3");
 }
-
 void draw() {
   background(0);
   controlarMusica(); 
-
+  println("Pantalla actual: " + pantalla);
+  
   if (pantalla == 0) {
     pantallaInicio();
   }
@@ -198,20 +231,26 @@ void draw() {
     menuPrincipal();
   }
   else if (pantalla == 2) {
+    println("subEstado actual: " + subEstado);  // ← VERIFICAR subEstado
     if (subEstado == 0){
+      println("Llamando a mostrarLore()");
       mostrarLore();
-    }else{
+    } else {
+      println("Llamando a nivel1()");
       nivel1();
     }
-  }  else if (pantalla == 3) {
+  }
+  else if (pantalla == 3) {
     pantallaNiveles();
   }
   else if (pantalla == 4) {
     pantallaManual();
   }
-  
   else if (pantalla == 5) {
     nivelJuego2();
+  }
+  else if (pantalla == 6) {
+    pantallaCreditos();
   }
 
   // Pausa y final se dibujan encima en cualquier pantalla que los use
@@ -226,7 +265,6 @@ void draw() {
   aplicarBrillo();
   actualizarTransicion();
 }
-
 //PRUEBA TRANSCISION--------------------------------
 void iniciarTransicion(int destino) {
   enTransicion = true;
@@ -317,14 +355,15 @@ void keyPressed() {
     }
   }
   else if (pantalla == 4) {
-    controlarManualTeclado();  // Cambiar a nueva función
+    controlarManualTeclado();
   }
   else if (pantalla == 5) {
     j2_keyPressed();
   }
+  else if (pantalla == 6) {  // ← NUEVO: Créditos
+    controlarCreditosTeclado();
+  }
 }
-
-
 void mousePressed() {
   if (enTransicion) return;
 
@@ -333,14 +372,14 @@ void mousePressed() {
     return;
   }
 
-if (estadoPausa == 1) {
-  if (tipoPausa == 0) {
-    controlarPausaJuego1Mouse();
-  } else {
-    controlarPausaJuego2Mouse(); // 👈 nuevo
+  if (estadoPausa == 1) {
+    if (tipoPausa == 0) {
+      controlarPausaJuego1Mouse();
+    } else {
+      controlarPausaJuego2Mouse();
+    }
+    return;
   }
-  return;
-}
 
   // Botón pausa — solo en pantalla 2
   if (pantalla == 2) {
@@ -358,37 +397,33 @@ if (estadoPausa == 1) {
       tipoPausa = 0;
       return;
     }
+    
     // 🔥 LORE
-  if (subEstado == 0) {
+    if (subEstado == 0) {
+      if (indiceTexto < textoCompleto.length()) {
+        textoVisible = textoCompleto;
+        indiceTexto = textoCompleto.length();
+        return;
+      }
 
-    if (indiceTexto < textoCompleto.length()) {
-      textoVisible = textoCompleto;
-      indiceTexto = textoCompleto.length();
+      paginaLore++;
+      if (paginaLore >= 4) {
+        subEstado = 1;
+        paginaLore = 0;
+        return;
+      }
+      cargarTextoLore();
       return;
     }
 
-    paginaLore++;
-
-    if (paginaLore >= 4) {
-      subEstado = 1;
-      paginaLore = 0;
-      return;
+    // 🎮 JUEGO
+    if (subEstado == 1) {
+      mouseNivel1();
     }
-
-    cargarTextoLore();
-    return;
-  }
-
-  // 🎮 JUEGO
-  if (subEstado == 1) {
-    mouseNivel1();
-  }
-
-
   }
 
   if (pantalla == 3) {
-      controlarNiveles();
+    controlarNiveles();
   }
   
   // Manual
@@ -396,11 +431,13 @@ if (estadoPausa == 1) {
     controlarManual();
   }
 
-
- if (pantalla == 5) {
-    int sz = 100; int esp = 15; int yUI = 80;
+  if (pantalla == 5) {
+    int sz = 100; 
+    int esp = 15; 
+    int yUI = 80;
     int xBase = width - (sz * 3);
     int xPause = xBase + (sz + esp) * 2;
+    
     if (dist(mouseX, mouseY, xPause, yUI) < sz/2) {
       if (j2_estado == 0) {
         pantallaOrigen = 5;
@@ -410,28 +447,16 @@ if (estadoPausa == 1) {
       }
       return;
     }
-    if (j2_estado != 0) clicFinalJuego2();
+    if (j2_estado != 0) {
+      clicFinalJuego2();
     }
-    
-    if (pantalla == 2 && subEstado == 0) {
-
-    // Si el texto no ha terminado → lo completa
-    if (indiceTexto < textoCompleto.length()) {
-      textoVisible = textoCompleto;
-      indiceTexto = textoCompleto.length();
-      return;
-    }
-
-    // siguiente página
-    paginaLore++;
-
-    if (paginaLore >= 4) {
-      subEstado = 1; // pasar al juego
-      paginaLore = 0;
-      return;
-    }
-
-    cargarTextoLore();
+  }
+  
+  // ========================================
+  // NUEVO: CRÉDITOS (pantalla 6)
+  // ========================================
+  if (pantalla == 6) {
+    controlarCreditos();
   }
 }
 

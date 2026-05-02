@@ -89,8 +89,8 @@ void ejecutarOpcion() {
 
   // Iniciar juego
   if (opcionSeleccionada == 0) {
-iniciarModoJuego1(MODO_FACIL);
-iniciarJuego1Completo(); 
+    iniciarModoJuego1(MODO_FACIL);
+    iniciarJuego1Completo(); 
   }
 
   // Niveles
@@ -100,23 +100,23 @@ iniciarJuego1Completo();
     }
   }
 
-  // Como jugar
+  // Como jugar (Manual)
   if (opcionSeleccionada == 2) {
     pantalla = 4;
   }
 
   // Créditos
   if (opcionSeleccionada == 3) {
-    pantalla = 5;
+    pantalla = 6;  // ← CAMBIADO a 6 (antes era 7)
   }
 
   // Configuración
   if (opcionSeleccionada == 4) {
-    pantalla = 6; // o lo que quieras
+    pantalla = 8;  // ← Cambia a 8 para no chocar con créditos
   }
 
   // Salir
   if (opcionSeleccionada == 5) {
     exit();
   }
-}
+} 

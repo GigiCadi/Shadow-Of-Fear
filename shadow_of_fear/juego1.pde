@@ -144,6 +144,8 @@ void mezclarMensajes() {
 // INICIAR NIVEL
 // ==========================
 void iniciarNivel1() {
+  println("iniciarNivel1 - Inicio");
+  
   estadoEmocion = 0;
   indiceMensaje = 0;
   nivel1Terminado = false;
@@ -153,6 +155,8 @@ void iniciarNivel1() {
   temporizadorSiguienteMensaje = 60;
   palabraSeleccionada = -1;
   palabraBancoSeleccionada = -1;
+  
+  println("iniciarNivel1 - Fin");
 }
 
 void inicializarComentariosMostrados() {
@@ -310,13 +314,38 @@ void programarSiguienteMensaje() {
 }
 
 void dibujarComentariosScroll() {
-  if (mensajes == null || mensajes.length == 0) return;
+  // Verificaciones de seguridad
+  if (mensajes == null || mensajes.length == 0) {
+    println("ERROR: mensajes es null o vacío");
+    return;
+  }
+  
+  if (comentariosMostrados == null) {
+    println("ERROR: comentariosMostrados es null");
+    return;
+  }
+  
+  if (usuariosComentarios == null) {
+    println("ERROR: usuariosComentarios es null");
+    return;
+  }
 
   int inicio = max(0, indiceMensaje - (maxMensajesVisibles - 1));
   int fin = min(indiceMensaje, mensajes.length - 1);
   int ordenVisible = 0;
 
   for (int m = inicio; m <= fin; m++) {
+    // Verificar que el índice existe
+    if (m >= comentariosMostrados.length) {
+      println("ERROR: m=" + m + " fuera de rango, comentariosMostrados.length=" + comentariosMostrados.length);
+      continue;
+    }
+    
+    if (m >= usuariosComentarios.length) {
+      println("ERROR: m=" + m + " fuera de rango, usuariosComentarios.length=" + usuariosComentarios.length);
+      continue;
+    }
+    
     float baseX = comentarioX;
     float baseY = comentarioYInicial + ordenVisible * espacioEntreComentarios;
 
@@ -324,6 +353,11 @@ void dibujarComentariosScroll() {
     if (m == indiceMensaje && palabrasActuales != null) {
       palabrasMostrar = palabrasActuales;
     } else {
+      // Verificar que comentariosMostrados[m] no sea null
+      if (comentariosMostrados[m] == null) {
+        println("ERROR: comentariosMostrados[" + m + "] es null");
+        continue;
+      }
       palabrasMostrar = split(comentariosMostrados[m], " ");
     }
 
@@ -359,94 +393,139 @@ void dibujarComentariosScroll() {
 }
 
 // ==========================
-// OBTENER PALABRA CLICKEADA
-// ==========================
-int obtenerPalabraClickeada(float mx, float my) {
-  if (palabrasActuales == null) return -1;
-
-  int inicio = max(0, indiceMensaje - (maxMensajesVisibles - 1));
-  int ordenVisible = indiceMensaje - inicio;
-
-  float baseX = comentarioX;
-  float baseY = comentarioYInicial + ordenVisible * espacioEntreComentarios;
-  float x = baseX;
-  float y = baseY;
-
-  textAlign(LEFT);
-  textSize(comentarioTextSize);
-  float altoCaja = comentarioTextSize + 8;
-
-  for (int i = 0; i < palabrasActuales.length; i++) {
-    String palabra = palabrasActuales[i];
-    float w = textWidth(palabra + " ");
-
-    if (x + w > baseX + comentarioAncho) {
-      x = baseX;
-      y += interlineadoMensaje;
-    }
-
-    if (mx >= x && mx <= x + w &&
-        my >= y - altoCaja + 4 && my <= y + 6) {
-      return i;
-    }
-
-    x += w;
-  }
-
-  return -1;
-}
-
-// ==========================
 // DIBUJAR NIVEL
 // ==========================
 void nivel1() {
- 
+  println("=== nivel1() inicio ===");
+  
+  // ========================================
+  // VERIFICACIONES DE SEGURIDAD
+  // ========================================
+  if (fondo3 == null) {
+    println("ERROR: fondo3 es null");
+    return;
+  }
+  if (pc == null) {
+    println("ERROR: pc es null");
+    return;
+  }
+  if (web == null) {
+    println("ERROR: web es null");
+    return;
+  }
+  if (btneliminar == null) {
+    println("ERROR: btneliminar es null");
+    return;
+  }
+  if (btnreemplazar == null) {
+    println("ERROR: btnreemplazar es null");
+    return;
+  }
+  if (wordbank == null) {
+    println("ERROR: wordbank es null");
+    return;
+  }
+  if (emotionbar == null) {
+    println("ERROR: emotionbar es null");
+    return;
+  }
+  if (emojis == null || emojis[0] == null) {
+    println("ERROR: emojis no están cargados");
+    return;
+  }
+  if (fuente == null) {
+    println("ERROR: fuente es null");
+    return;
+  }
+  if (mensajes == null) {
+    println("ERROR: mensajes es null");
+    return;
+  }
+  if (comentariosMostrados == null) {
+    println("ERROR: comentariosMostrados es null");
+    return;
+  }
+  if (usuariosComentarios == null) {
+    println("ERROR: usuariosComentarios es null");
+    return;
+  }
+  if (bancoPalabras == null) {
+    println("ERROR: bancoPalabras es null");
+    return;
+  }
+  if (bars == null || bars[0] == null) {
+    println("ERROR: bars no están cargadas");
+    return;
+  }
+  if (btnmusic == null || btnmusic[0] == null) {
+    println("ERROR: btnmusic no está cargado");
+    return;
+  }
+  if (btnpause == null || btnpause[0] == null) {
+    println("ERROR: btnpause no está cargado");
+    return;
+  }
+  
+  println("Todas las verificaciones pasaron - continuando...");
+  
+  // ========================================
+  // DIBUJAR NIVEL
+  // ========================================
+  println(" 1. dibujando fondo3");
   imageMode(CORNER);
   image(fondo3, 0, 0, width, height);
+  
+  println(" 2. dibujando pc");
   image(pc, 372, 164, 793, 476);
+  
+  println(" 3. dibujando web");
   image(web, 412, 194, 693, 376);
 
+  println(" 4. llamando dibujarComentariosScroll()");
   fill(101, 70, 155);
   dibujarComentariosScroll();
 
+  println(" 5. dibujando btneliminar");
   imageMode(CENTER);
   image(btneliminar, width/3, height - 70, 470, 94);
+  
+  println(" 6. dibujando btnreemplazar");
   image(btnreemplazar, width - width/3, height - 70, 470, 94);
 
+  println(" 7. dibujando wordbank");
   image(wordbank, width, height/2, 700, 680);
 
-// ==========================
-// BANCO DE PALABRAS
-// ==========================
-// Dibuja las palabras centradas dentro del banco de palabras.
-// Las palabras normales usan morado oscuro.
-// La palabra seleccionada usa un lila suave.
-textAlign(CENTER, CENTER);
-textSize(20);
-textFont(fuente);
+  println(" 8. dibujando banco de palabras");
+  textAlign(CENTER, CENTER);
+  textSize(20);
+  textFont(fuente);
 
-// Centro horizontal del papel del banco de palabras.
-// Ajusta este valor si quieres mover TODO el texto un poco.
-float xWB = width - 170;
-float yWB = height / 2 - 200;
+  float xWB = width - 170;
+  float yWB = height / 2 - 200;
 
-for (int i = 0; i < bancoPalabras.length; i++) {
-  if (i == palabraBancoSeleccionada) {
-    fill(155, 125, 210); // lila suave para palabra seleccionada
-  } else {
-    fill(55, 40, 100);   // morado oscuro normal
+  for (int i = 0; i < bancoPalabras.length; i++) {
+    if (i == palabraBancoSeleccionada) {
+      fill(155, 125, 210);
+    } else {
+      fill(55, 40, 100);
+    }
+    text(bancoPalabras[i], xWB, yWB + i * 60);
   }
 
-  text(bancoPalabras[i], xWB, yWB + i * 60);
-}
-
+  println(" 9. dibujando emotionbar");
   image(emotionbar, 150, height/2, 139, 642);
+  
+  println(" 10. dibujando emojis");
   image(emojis[estadoEmocion], 150, height/2 + 230, 90, 90);
+  
+  println(" 11. llamando dibujarBarras()");
   dibujarBarras();
 
+  println(" 12. llamando dibujarUI()");
   dibujarUI();
 
   if (tiempoFeedback > 0) {
+    println(" 13. dibujando feedback");
     dibujarFeedbackJuego1();
     tiempoFeedback--;
   }
@@ -458,6 +537,8 @@ for (int i = 0; i < bancoPalabras.length; i++) {
       siguienteMensaje();
     }
   }
+  
+  println("=== nivel1() fin ===");
 }
 
 // ==========================
@@ -746,11 +827,46 @@ void generarUsuariosAnonimos() {
 
 void iniciarJuego1Completo() {
   juegoActual = 0;
-
-  pantalla = 2;   // ir al juego 1
-
-  subEstado = 0;  // empezar en lore
+  pantalla = 2;
+  subEstado = 0;
   paginaLore = 0;
+  cargarTextoLore();
+}
 
-  cargarTextoLore(); // iniciar texto del lore
+// ==========================
+// OBTENER PALABRA CLICKEADA
+// ==========================
+int obtenerPalabraClickeada(float mx, float my) {
+  if (palabrasActuales == null) return -1;
+
+  int inicio = max(0, indiceMensaje - (maxMensajesVisibles - 1));
+  int ordenVisible = indiceMensaje - inicio;
+
+  float baseX = comentarioX;
+  float baseY = comentarioYInicial + ordenVisible * espacioEntreComentarios;
+  float x = baseX;
+  float y = baseY;
+
+  textAlign(LEFT);
+  textSize(comentarioTextSize);
+  float altoCaja = comentarioTextSize + 8;
+
+  for (int i = 0; i < palabrasActuales.length; i++) {
+    String palabra = palabrasActuales[i];
+    float w = textWidth(palabra + " ");
+
+    if (x + w > baseX + comentarioAncho) {
+      x = baseX;
+      y += interlineadoMensaje;
+    }
+
+    if (mx >= x && mx <= x + w &&
+        my >= y - altoCaja + 4 && my <= y + 6) {
+      return i;
+    }
+
+    x += w;
+  }
+
+  return -1;
 }

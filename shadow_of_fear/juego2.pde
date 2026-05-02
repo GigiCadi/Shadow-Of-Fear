@@ -512,16 +512,41 @@ int opcionFinalJuego2 = 0;
 String[] opcionesFinalJuego2 = {"Volver a intentar", "Volver al menú"};
 
 void dibujarFinalJuego2() {
-  pushStyle();  // ← AÑADIR
+  pushStyle();
   
-  fill(0, 190);
+  // ============================================================
+  // 1. IMAGEN DE FONDO (victoria o derrota)
+  // ============================================================
+  imageMode(CORNER);
+  
+  if (j2_estado == 2 && fondoVictoria != null) {
+    // Imagen de victoria
+    tint(255, 200);
+    image(fondoVictoria, 0, 0, width, height);
+    noTint();
+  } 
+  else if (j2_estado == 1 && fondoDerrota != null) {
+    // Imagen de derrota
+    tint(255, 200);
+    image(fondoDerrota, 0, 0, width, height);
+    noTint();
+  }
+  
+  // ============================================================
+  // 2. CAPA OSCURA SEMITRANSPARENTE
+  // ============================================================
+  fill(0, 180);
   noStroke();
   rect(0, 0, width, height);
+  
+  // ============================================================
+  // 3. TEXTO Y OPCIONES
+  // ============================================================
   textFont(fuente);
   textAlign(CENTER, CENTER);
 
   if (j2_estado == 2) {
-    fill(120, 255, 160);
+    fill(190, 165, 255);
     textSize(26);
     text("¡LLEGASTE A LA OFICINA!", width/2, height/2-110);
     fill(230, 245, 230);
@@ -551,7 +576,7 @@ void dibujarFinalJuego2() {
     }
   }
   
-  popStyle();  // ← AÑADIR
+  popStyle();
 }
 
 void clicFinalJuego2() {
