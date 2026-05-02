@@ -28,6 +28,10 @@ float tiempo = 0;
 final int PANTALLA_NIVEL2 = 3;
 final int PANTALLA_NIVEL3 = 4;
 final int PANTALLA_CONFIG = 5;
+import processing.sound.*;
+SoundFile musicaMenu;
+SoundFile musicaNivel1;
+SoundFile sonidoVoz;
 
 int pantalla = 0;
 int pantallaDestino = 0;
@@ -174,10 +178,18 @@ void setup() {
   //----------------------------------------
   
   inicializarProgresoJuego1();
+  musicaMenu = new SoundFile(this, "musica/menu.mp3");
+  musicaNivel1 = new SoundFile(this, "musica/nivel1.mp3");
+sonidoVoz = new SoundFile(this, "musica/voz.mp3");
+SoundFile musicaMenu;
+SoundFile musicaNivel1;
+  imagenes();      
+  cargarTextoLore(); 
 }
 
 void draw() {
   background(0);
+  controlarMusica(); 
 
   if (pantalla == 0) {
     pantallaInicio();
@@ -186,7 +198,11 @@ void draw() {
     menuPrincipal();
   }
   else if (pantalla == 2) {
-    nivel1();
+    if (subEstado == 0){
+      mostrarLore();
+    }else{
+      nivel1();
+    }
   }  else if (pantalla == 3) {
     pantallaNiveles();
   }
@@ -342,8 +358,33 @@ if (estadoPausa == 1) {
       tipoPausa = 0;
       return;
     }
+    // 🔥 LORE
+  if (subEstado == 0) {
 
+    if (indiceTexto < textoCompleto.length()) {
+      textoVisible = textoCompleto;
+      indiceTexto = textoCompleto.length();
+      return;
+    }
+
+    paginaLore++;
+
+    if (paginaLore >= 4) {
+      subEstado = 1;
+      paginaLore = 0;
+      return;
+    }
+
+    cargarTextoLore();
+    return;
+  }
+
+  // 🎮 JUEGO
+  if (subEstado == 1) {
     mouseNivel1();
+  }
+
+
   }
 
   if (pantalla == 3) {
@@ -371,10 +412,97 @@ if (estadoPausa == 1) {
     }
     if (j2_estado != 0) clicFinalJuego2();
     }
+    
+    if (pantalla == 2 && subEstado == 0) {
+
+    // Si el texto no ha terminado → lo completa
+    if (indiceTexto < textoCompleto.length()) {
+      textoVisible = textoCompleto;
+      indiceTexto = textoCompleto.length();
+      return;
+    }
+
+    // siguiente página
+    paginaLore++;
+
+    if (paginaLore >= 4) {
+      subEstado = 1; // pasar al juego
+      paginaLore = 0;
+      return;
+    }
+
+    cargarTextoLore();
+  }
 }
 
 void keyReleased() {
    if (pantalla == 5) {
      j2_keyReleased();
    }    
+}
+
+void controlarMusica() {
+
+  // Seguridad básica
+  if (musicaMenu == null) return;
+
+  // ==========================
+  // 🏠 MENU
+  // ==========================
+  if (pantalla == 0 || pantalla == 1) {
+
+    if (!musicaMenu.isPlaying()) {
+      musicaMenu.loop();
+    }
+    if(musicaNivel1 != null && musicaNivel1.isPlaying()){
+      musicaNivel1.stop();
+    }
+    if (sonidoVoz != null && sonidoVoz.isPlaying()){
+      sonidoVoz.stop();
+    }
+    return;
+  }
+  // ==========================
+  // 📖 LORE
+  // ==========================
+  if (pantalla == 2 && subEstado == 0) {
+
+    if (musicaMenu.isPlaying()){
+      musicaMenu.stop();
+    }
+    if (musicaNivel1.isPlaying()){ 
+      musicaNivel1.stop();
+    }
+    return;
+  }
+
+  // ==========================
+  // 🎮 GAMEPLAY
+  // ==========================
+  if (pantalla == 2 && subEstado == 1) {
+
+    if (musicaMenu.isPlaying()){
+      musicaMenu.stop();
+    }
+
+    if (!musicaNivel1.isPlaying()) {
+      musicaNivel1.loop();
+    }
+
+    return;
+  }
+
+  // ==========================
+  // 🔕 OTROS
+  // ==========================
+  if (musicaMenu.isPlaying()){
+    musicaMenu.stop();
+  }
+  if (musicaNivel1.isPlaying()){
+    musicaNivel1.stop();
+  }
+}
+void pararTodasLasMusicas() {
+  if (musicaMenu != null && musicaMenu.isPlaying()) musicaMenu.stop();
+  if (musicaNivel1 != null && musicaNivel1.isPlaying()) musicaNivel1.stop();
 }

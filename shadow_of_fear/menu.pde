@@ -79,6 +79,7 @@ void controlarMenu() {
   if (key == ' ') {
     ejecutarOpcion();
   }
+  
 }
 
 // ==========================
@@ -89,6 +90,7 @@ void ejecutarOpcion() {
   // Iniciar juego
   if (opcionSeleccionada == 0) {
 iniciarModoJuego1(MODO_FACIL);
+iniciarJuego1Completo(); 
   }
 
   // Niveles

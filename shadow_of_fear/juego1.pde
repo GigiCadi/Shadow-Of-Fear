@@ -7,7 +7,7 @@
 int estadoEmocion = 0;
 int indiceMensaje = 0;
 boolean nivel1Terminado = false;
-
+int subEstadoJuego1 = 0;
 String feedback = "";
 int tiempoFeedback = 0;
 String[] usuariosComentarios;
@@ -400,6 +400,7 @@ int obtenerPalabraClickeada(float mx, float my) {
 // DIBUJAR NIVEL
 // ==========================
 void nivel1() {
+ 
   imageMode(CORNER);
   image(fondo3, 0, 0, width, height);
   image(pc, 372, 164, 793, 476);
@@ -741,4 +742,15 @@ void generarUsuariosAnonimos() {
     int idAnonimo = (int)(random(1000, 9999));
     usuariosComentarios[i] = "Anonimo" + idAnonimo;
   }
+}
+
+void iniciarJuego1Completo() {
+  juegoActual = 0;
+
+  pantalla = 2;   // ir al juego 1
+
+  subEstado = 0;  // empezar en lore
+  paginaLore = 0;
+
+  cargarTextoLore(); // iniciar texto del lore
 }
