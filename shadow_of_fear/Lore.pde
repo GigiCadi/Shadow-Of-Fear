@@ -12,7 +12,6 @@ int paginaLore = 0;
 PImage[][] lores = new PImage[3][4]; // 3 juegos, 4 imágenes cada uno
 String[][] textosLore = new String[3][4];
 
-
 // EFECTO ESCRITURA
 String textoCompleto = "";
 String textoVisible = "";
@@ -60,13 +59,8 @@ lores[0][3] = loadImage("imagenes/Lore/c4.png");
 // MOSTRAR LORE
 // ========================================
 void mostrarLore() {
-  println("=== mostrarLore() ===");
-  println("juegoActual: " + juegoActual);
-  println("paginaLore: " + paginaLore);
-  
   // Verificar que las imágenes existen
   if (lores == null || lores[juegoActual] == null || lores[juegoActual][paginaLore] == null) {
-    println("ERROR: Imagen de lore no cargada correctamente");
     // Fondo de respaldo
     background(0);
     fill(255);
@@ -74,13 +68,10 @@ void mostrarLore() {
     text("Historia no disponible", width/2, height/2);
     return;
   }
-  
   imageMode(CORNER);
   image(lores[juegoActual][paginaLore], 0, 0, width, height);
-  
   // Verificar que hay texto
   if (textosLore == null || textosLore[juegoActual] == null || textosLore[juegoActual][paginaLore] == null) {
-    println("ERROR: Texto de lore no cargado");
     return;
   }
 
@@ -116,48 +107,28 @@ void actualizarTexto() {
 // CARGAR TEXTO DEL LORE
 // ========================================
 void cargarTextoLore() {
-  println("=== cargarTextoLore() ===");
-  println("juegoActual: " + juegoActual);
-  println("paginaLore: " + paginaLore);
-  
   // Verificar que el texto existe
   if (textosLore[juegoActual] == null || textosLore[juegoActual][paginaLore] == null) {
-    println("ERROR: Texto de lore no encontrado");
     textoCompleto = "Historia no disponible...";
   } else {
     textoCompleto = textosLore[juegoActual][paginaLore];
   }
-  
   textoVisible = "";
   indiceTexto = 0;
   contadorTexto = 0;
 }
-
-// ========================================
-// INICIAR LORE DEL JUEGO 1
-// ========================================
 void iniciarLoreJuego1() {
-  println("=== iniciarLoreJuego1() ===");
   juegoActual = 0;
   subEstado = 0;
   paginaLore = 0;
   cargarTextoLore();
 }
-
-// ========================================
-// AVANZAR PÁGINA DEL LORE
-// ========================================
 void avanzarLore() {
-  println("=== avanzarLore() ===");
-  
   if (paginaLore + 1 < 4) {
-    // Siguiente página
     paginaLore++;
     cargarTextoLore();
   } else {
-    // Terminó el lore, empezar el juego
     subEstado = 1;
     iniciarNivel1();  // Iniciar el juego
-    println("Lore terminado, iniciando juego");
   }
 }

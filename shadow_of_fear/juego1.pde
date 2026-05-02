@@ -143,9 +143,7 @@ void mezclarMensajes() {
 // ==========================
 // INICIAR NIVEL
 // ==========================
-void iniciarNivel1() {
-  println("iniciarNivel1 - Inicio");
-  
+void iniciarNivel1() {  
   estadoEmocion = 0;
   indiceMensaje = 0;
   nivel1Terminado = false;
@@ -155,9 +153,7 @@ void iniciarNivel1() {
   temporizadorSiguienteMensaje = 60;
   palabraSeleccionada = -1;
   palabraBancoSeleccionada = -1;
-  
-  println("iniciarNivel1 - Fin");
-}
+  }
 
 void inicializarComentariosMostrados() {
   comentariosMostrados = new String[mensajes.length];
@@ -316,17 +312,14 @@ void programarSiguienteMensaje() {
 void dibujarComentariosScroll() {
   // Verificaciones de seguridad
   if (mensajes == null || mensajes.length == 0) {
-    println("ERROR: mensajes es null o vacío");
     return;
   }
   
   if (comentariosMostrados == null) {
-    println("ERROR: comentariosMostrados es null");
     return;
   }
   
   if (usuariosComentarios == null) {
-    println("ERROR: usuariosComentarios es null");
     return;
   }
 
@@ -337,12 +330,10 @@ void dibujarComentariosScroll() {
   for (int m = inicio; m <= fin; m++) {
     // Verificar que el índice existe
     if (m >= comentariosMostrados.length) {
-      println("ERROR: m=" + m + " fuera de rango, comentariosMostrados.length=" + comentariosMostrados.length);
       continue;
     }
     
     if (m >= usuariosComentarios.length) {
-      println("ERROR: m=" + m + " fuera de rango, usuariosComentarios.length=" + usuariosComentarios.length);
       continue;
     }
     
@@ -355,7 +346,6 @@ void dibujarComentariosScroll() {
     } else {
       // Verificar que comentariosMostrados[m] no sea null
       if (comentariosMostrados[m] == null) {
-        println("ERROR: comentariosMostrados[" + m + "] es null");
         continue;
       }
       palabrasMostrar = split(comentariosMostrados[m], " ");
@@ -402,100 +392,65 @@ void nivel1() {
   // VERIFICACIONES DE SEGURIDAD
   // ========================================
   if (fondo3 == null) {
-    println("ERROR: fondo3 es null");
     return;
   }
   if (pc == null) {
-    println("ERROR: pc es null");
     return;
   }
   if (web == null) {
-    println("ERROR: web es null");
     return;
   }
   if (btneliminar == null) {
-    println("ERROR: btneliminar es null");
     return;
   }
   if (btnreemplazar == null) {
-    println("ERROR: btnreemplazar es null");
     return;
   }
   if (wordbank == null) {
-    println("ERROR: wordbank es null");
     return;
   }
   if (emotionbar == null) {
-    println("ERROR: emotionbar es null");
     return;
   }
   if (emojis == null || emojis[0] == null) {
-    println("ERROR: emojis no están cargados");
     return;
   }
   if (fuente == null) {
-    println("ERROR: fuente es null");
     return;
   }
   if (mensajes == null) {
-    println("ERROR: mensajes es null");
     return;
   }
   if (comentariosMostrados == null) {
-    println("ERROR: comentariosMostrados es null");
     return;
   }
   if (usuariosComentarios == null) {
-    println("ERROR: usuariosComentarios es null");
     return;
   }
   if (bancoPalabras == null) {
-    println("ERROR: bancoPalabras es null");
     return;
   }
   if (bars == null || bars[0] == null) {
-    println("ERROR: bars no están cargadas");
-    return;
-  }
-  if (btnmusic == null || btnmusic[0] == null) {
-    println("ERROR: btnmusic no está cargado");
     return;
   }
   if (btnpause == null || btnpause[0] == null) {
-    println("ERROR: btnpause no está cargado");
     return;
   }
   
-  println("Todas las verificaciones pasaron - continuando...");
   
   // ========================================
   // DIBUJAR NIVEL
   // ========================================
-  println(" 1. dibujando fondo3");
   imageMode(CORNER);
   image(fondo3, 0, 0, width, height);
-  
-  println(" 2. dibujando pc");
   image(pc, 372, 164, 793, 476);
-  
-  println(" 3. dibujando web");
   image(web, 412, 194, 693, 376);
-
-  println(" 4. llamando dibujarComentariosScroll()");
   fill(101, 70, 155);
   dibujarComentariosScroll();
-
-  println(" 5. dibujando btneliminar");
   imageMode(CENTER);
   image(btneliminar, width/3, height - 70, 470, 94);
-  
-  println(" 6. dibujando btnreemplazar");
   image(btnreemplazar, width - width/3, height - 70, 470, 94);
-
-  println(" 7. dibujando wordbank");
   image(wordbank, width, height/2, 700, 680);
-
-  println(" 8. dibujando banco de palabras");
   textAlign(CENTER, CENTER);
   textSize(20);
   textFont(fuente);
@@ -511,25 +466,14 @@ void nivel1() {
     }
     text(bancoPalabras[i], xWB, yWB + i * 60);
   }
-
-  println(" 9. dibujando emotionbar");
   image(emotionbar, 150, height/2, 139, 642);
-  
-  println(" 10. dibujando emojis");
   image(emojis[estadoEmocion], 150, height/2 + 230, 90, 90);
-  
-  println(" 11. llamando dibujarBarras()");
   dibujarBarras();
-
-  println(" 12. llamando dibujarUI()");
   dibujarUI();
-
   if (tiempoFeedback > 0) {
-    println(" 13. dibujando feedback");
     dibujarFeedbackJuego1();
     tiempoFeedback--;
   }
-
   if (esperandoSiguienteMensaje) {
     temporizadorSiguienteMensaje--;
     if (temporizadorSiguienteMensaje <= 0) {
@@ -537,13 +481,7 @@ void nivel1() {
       siguienteMensaje();
     }
   }
-  
-  println("=== nivel1() fin ===");
 }
-
-// ==========================
-// FEEDBACK VISUAL DEL JUEGO 1
-// ==========================
 void dibujarFeedbackJuego1() {
   float x = width / 2;
   float y = 100;
@@ -672,16 +610,13 @@ void reemplazarPalabra() {
     tiempoFeedback = 60;
     return;
   }
-
   // Verifica que el jugador haya seleccionado una palabra del banco de palabras.
   if (palabraBancoSeleccionada == -1) {
     feedback = "Selecciona una palabra del banco";
     tiempoFeedback = 60;
     return;
   }
-
   // Verifica que la palabra seleccionada en el comentario sea la palabra ofensiva correcta.
-  // Por ejemplo: en "Eres debil", la palabra correcta para seleccionar sería "debil".
   if (palabraSeleccionada != palabraCorrecta[indiceMensaje]) {
     feedback = "Selecciona la palabra ofensiva";
     tiempoFeedback = 60;
@@ -689,9 +624,7 @@ void reemplazarPalabra() {
     siguienteMensaje();
     return;
   }
-
   // Verifica que este mensaje realmente se resuelva con la acción "reemplazar".
-  // En tu sistema: accionCorrecta == 2 significa reemplazar.
   if (accionCorrecta[indiceMensaje] != 2) {
     feedback = "Debes eliminar, no reemplazar";
     tiempoFeedback = 60;
@@ -700,61 +633,16 @@ void reemplazarPalabra() {
     return;
   }
 
-  // Obtiene la palabra que el jugador eligió desde el banco.
-  // Ejemplo: "unico", "fuerte", "capaz", etc.
-  String palabraElegida = normalizarPalabra(bancoPalabras[palabraBancoSeleccionada]);
-
-  // Obtiene la palabra correcta que debería usarse para reemplazar.
-  // Se toma desde la respuesta correcta del mensaje actual.
-  String palabraCorrectaBanco = normalizarPalabra(obtenerPalabraCorrectaDelBanco());
-
-  // Compara la palabra elegida con la palabra correcta esperada.
-  // Si no coinciden, el juego marca error.
-  if (!palabraElegida.equals(palabraCorrectaBanco)) {
-    feedback = "Esa palabra no corresponde";
-    tiempoFeedback = 60;
-    estadoEmocion++;
-    siguienteMensaje();
-    return;
-  }
-
   // Si todo está correcto, reemplaza el comentario ofensivo por su versión positiva.
   comentariosMostrados[indiceMensaje] = respuestas[indiceMensaje];
-
   // Actualiza el arreglo de palabras visibles en pantalla.
   palabrasActuales = split(comentariosMostrados[indiceMensaje], " ");
-
   // Muestra feedback positivo y avanza al siguiente mensaje después de una pausa.
   feedback = "¡Bien!";
   tiempoFeedback = 60;
   programarSiguienteMensaje();
 }
 
-String normalizarPalabra(String palabra) {
-  // Convierte la palabra a minúsculas y quita espacios extra.
-  // Esto evita errores por diferencias como "Fuerte" vs "fuerte".
-  palabra = palabra.toLowerCase();
-  palabra = palabra.trim();
-
-  // Elimina signos de puntuación comunes.
-  // Así "fuerte!" y "fuerte" se consideran iguales.
-  palabra = palabra.replace(".", "");
-  palabra = palabra.replace(",", "");
-  palabra = palabra.replace("!", "");
-  palabra = palabra.replace("¡", "");
-  palabra = palabra.replace("?", "");
-  palabra = palabra.replace("¿", "");
-
-  // Reemplaza vocales con tilde por vocales normales.
-  // Así "único" y "unico" se pueden comparar correctamente.
-  palabra = palabra.replace("á", "a");
-  palabra = palabra.replace("é", "e");
-  palabra = palabra.replace("í", "i");
-  palabra = palabra.replace("ó", "o");
-  palabra = palabra.replace("ú", "u");
-
-  return palabra;
-}
 
 String obtenerPalabraCorrectaDelBanco() {
   // Divide la respuesta correcta en palabras.

@@ -9,7 +9,7 @@ String[] opciones = {
   "Niveles",
   "Como jugar",
   "Creditos",
-  "Configuración", 
+  "Explicación del Código", 
   "Salir"
 };
 
@@ -99,22 +99,18 @@ void ejecutarOpcion() {
       pantalla = 3;
     }
   }
-
   // Como jugar (Manual)
   if (opcionSeleccionada == 2) {
     pantalla = 4;
   }
-
   // Créditos
   if (opcionSeleccionada == 3) {
-    pantalla = 6;  // ← CAMBIADO a 6 (antes era 7)
+    pantalla = 6;  
   }
-
   // Configuración
   if (opcionSeleccionada == 4) {
-    pantalla = 8;  // ← Cambia a 8 para no chocar con créditos
+    pantalla = 8;  
   }
-
   // Salir
   if (opcionSeleccionada == 5) {
     exit();

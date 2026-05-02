@@ -1,16 +1,15 @@
 
 
 void dibujarUI() {
+  pushStyle();
   imageMode(CENTER);
-
   int tamaño = 100;
   int espacio = 15;
   int y = 80;
-
   int x = width - (tamaño * 3);
-
-  image(btnmusic[estadoMusica], x + tamaño + espacio, y, tamaño, tamaño);
+  // Solo el botón de pausa
   image(btnpause[estadoPausa], x + (tamaño + espacio) * 2, y, tamaño, tamaño);
+  popStyle();
 }
 
 //  -->> IU juego 1
@@ -31,7 +30,7 @@ void dibujarBarras() {
 }
 
 void dibujarPause() {
-  pushStyle();  // ← AÑADIR: guardar estilos actuales
+  pushStyle();  
   
   fill(0, 190);
   rect(0, 0, width, height);
@@ -64,13 +63,11 @@ void dibujarPause() {
         text(opciones[i], x, y);
       }
     }
-    popStyle();  // ← AÑADIR: restaurar estilos antes de salir
-    return;      // ← IMPORTANTE: salir para no seguir al juego 1
+    popStyle();  
+    return;      
   }
 
-  // =========================
   // PAUSA JUEGO 1
-  // =========================
   if (pantallaOrigen == 4) {
     String[] opcionesManual = {"Continuar", "Volver al menú"};
     for (int i = 0; i < opcionesManual.length; i++) {
@@ -83,10 +80,27 @@ void dibujarPause() {
         text(opcionesManual[i], x, y);
       }
     }
-    popStyle();  // ← AÑADIR
+    popStyle(); 
     return;
   }
+  
+  // PAUSA JUEGO 3
+  if (tipoPausa == 2) {
+      String[] opciones = {"Continuar", "Reiniciar", "Volver al menú"};
+          for (int i = 0; i < opciones.length; i++) {
+      int y = yInicial + i * espacioY;
 
+      if (i == opcionPausa) {
+        fill(190, 165, 255);
+        text("> " + opciones[i], x, y);
+      } else {
+        fill(245, 235, 255);
+        text(opciones[i], x, y);
+      }
+    }
+    popStyle();  
+       return;
+  }
   int total = totalOpcionesPausaJuego1();
 
   for (int i = 0; i < total; i++) {
