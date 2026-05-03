@@ -488,15 +488,27 @@ void dibujarFeedbackJuego1() {
 
   boolean esBien = feedback.equals("¡Bien!");
 
+  // Calcular el ancho necesario según el texto
   float anchoCaja;
-  float altoCaja;
-
+  float altoCaja = 62;  // Alto base
+  
+  textFont(fuente);
+  textSize(16);
+  
   if (esBien) {
     anchoCaja = 320;
-    altoCaja = 62;
   } else {
-    anchoCaja = 690;
-    altoCaja = 72;
+    // Calcular ancho dinámico según el texto
+    float anchoTexto = textWidth(feedback);
+    // Añadir padding de 60 píxeles
+    anchoCaja = anchoTexto + 80;
+    // Limitar ancho máximo y mínimo
+    anchoCaja = constrain(anchoCaja, 400, 800);
+    
+    // Si el texto es muy largo, ajustar altura
+    if (anchoTexto > 700) {
+      altoCaja = 82;
+    }
   }
 
   pushStyle();
@@ -505,18 +517,22 @@ void dibujarFeedbackJuego1() {
   textAlign(CENTER, CENTER);
   textFont(fuente);
 
+  // Sombra
   noStroke();
   fill(30, 25, 55, 180);
   rect(x + 5, y + 5, anchoCaja, altoCaja, 10);
 
+  // Fondo morado
   fill(190, 165, 255, 235);
   rect(x, y, anchoCaja, altoCaja, 10);
 
+  // Borde
   stroke(55, 40, 100);
   strokeWeight(4);
   noFill();
   rect(x, y, anchoCaja, altoCaja, 10);
 
+  // Texto
   if (esBien) {
     textSize(22);
   } else {
@@ -618,7 +634,7 @@ void reemplazarPalabra() {
   }
   // Verifica que la palabra seleccionada en el comentario sea la palabra ofensiva correcta.
   if (palabraSeleccionada != palabraCorrecta[indiceMensaje]) {
-    feedback = "Selecciona la palabra ofensiva";
+    feedback = "Selecciona la palabra ofensiva correcta";
     tiempoFeedback = 60;
     estadoEmocion++;
     siguienteMensaje();
@@ -633,13 +649,44 @@ void reemplazarPalabra() {
     return;
   }
 
-  // Si todo está correcto, reemplaza el comentario ofensivo por su versión positiva.
-  comentariosMostrados[indiceMensaje] = respuestas[indiceMensaje];
-  // Actualiza el arreglo de palabras visibles en pantalla.
+  // Obtener la palabra correcta del banco (la positiva)
+  String palabraPositiva = bancoPalabras[palabraBancoSeleccionada];
+  
+  // Obtener la palabra ofensiva que se va a reemplazar
+  String palabraOfensiva = palabrasActuales[palabraSeleccionada];
+  
+  // Verificar que la palabra seleccionada del banco sea la correcta para este mensaje
+  String palabraCorrectaEsperada = obtenerPalabraCorrectaDelBanco();
+  
+  if (!palabraPositiva.equals(palabraCorrectaEsperada)) {
+    feedback = "Esa no es la palabra correcta para reemplazar";
+    tiempoFeedback = 60;
+    estadoEmocion++;
+    siguienteMensaje();
+    return;
+  }
+  
+  // REEMPLAZAR SOLO LA PALABRA OFENSIVA, no todo el mensaje
+  palabrasActuales[palabraSeleccionada] = palabraPositiva;
+  
+  // Reconstruir el mensaje completo
+  String nuevoMensaje = "";
+  for (int i = 0; i < palabrasActuales.length; i++) {
+    if (i > 0) nuevoMensaje += " ";
+    nuevoMensaje += palabrasActuales[i];
+  }
+  
+  // Guardar el mensaje corregido
+  comentariosMostrados[indiceMensaje] = nuevoMensaje;
+  
+  // Actualizar palabrasActuales (aunque ya lo hicimos)
   palabrasActuales = split(comentariosMostrados[indiceMensaje], " ");
-  // Muestra feedback positivo y avanza al siguiente mensaje después de una pausa.
+  
+  // Mostrar feedback positivo
   feedback = "¡Bien!";
   tiempoFeedback = 60;
+  
+  // Programar siguiente mensaje
   programarSiguienteMensaje();
 }
 

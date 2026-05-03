@@ -9,7 +9,7 @@ String[] opciones = {
   "Niveles",
   "Como jugar",
   "Creditos",
-  "Explicación del Código", 
+  "Código", 
   "Salir"
 };
 

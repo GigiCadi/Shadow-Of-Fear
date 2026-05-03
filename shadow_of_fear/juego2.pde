@@ -521,13 +521,13 @@ void dibujarFinalJuego2() {
   
   if (j2_estado == 2 && fondoVictoria != null) {
     // Imagen de victoria
-    tint(255, 200);
+    tint(255, 240);
     image(fondoVictoria, 0, 0, width, height);
     noTint();
   } 
   else if (j2_estado == 1 && fondoDerrota != null) {
     // Imagen de derrota
-    tint(255, 200);
+    tint(255, 240);
     image(fondoDerrota, 0, 0, width, height);
     noTint();
   }

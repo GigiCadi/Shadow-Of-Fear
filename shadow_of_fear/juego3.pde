@@ -1,19 +1,19 @@
 // ================================================================
-// JUEGO 3
+// JUEGO 3 - SOMBRA DEL MIEDO
 // ================================================================
 
-// ESTADO DEL JUEGO 3
+// ESTADO DEL JUEGO
 int j3_estado = 0;        // 0 = jugando, 1 = final trágico, 2 = final intermedio, 3 = final bueno
 boolean j3_iniciado = false;
-int j3_moral = 0;         // Acumulador de decisiones
-int j3_momentoActual = 0; 
+int j3_moral = 0;
+int j3_momentoActual = 0;
 int j3_opcionSeleccionada = 0;
 boolean j3_esperandoInput = true;
 boolean j3_mostrandoRespuesta = false;
 int j3_timerRespuesta = 0;
 final int J3_TIEMPO_RESPUESTA = 90;
 
-// DATOS DEL JUEGO 3 
+// DATOS DEL JUEGO
 String[] j3_dialogosBully = {
   "Oye, Alimaña... ¿a dónde con tanta prisa? A ver si tan valiente ahora sin el rector",
   "¿En serio creíste que te ibas a salvar? Ilusa.",
@@ -50,10 +50,16 @@ String[][] j3_reaccionesBully = {
   {"\"Morton huye. El vecino acompaña a Ali a casa\"", "\"Morton se ríe y se va. Ali se queda sola\"", "\"El vecino se va confundido\""}
 };
 
-// Índices de sprites para cada momento (bully y prota)
-int[] j3_bullySprite = {0, 0, 2, 2, 1, 0};  // 0=normal, 1=creido, 2=enojado
-int[] j3_protaSprite = {2, 2, 2, 2, 0, 0};  // 0=aliviada, 1=arrodillada, 2=asustada, 3=corre, 4=depresiva
+int[] j3_bullySprite = {0, 0, 2, 2, 1, 0};
+int[] j3_protaSprite = {2, 2, 2, 2, 0, 0};
 
+// PANTALLA FINAL
+int opcionFinalJuego3 = 0;
+String[] opcionesFinalJuego3 = {"Volver a intentar", "Volver al menú"};
+
+// ================================================================
+// INICIALIZAR
+// ================================================================
 void iniciarJuego3() {
   j3_estado = 0;
   j3_iniciado = true;
@@ -69,8 +75,13 @@ void iniciarJuego3() {
   pantalla = 7;
 }
 
+// ================================================================
 // PANTALLA PRINCIPAL
+// ================================================================
 void nivelJuego3() {
+  if (!j3_iniciado) return;
+  
+  // Dibujar fondo UNA SOLA VEZ
   imageMode(CORNER);
   if (juego3 != null) {
     image(juego3, 0, 0, width, height);
@@ -78,10 +89,8 @@ void nivelJuego3() {
     background(20, 15, 35);
   }
   
-  if (!j3_iniciado) return;
-  
   if (j3_estado == 0) {
-    dibujarPantallaJuego3();
+    dibujarContenidoJuego3();
   } else {
     dibujarFinalJuego3();
   }
@@ -89,64 +98,102 @@ void nivelJuego3() {
   dibujarUI();
 }
 
-void dibujarPantallaJuego3() {
+// ================================================================
+// DIBUJAR CONTENIDO DEL JUEGO (escenas y diálogos)
+// ================================================================
+void dibujarContenidoJuego3() {
   pushStyle();
   
   float centroX = width / 2;
   float centroY = height / 2;
   
-  // 1. PERSONAJES (fondo sin interfaz)
+  // ============================================================
+  // ESCENA INICIAL (momento 0)
+  // ============================================================
+  if (j3_momentoActual == 0) {
+    // Bully a lo lejos (izquierda)
+    imageMode(CENTER);
+    if (bullyParado != null) {
+      image(bullyParado, centroX + 280, height - 220, 420, 510);
+    }
+    
+    // Ali caminando de espaldas (derecha)
+    if (aliEspaldas != null) {
+      image(aliEspaldas, centroX + 50, height - 320, 120, 158);
+    }
+    
+    // Texto narrativo
+    fill(0, 0, 0, 200);
+    noStroke();
+    rect(0, height - 280, width, 280);
+    
+    fill(245, 235, 255);
+    textFont(fuente);
+    textSize(20);
+    textAlign(CENTER, CENTER);
+    text("Ali sale de la escuela. El sol se oculta. Camina sola...", width/2, height - 200);
+    text("Escucha pasos detrás de ella. Alguien la sigue...", width/2, height - 155);
+    
+    textSize(14);
+    fill(190, 165, 255);
+    text("Presiona cualquier tecla o haz clic para continuar", width/2, height - 90);
+    
+    popStyle();
+    return;
+  }
+  
+  // ============================================================
+  // DIÁLOGOS Y OPCIONES (momento 1 en adelante)
+  // ============================================================
+  int index = j3_momentoActual - 1;
+  
+  if (index < 0 || index >= j3_dialogosBully.length) {
+    popStyle();
+    return;
+  }
+  
+  float altoFranja = height * 0.32;
+  float yFranja = height - altoFranja;
   
   // Bully (izquierda)
-  if (j3_bullySprite[j3_momentoActual] >= 0 && 
-      bully[j3_bullySprite[j3_momentoActual]] != null) {
+  if (j3_bullySprite[index] >= 0 && bully[j3_bullySprite[index]] != null) {
     imageMode(CENTER);
-    image(bully[j3_bullySprite[j3_momentoActual]], 
-          centroX - 220, centroY + 60, 220, 270);
+    image(bully[j3_bullySprite[index]], centroX - 220, centroY + 60, 220, 270);
   }
   
   // Ali (derecha)
-  if (j3_protaSprite[j3_momentoActual] >= 0 && 
-      prota[j3_protaSprite[j3_momentoActual]] != null) {
+  if (j3_protaSprite[index] >= 0 && prota[j3_protaSprite[index]] != null) {
     imageMode(CENTER);
-    image(prota[j3_protaSprite[j3_momentoActual]], 
-          centroX + 220, centroY + 60, 200, 250);
+    image(prota[j3_protaSprite[index]], centroX + 220, centroY + 60, 200, 250);
   }
   
-  float altoFranja = height * 0.28;
-  float yFranja = height - altoFranja;
-  
+  // Fondo UI
   fill(0, 0, 0, 200);
   noStroke();
   rect(0, yFranja, width, altoFranja);
   
-  // Línea divisoria fina entre las dos secciones
+  // Línea divisoria
   float xDivisor = width * 0.45;
   stroke(150, 100, 200);
   strokeWeight(1);
   line(xDivisor, yFranja + 20, xDivisor, height - 20);
   noStroke();
-
-  // 3. LADO IZQUIERDO: OPCIONES
+  
+  // Opciones
   float xIzq = xDivisor - 480;
   float yTitulo = yFranja + 35;
   
   fill(245, 235, 255);
-  textFont(fuente);
   textSize(18);
   textAlign(LEFT, TOP);
   text("¿QUÉ HARÁS?", xIzq, yTitulo);
   
-  float yOpcion = yTitulo + 45;
-  float espacioOpcion = 42;
+  float yOpcion = yTitulo + 50;
+  float espacioOpcion = 45;
   
   for (int i = 0; i < 3; i++) {
     String letra = (i == 0 ? "A" : i == 1 ? "B" : "C");
-    String textoOpcion = j3_opciones[j3_momentoActual][i];
-    
-    fill(200, 200, 220);
-    textSize(14);
-    textAlign(LEFT, TOP);
+    String textoOpcion = j3_opciones[index][i];
     
     if (i == j3_opcionSeleccionada && j3_esperandoInput && !j3_mostrandoRespuesta) {
       fill(190, 165, 255);
@@ -156,34 +203,35 @@ void dibujarPantallaJuego3() {
       text("  " + letra + ". " + textoOpcion, xIzq, yOpcion + i * espacioOpcion);
     }
   }
-  // 4. LADO DERECHO: DIÁLOGO / CONTEXTO
+  
+  // Diálogo del bully
   float xDer = xDivisor + 40;
-  float yDer = yFranja + 95;
-  float anchoTexto = width - xDer - 40;
+  float yDer = yFranja + 50;
+  float anchoTexto = width - xDer - 60;
   
   fill(245, 235, 255);
   textSize(16);
   textAlign(LEFT, TOP);
   
-  String dialogo = j3_dialogosBully[j3_momentoActual];
+  String dialogo = j3_dialogosBully[index];
   if (j3_mostrandoRespuesta && j3_timerRespuesta > 0) {
-    dialogo = j3_reaccionesBully[j3_momentoActual][j3_opcionSeleccionada];
+    dialogo = j3_reaccionesBully[index][j3_opcionSeleccionada];
   }
   
-  // Ajuste de texto multilínea
   String[] lineas = dividirTexto(dialogo, anchoTexto);
   float yLinea = yDer;
   for (int i = 0; i < lineas.length; i++) {
-    text(lineas[i], xDer, yLinea + i * 25);
+    text(lineas[i], xDer, yLinea + i * 28);
   }
-  // 5. TIMER DE RESPUESTA
+  
+  // Timer para respuesta
   if (j3_mostrandoRespuesta && j3_timerRespuesta > 0) {
     j3_timerRespuesta--;
     if (j3_timerRespuesta <= 0) {
       j3_mostrandoRespuesta = false;
       j3_momentoActual++;
       
-      if (j3_momentoActual >= j3_dialogosBully.length) {
+      if (j3_momentoActual > j3_dialogosBully.length) {
         evaluarFinalJuego3();
       } else {
         j3_esperandoInput = true;
@@ -193,6 +241,10 @@ void dibujarPantallaJuego3() {
   
   popStyle();
 }
+
+// ================================================================
+// FUNCIONES AUXILIARES
+// ================================================================
 String[] dividirTexto(String texto, float anchoMax) {
   ArrayList<String> lineas = new ArrayList<String>();
   String[] palabras = split(texto, " ");
@@ -213,17 +265,20 @@ String[] dividirTexto(String texto, float anchoMax) {
   return lineas.toArray(new String[0]);
 }
 
-// PROCESAR DECISIÓN
 void procesarDecisionJuego3(int opcion) {
   if (!j3_esperandoInput || j3_mostrandoRespuesta) return;
-  if (j3_momentoActual >= j3_dialogosBully.length) return;
+  
+  int index = j3_momentoActual - 1;
+  if (index < 0 || index >= j3_dialogosBully.length) return;
+  
   j3_opcionSeleccionada = opcion;
-  j3_moral += j3_valoresOpciones[j3_momentoActual][opcion];
+  j3_moral += j3_valoresOpciones[index][opcion];
+  
   j3_esperandoInput = false;
   j3_mostrandoRespuesta = true;
   j3_timerRespuesta = J3_TIEMPO_RESPUESTA;
 }
-// EVALUAR FINAL
+
 void evaluarFinalJuego3() {
   if (j3_moral < 0) {
     j3_estado = 1;
@@ -233,10 +288,10 @@ void evaluarFinalJuego3() {
     j3_estado = 3;
   }
 }
-// PANTALLA FINAL
-int opcionFinalJuego3 = 0;
-String[] opcionesFinalJuego3 = {"Volver a intentar", "Volver al menú"};
 
+// ================================================================
+// PANTALLA FINAL
+// ================================================================
 void dibujarFinalJuego3() {
   pushStyle();
   
@@ -300,6 +355,10 @@ void dibujarFinalJuego3() {
   
   popStyle();
 }
+
+// ================================================================
+// CONTROL POR MOUSE
+// ================================================================
 void mouseJuego3() {
   if (j3_estado != 0) {
     int yBase = height/2 + 60;
@@ -308,6 +367,7 @@ void mouseJuego3() {
     if (mouseX > width/2 - 220 && mouseX < width/2 + 220 &&
         mouseY > yBase - 22 && mouseY < yBase + 22) {
       iniciarJuego3();
+      return;
     }
     if (mouseX > width/2 - 220 && mouseX < width/2 + 220 &&
         mouseY > yBase + espacioY - 22 && mouseY < yBase + espacioY + 22) {
@@ -319,30 +379,38 @@ void mouseJuego3() {
     return;
   }
   
-  if (j3_mostrandoRespuesta) return;
-  if (!j3_esperandoInput) return;
+  // Avanzar escena inicial
+  if (j3_momentoActual == 0) {
+    j3_momentoActual = 1;
+    return;
+  }
   
-  // Detectar clic en opciones (lado izquierdo de la franja)
-  float altoFranja = height * 0.28;
-  float yFranja = height - altoFranja;
-  float xDivisor = width * 0.45;
-  float xIzq = xDivisor - 180;
-  float yOpcion = yFranja + 80; // ajustar según coordenadas
-  float espacioOpcion = 42;
-  
-  for (int i = 0; i < 3; i++) {
-    float yOpt = yOpcion + i * espacioOpcion;
-    float anchoOpt = 300; // ancho aproximado del texto
-    if (mouseX > xIzq - 20 && mouseX < xIzq + anchoOpt &&
-        mouseY > yOpt - 15 && mouseY < yOpt + 20) {
-      procesarDecisionJuego3(i);
-      return;
+  // Seleccionar opción
+  if (!j3_mostrandoRespuesta && j3_esperandoInput) {
+    float altoFranja = height * 0.32;
+    float yFranja = height - altoFranja;
+    float xDivisor = width * 0.45;
+    float xIzq = xDivisor - 480;
+    float yOpcion = yFranja + 85;
+    float espacioOpcion = 45;
+    float anchoOpt = 350;
+    
+    for (int i = 0; i < 3; i++) {
+      float yOpt = yOpcion + i * espacioOpcion;
+      if (mouseX > xIzq - 20 && mouseX < xIzq + anchoOpt &&
+          mouseY > yOpt - 18 && mouseY < yOpt + 18) {
+        procesarDecisionJuego3(i);
+        return;
+      }
     }
   }
 }
 
+// ================================================================
+// CONTROL POR TECLADO
+// ================================================================
 void controlarJuego3Teclado() {
-  // Final del juego
+  // Pantalla de final
   if (j3_estado != 0) {
     if (keyCode == UP) {
       opcionFinalJuego3--;
@@ -363,29 +431,42 @@ void controlarJuego3Teclado() {
     return;
   }
   
-  if (j3_mostrandoRespuesta) return;
-  if (!j3_esperandoInput) return;
-  
-  if (keyCode == UP) {
-    j3_opcionSeleccionada--;
-    if (j3_opcionSeleccionada < 0) j3_opcionSeleccionada = 2;
-  }
-  else if (keyCode == DOWN) {
-    j3_opcionSeleccionada++;
-    if (j3_opcionSeleccionada > 2) j3_opcionSeleccionada = 0;
-  }
-  else if (keyCode == ESC) {
-    // Abrir pausa
+  // ESC para pausa
+  if (keyCode == ESC) {
     pantallaOrigen = 7;
     estadoPausa = 1;
     opcionPausa = 0;
-    tipoPausa = 2;  // juego 3
+    tipoPausa = 2;
     key = 0;
+    return;
   }
-  else if (key == ' ' || keyCode == ENTER) {
-    procesarDecisionJuego3(j3_opcionSeleccionada);
+  
+  // Avanzar escena inicial (cualquier tecla)
+  if (j3_momentoActual == 0) {
+    j3_momentoActual = 1;
+    key = 0;
+    return;
+  }
+  
+  // Navegar y seleccionar opciones
+  if (!j3_mostrandoRespuesta && j3_esperandoInput) {
+    if (keyCode == UP) {
+      j3_opcionSeleccionada--;
+      if (j3_opcionSeleccionada < 0) j3_opcionSeleccionada = 2;
+    }
+    else if (keyCode == DOWN) {
+      j3_opcionSeleccionada++;
+      if (j3_opcionSeleccionada > 2) j3_opcionSeleccionada = 0;
+    }
+    else if (key == ' ' || keyCode == ENTER) {
+      procesarDecisionJuego3(j3_opcionSeleccionada);
+    }
   }
 }
+
+// ================================================================
+// CONTROL DE PAUSA
+// ================================================================
 void controlarPausaJuego3Teclado() {
   String[] opciones = {"Continuar", "Reiniciar", "Volver al menú"};
   

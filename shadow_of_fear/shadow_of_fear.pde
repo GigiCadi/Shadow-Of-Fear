@@ -11,12 +11,17 @@ PImage[] btnjuegos = new PImage[3];
 PImage[] bully = new PImage[3];
 PImage[] prota = new PImage[5];
 PFont fuente;
-
+PImage bullyParado;      
+PImage aliEspaldas;      
 // Pantalla de créditos
 PImage fondoCreditos;
 PImage popupRuth, popupGilarys, popupNashed;
 boolean mostrarPopup = false;
 int popupActual = 0; // 0=ruth, 1=gilarys, 2=nashed
+
+//codigo 
+PImage fondoCodigo;
+PImage personajeRuth;
 
 // vectores animaciones
 PImage[] protaup = new PImage[3];
@@ -155,6 +160,12 @@ void setup() {
   prota[3] = loadImage("imagenes/personajes/protacorre.png");
   prota[4] = loadImage("imagenes/personajes/protaDepresiva.png");
   juego3 = loadImage("imagenes/fondo/juego3.png");
+  bullyParado = loadImage("imagenes/personajes/bully_paradouu.png");
+  aliEspaldas = loadImage("imagenes/personajes/protacaminadoarriba1.png");
+  
+  //codigo
+  fondoCodigo = loadImage("imagenes/fondo/fondo_codigo.jpeg");
+  personajeRuth = loadImage("imagenes/personajes/ruth_codigo.png");
 
   // Texto
   textFont(fuente);
@@ -197,13 +208,14 @@ void draw() {
     pantallaCreditos();
   } else if (pantalla == 7) {
     nivelJuego3();
+  } else if (pantalla == 8) {  // ← NUEVA PANTALLA
+    pantallaCodigo();
   }
 
   if (estadoPausa == 1) dibujarPause();
   if (estadoFinal != 0) dibujarFinal();
   actualizarTransicion();
 }
-
 // ============================================================
 // Transición
 // ============================================================
@@ -289,6 +301,7 @@ void keyPressed() {
   else if (pantalla == 5) j2_keyPressed();
   else if (pantalla == 6) controlarCreditosTeclado();
   else if (pantalla == 7) controlarJuego3Teclado();
+  else if (pantalla == 8) controlarCodigoTeclado();  // ← NUEVO
 }
 
 void mousePressed() {
@@ -337,10 +350,19 @@ void mousePressed() {
     }
     // Juego
     if (subEstado == 1) mouseNivel1();
+    return;
   }
 
-  if (pantalla == 3) controlarNiveles();
-  if (pantalla == 4) controlarManual();
+  if (pantalla == 3) {
+    controlarNiveles();
+    return;
+  }
+  
+  if (pantalla == 4) {
+    controlarManual();
+    return;
+  }
+  
   if (pantalla == 5) {
     int sz = 100, esp = 15, yUI = 80;
     int xBase = width - (sz * 3);
@@ -355,8 +377,14 @@ void mousePressed() {
       return;
     }
     if (j2_estado != 0) clicFinalJuego2();
+    return;
   }
-  if (pantalla == 6) controlarCreditos();
+  
+  if (pantalla == 6) {
+    controlarCreditos();
+    return;
+  }
+  
   if (pantalla == 7) {
     int sz = 100, esp = 15, yUI = 80;
     int xBase = width - (sz * 3);
@@ -371,6 +399,13 @@ void mousePressed() {
       return;
     }
     mouseJuego3();
+    return;
+  }
+  
+  // ← NUEVA PANTALLA 8 (CÓDIGO) - CORRECTA, FUERA DEL if (pantalla == 7)
+  if (pantalla == 8) {
+    controlarCodigo();
+    return;
   }
 }
 
