@@ -21,18 +21,18 @@ int[] palabraCorrecta = {1, 0, 0, 1, 1, 1, 0, 1};
 
 // ---------- MENSAJES (FÁCIL - 8 mensajes) ----------
 String[] mensajes = {
-  "Eres raro",
+  "Eres rara",
   "Nadie te quiere",
   "No encajas",
   "Eres inutil",
-  "Eres feo",
-  "Eres tonto",
+  "Eres fea",
+  "Eres tonta",
   "No vales",
   "Eres debil"
 };
 
 String[] respuestas = {
-  "Eres unico",
+  "Eres unica",
   "Todos te quieren",
   "Si encajas",
   "Eres capaz",
@@ -44,7 +44,7 @@ String[] respuestas = {
 
 // ---------- WORDBANK ----------
 String[] bancoPalabras = {
-  "unico", "todos", "si", "capaz",
+  "unica", "todas", "si", "capaz",
   "especial", "inteligente", "fuerte"
 };
 
@@ -106,6 +106,11 @@ String[] subtextosVictoria = {
   "Responder con conciencia también es construir un espacio más sano."
 };
 
+String normalizar(String s) {
+  s = s.toLowerCase();
+  s = s.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u");
+  return s;
+}
 // ==========================
 // MEZCLAR MENSAJES (ALEATORIO)
 // ==========================
@@ -185,18 +190,18 @@ void iniciarNivel1Dificil() {
   // FACIL
   if (dificultadNivel1 == 1) {
     mensajes = new String[] {
-      "Eres raro",
+      "Eres rara",
       "Nadie te quiere",
       "No encajas",
       "Eres inutil",
-      "Eres feo",
-      "Eres tonto",
+      "Eres fea",
+      "Eres tonta",
       "No vales",
       "Eres debil"
     };
 
     respuestas = new String[] {
-      "Eres unico",
+      "Eres unica",
       "Todos te quieren",
       "Encajas",
       "Eres capaz",
@@ -207,7 +212,7 @@ void iniciarNivel1Dificil() {
     };
 
     bancoPalabras = new String[] {
-      "unico", "todos", "capaz", "especial",
+      "unica", "todos", "capaz", "especial",
       "inteligente", "fuerte", "vales"
     };
 
@@ -244,7 +249,7 @@ void iniciarNivel1Dificil() {
     };
 
     bancoPalabras = new String[] {
-      "capaz", "fuerte", "todos", "valioso",
+      "capaz", "fuerte", "todos", "valiosa",
       "importante", "respetan", "puedes"
     };
 
@@ -278,11 +283,11 @@ void iniciarNivel1Dificil() {
 
     bancoPalabras = new String[] {
       "capaz", "todos", "fuerte", "algo",
-      "valioso", "importante", "reconocen"
+      "valiosa", "importante", "reconocen"
     };
 
     accionCorrecta = new int[] {1, 2, 1, 2, 1, 2, 2, 2};
-    palabraCorrecta = new int[] {0, 1, 0, 0, 0, 1, 2, 0};
+    palabraCorrecta = new int[] {0, 1, 0, 0, 0, 1, 1, 0};
   }
 
   mezclarMensajes();
@@ -597,19 +602,20 @@ void eliminarPalabra() {
     return;
   }
   if (palabraSeleccionada != palabraCorrecta[indiceMensaje]) {
-    feedback = "Selecciona la palabra correcta";
+    feedback = "Selecciona la palabra ofensiva correcta";
     tiempoFeedback = 60;
     estadoEmocion++;
     siguienteMensaje();
     return;
   }
   if (accionCorrecta[indiceMensaje] != 1) {
-    feedback = "Debes reemplazar, no eliminar";
+    feedback = "Para este mensaje debes usar REEMPLAZAR, no eliminar";
     tiempoFeedback = 60;
     estadoEmocion++;
     siguienteMensaje();
     return;
   }
+  // Asignar la respuesta completa
   comentariosMostrados[indiceMensaje] = respuestas[indiceMensaje];
   palabrasActuales = split(comentariosMostrados[indiceMensaje], " ");
   feedback = "¡Bien!";
@@ -617,23 +623,17 @@ void eliminarPalabra() {
   programarSiguienteMensaje();
 }
 
-// ==========================
-// REEMPLAZAR
-// ==========================
 void reemplazarPalabra() {
-  // Verifica que el jugador haya seleccionado una palabra del comentario.
   if (palabraSeleccionada == -1) {
     feedback = "Selecciona una palabra";
     tiempoFeedback = 60;
     return;
   }
-  // Verifica que el jugador haya seleccionado una palabra del banco de palabras.
   if (palabraBancoSeleccionada == -1) {
     feedback = "Selecciona una palabra del banco";
     tiempoFeedback = 60;
     return;
   }
-  // Verifica que la palabra seleccionada en el comentario sea la palabra ofensiva correcta.
   if (palabraSeleccionada != palabraCorrecta[indiceMensaje]) {
     feedback = "Selecciona la palabra ofensiva correcta";
     tiempoFeedback = 60;
@@ -641,72 +641,58 @@ void reemplazarPalabra() {
     siguienteMensaje();
     return;
   }
-  // Verifica que este mensaje realmente se resuelva con la acción "reemplazar".
   if (accionCorrecta[indiceMensaje] != 2) {
-    feedback = "Debes eliminar, no reemplazar";
+    feedback = "Para este mensaje debes usar ELIMINAR, no reemplazar";
     tiempoFeedback = 60;
     estadoEmocion++;
     siguienteMensaje();
     return;
   }
 
-  // Obtener la palabra correcta del banco (la positiva)
-  String palabraPositiva = bancoPalabras[palabraBancoSeleccionada];
-  
-  // Obtener la palabra ofensiva que se va a reemplazar
-  String palabraOfensiva = palabrasActuales[palabraSeleccionada];
-  
-  // Verificar que la palabra seleccionada del banco sea la correcta para este mensaje
-  String palabraCorrectaEsperada = obtenerPalabraCorrectaDelBanco();
-  
-  if (!palabraPositiva.equals(palabraCorrectaEsperada)) {
+  // Obtener la palabra esperada del banco (normalizada)
+  String palabraEsperada = normalizar(obtenerPalabraCorrectaDelBanco());
+  // Obtener la palabra elegida por el jugador (normalizada)
+  String palabraElegida = normalizar(bancoPalabras[palabraBancoSeleccionada]);
+
+  if (!palabraElegida.equals(palabraEsperada)) {
     feedback = "Esa no es la palabra correcta para reemplazar";
     tiempoFeedback = 60;
     estadoEmocion++;
     siguienteMensaje();
     return;
   }
-  
-  // REEMPLAZAR SOLO LA PALABRA OFENSIVA, no todo el mensaje
-  palabrasActuales[palabraSeleccionada] = palabraPositiva;
-  
-  // Reconstruir el mensaje completo
-  String nuevoMensaje = "";
-  for (int i = 0; i < palabrasActuales.length; i++) {
-    if (i > 0) nuevoMensaje += " ";
-    nuevoMensaje += palabrasActuales[i];
-  }
-  
-  // Guardar el mensaje corregido
-  comentariosMostrados[indiceMensaje] = nuevoMensaje;
-  
-  // Actualizar palabrasActuales (aunque ya lo hicimos)
+
+  // Asignar la respuesta completa
+  comentariosMostrados[indiceMensaje] = respuestas[indiceMensaje];
   palabrasActuales = split(comentariosMostrados[indiceMensaje], " ");
-  
-  // Mostrar feedback positivo
   feedback = "¡Bien!";
   tiempoFeedback = 60;
-  
-  // Programar siguiente mensaje
   programarSiguienteMensaje();
 }
 
 
 String obtenerPalabraCorrectaDelBanco() {
-  // Divide la respuesta correcta en palabras.
-  // Ejemplo: "Eres fuerte" se convierte en ["Eres", "fuerte"].
+  // Busca cuál palabra del banco aparece en la respuesta correcta
+  // pero NO en el mensaje original, para evitar falsos positivos.
+  // Esto resuelve casos donde la respuesta tiene distinta longitud
+  // que el mensaje original (ej: "No tienes nada..." -> "Tienes algo...").
+  String respuestaNorm = normalizar(respuestas[indiceMensaje]);
+  String mensajeNorm   = normalizar(mensajes[indiceMensaje]);
+
+  for (String palabra : bancoPalabras) {
+    String pNorm = normalizar(palabra);
+    boolean enRespuesta = (" " + respuestaNorm + " ").contains(" " + pNorm + " ");
+    boolean enOriginal  = (" " + mensajeNorm   + " ").contains(" " + pNorm + " ");
+    if (enRespuesta && !enOriginal) return palabra;
+  }
+
+  // Fallback: metodo original por indice (funciona cuando las longitudes coinciden)
   String[] palabrasRespuesta = split(respuestas[indiceMensaje], " ");
-
-  // Usa el mismo índice de palabraCorrecta para buscar la palabra positiva
-  // dentro de la respuesta correcta.
   int indiceCorrecto = palabraCorrecta[indiceMensaje];
-
-  // Verifica que el índice exista dentro del arreglo para evitar errores.
   if (indiceCorrecto >= 0 && indiceCorrecto < palabrasRespuesta.length) {
     return palabrasRespuesta[indiceCorrecto];
   }
 
-  // Si algo sale mal, devuelve texto vacío para evitar que el juego se rompa.
   return "";
 }
 

@@ -1,5 +1,5 @@
 int paginaManual = 0;
-int totalPaginasManual = 2;  // Cambia esto según cuántas páginas tengas
+int totalPaginasManual = 3; 
 
 void pantallaManual() {
   imageMode(CORNER);

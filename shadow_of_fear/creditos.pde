@@ -1,13 +1,5 @@
-// ==========================
-// PANTALLA DE CRÉDITOS
-// ==========================
-
 void pantallaCreditos() {
   pushStyle();
-  
-  // ========================================
-  // 1. FONDO PRINCIPAL (popup_creditos.png)
-  // ========================================
   imageMode(CORNER);
   if (fondoCreditos != null) {
     image(fondoCreditos, 0, 0, width, height);
@@ -15,13 +7,10 @@ void pantallaCreditos() {
     background(30, 25, 55);
   }
   
-  // ========================================
-  // 2. BOTÓN VOLVER
-  // ========================================
   imageMode(CENTER);
   float tamanoVolverX = width * 0.12;
   float tamanoVolverY = tamanoVolverX * 0.4;
-  float xVolver = width - 70;
+  float xVolver = width - 110;
   float yVolver = 60;
   
   if (btnvolver != null) {
@@ -36,17 +25,11 @@ void pantallaCreditos() {
     textAlign(CENTER, CENTER);
     text("VOLVER", xVolver, yVolver);
   }
-  
-  // ========================================
-  // 3. SI HAY POPUP ABIERTO, OSCURECER FONDO Y MOSTRAR POPUP
-  // ========================================
   if (mostrarPopup) {
-    // Capa oscura semitransparente encima del fondo
     fill(0, 180);
     noStroke();
     rect(0, 0, width, height);
     
-    // Mostrar el popup correspondiente
     imageMode(CENTER);
     float anchoPopup = width * 0.7;
     float altoPopup = height * 0.7;
@@ -59,17 +42,17 @@ void pantallaCreditos() {
       image(popupNashed, width/2, height/2, anchoPopup, altoPopup);
     }
   }
-  float anchoBoton = width * 0.15;
-float altoBoton = anchoBoton * 0.35;
+  float anchoBoton = width * 0.28;
+  float altoBoton  = height * 0.55;
 
-float xRuth = width * 0.25;
-float yRuth = height * 0.7;
+  float xRuth    = width * 0.48;
+  float yRuth    = height * 0.50;
 
-float xGilarys = width * 0.5;
-float yGilarys = height * 0.7;
+  float xGilarys = width * 0.155;
+  float yGilarys = height * 0.50;
 
-float xNashed = width * 0.75;
-float yNashed = height * 0.7;
+  float xNashed  = width * 0.815;
+  float yNashed  = height * 0.50;
 
 // detectar hover
 boolean hoverRuth = mouseX > xRuth - anchoBoton/2 && mouseX < xRuth + anchoBoton/2 &&
@@ -81,17 +64,11 @@ boolean hoverGilarys = mouseX > xGilarys - anchoBoton/2 && mouseX < xGilarys + a
 boolean hoverNashed = mouseX > xNashed - anchoBoton/2 && mouseX < xNashed + anchoBoton/2 &&
                       mouseY > yNashed - altoBoton/2 && mouseY < yNashed + altoBoton/2;
   
-// mostrar flechas encima de los nombres
-if (hoverRuth) {
-  dibujarFlecha(xRuth, yRuth - 120);
-}
-
-if (hoverGilarys) {
-  dibujarFlecha(xGilarys, yGilarys - 120);
-}
-
-if (hoverNashed) {
-  dibujarFlecha(xNashed, yNashed - 120);
+// mostrar flechas centradas sobre cada personaje
+if (!mostrarPopup) {
+  if (hoverRuth)    dibujarFlecha(xRuth,    yRuth    - altoBoton/2 - 20);
+  if (hoverGilarys) dibujarFlecha(xGilarys, yGilarys - altoBoton/2 - 20);
+  if (hoverNashed)  dibujarFlecha(xNashed,  yNashed  - altoBoton/2 - 20);
 }  
   popStyle();
 }
@@ -100,7 +77,7 @@ if (hoverNashed) {
 // CONTROL CON MOUSE
 // ========================================
 void controlarCreditos() {
-  float xVolver = width - 70;
+  float xVolver = width - 110;
   float yVolver = 60;
   float tamanoVolverX = width * 0.12;
   float tamanoVolverY = tamanoVolverX * 0.4;
@@ -121,41 +98,38 @@ void controlarCreditos() {
     return;
   }
   
-  float anchoBoton = width * 0.15;
-  float altoBoton = anchoBoton * 0.35;
-  
-  float xRuth = width * 0.25;
-  float yRuth = height * 0.7;
-  
-  float xGilarys = width * 0.5;
-  float yGilarys = height * 0.7;
-  
-  float xNashed = width * 0.75;
-  float yNashed = height * 0.7;
-  
-  // ========================================
-  // INTERCAMBIADO: Ruth muestra popup de Gilarys
-  // ========================================
-  // Ruth (muestra popup de Gilarys)
+  float anchoBoton = width * 0.28;
+  float altoBoton  = height * 0.55;
+
+  float xRuth    = width * 0.48;
+  float yRuth    = height * 0.50;
+
+  float xGilarys = width * 0.155;
+  float yGilarys = height * 0.50;
+
+  float xNashed  = width * 0.815;
+  float yNashed  = height * 0.50;
+
+  // Ruth
   if (mouseX > xRuth - anchoBoton/2 && mouseX < xRuth + anchoBoton/2 &&
-      mouseY > yRuth - altoBoton/2 && mouseY < yRuth + altoBoton/2) {
-    println("Click en RUTH - muestra popup de GILARYS");
+      mouseY > yRuth - altoBoton/2  && mouseY < yRuth + altoBoton/2) {
     mostrarPopup = true;
-    popupActual = 1;  // Ahora 1 = Gilarys
+    popupActual  = 0;  // popup de Ruth
+    return;
   }
-  // Gilarys (muestra popup de Ruth)
-  else if (mouseX > xGilarys - anchoBoton/2 && mouseX < xGilarys + anchoBoton/2 &&
-           mouseY > yGilarys - altoBoton/2 && mouseY < yGilarys + altoBoton/2) {
-    println("Click en GILARYS - muestra popup de RUTH");
+  // Gilarys
+  if (mouseX > xGilarys - anchoBoton/2 && mouseX < xGilarys + anchoBoton/2 &&
+      mouseY > yGilarys - altoBoton/2  && mouseY < yGilarys + altoBoton/2) {
     mostrarPopup = true;
-    popupActual = 0;  // Ahora 0 = Ruth
+    popupActual  = 1;  // popup de Gilarys
+    return;
   }
-  // Nashed (sin cambios)
-  else if (mouseX > xNashed - anchoBoton/2 && mouseX < xNashed + anchoBoton/2 &&
-           mouseY > yNashed - altoBoton/2 && mouseY < yNashed + altoBoton/2) {
-    println("Click en NASHED");
+  // Nashed
+  if (mouseX > xNashed - anchoBoton/2 && mouseX < xNashed + anchoBoton/2 &&
+      mouseY > yNashed - altoBoton/2  && mouseY < yNashed + altoBoton/2) {
     mostrarPopup = true;
-    popupActual = 2;
+    popupActual  = 2;  // popup de Nashed
+    return;
   }
 }
 

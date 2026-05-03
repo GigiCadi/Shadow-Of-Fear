@@ -50,8 +50,28 @@ String[][] j3_reaccionesBully = {
   {"\"Morton huye. El vecino acompaña a Ali a casa\"", "\"Morton se ríe y se va. Ali se queda sola\"", "\"El vecino se va confundido\""}
 };
 
+// prota[0]=Aliviada  prota[1]=Arrodillada  prota[2]=Asustada
+// prota[3]=Corre     prota[4]=Depresiva    prota[5]=llora  prota[6]=Ira
 int[] j3_bullySprite = {0, 0, 2, 2, 1, 0};
-int[] j3_protaSprite = {2, 2, 2, 2, 0, 0};
+
+// Sprite base de Ali por momento (mientras escucha al bully y elige)
+int[] j3_protaSprite = {
+  2,  // index 0 — "Alimaña ¿a dónde?"          → Asustada
+  2,  // index 1 — "¿En serio creíste escapar?"  → Asustada
+  4,  // index 2 — "Me causas asco"              → Depresiva
+  4,  // index 3 — "Da igual lo que hagas"       → Depresiva
+  0,  // index 4 — "Ali cierra los ojos..."      → Aliviada
+  0   // index 5 — "Un vecino baja corriendo..."  → Aliviada
+};
+
+int[][] j3_protaSpriteReaccion = {
+  {3, 2, 2},   // momento 1: A=Acelerar→Corre  B=Volverse→Asustada  C=Hacerse sorda→Asustada
+  {3, 6, 4},   // momento 2: A=Buscar salida→Corre  B=Preguntar→Ira  C=Silencio→Depresiva
+  {6, 4, 6},   // momento 3: A=Insultar→Ira  B=Decir que no→Depresiva  C=Preguntar por qué→Asustada
+  {6, 5, 2},   // momento 4: A=Enfrentar con odio→Ira  B=Llorar→Llora  C=Razonar→Asustada
+  {0, 3, 3},   // momento 5: A=Gritar ayuda→Aliviada  B=Huir→Corre  C=Empujar y correr→Corre
+  {0, 4, 4}    // momento 6: A=Decir verdad→Aliviada  B=No pasa nada→Depresiva  C=Silencio→Depresiva
+};
 
 // PANTALLA FINAL
 int opcionFinalJuego3 = 0;
@@ -107,21 +127,16 @@ void dibujarContenidoJuego3() {
   float centroX = width / 2;
   float centroY = height / 2;
   
-  // ============================================================
   // ESCENA INICIAL (momento 0)
-  // ============================================================
   if (j3_momentoActual == 0) {
-    // Bully a lo lejos (izquierda)
     imageMode(CENTER);
     if (bullyParado != null) {
       image(bullyParado, centroX + 280, height - 220, 420, 510);
     }
     
-    // Ali caminando de espaldas (derecha)
     if (aliEspaldas != null) {
       image(aliEspaldas, centroX + 50, height - 320, 120, 158);
     }
-    
     // Texto narrativo
     fill(0, 0, 0, 200);
     noStroke();
@@ -141,10 +156,7 @@ void dibujarContenidoJuego3() {
     popStyle();
     return;
   }
-  
-  // ============================================================
   // DIÁLOGOS Y OPCIONES (momento 1 en adelante)
-  // ============================================================
   int index = j3_momentoActual - 1;
   
   if (index < 0 || index >= j3_dialogosBully.length) {
@@ -155,16 +167,19 @@ void dibujarContenidoJuego3() {
   float altoFranja = height * 0.32;
   float yFranja = height - altoFranja;
   
-  // Bully (izquierda)
   if (j3_bullySprite[index] >= 0 && bully[j3_bullySprite[index]] != null) {
     imageMode(CENTER);
     image(bully[j3_bullySprite[index]], centroX - 220, centroY + 60, 220, 270);
   }
-  
-  // Ali (derecha)
-  if (j3_protaSprite[index] >= 0 && prota[j3_protaSprite[index]] != null) {
+  int spriteProta;
+  if (j3_mostrandoRespuesta && j3_timerRespuesta > 0) {
+    spriteProta = j3_protaSpriteReaccion[index][j3_opcionSeleccionada];
+  } else {
+    spriteProta = j3_protaSprite[index];
+  }
+  if (spriteProta >= 0 && prota[spriteProta] != null) {
     imageMode(CENTER);
-    image(prota[j3_protaSprite[index]], centroX + 220, centroY + 60, 200, 250);
+    image(prota[spriteProta], centroX + 220, centroY + 60, 200, 250);
   }
   
   // Fondo UI
@@ -180,7 +195,7 @@ void dibujarContenidoJuego3() {
   noStroke();
   
   // Opciones
-  float xIzq = xDivisor - 480;
+  float xIzq = xDivisor - 580;
   float yTitulo = yFranja + 35;
   
   fill(245, 235, 255);
@@ -405,10 +420,7 @@ void mouseJuego3() {
     }
   }
 }
-
-// ================================================================
 // CONTROL POR TECLADO
-// ================================================================
 void controlarJuego3Teclado() {
   // Pantalla de final
   if (j3_estado != 0) {
@@ -430,8 +442,6 @@ void controlarJuego3Teclado() {
     }
     return;
   }
-  
-  // ESC para pausa
   if (keyCode == ESC) {
     pantallaOrigen = 7;
     estadoPausa = 1;
@@ -440,15 +450,11 @@ void controlarJuego3Teclado() {
     key = 0;
     return;
   }
-  
-  // Avanzar escena inicial (cualquier tecla)
   if (j3_momentoActual == 0) {
     j3_momentoActual = 1;
     key = 0;
     return;
   }
-  
-  // Navegar y seleccionar opciones
   if (!j3_mostrandoRespuesta && j3_esperandoInput) {
     if (keyCode == UP) {
       j3_opcionSeleccionada--;
@@ -464,9 +470,7 @@ void controlarJuego3Teclado() {
   }
 }
 
-// ================================================================
 // CONTROL DE PAUSA
-// ================================================================
 void controlarPausaJuego3Teclado() {
   String[] opciones = {"Continuar", "Reiniciar", "Volver al menú"};
   

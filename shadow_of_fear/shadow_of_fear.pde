@@ -4,12 +4,12 @@ PImage logo, fondo1, fondo2, fondo3, fondoJuego2, pc, web, btneliminar, btnreemp
 PImage[] emojis = new PImage[5];
 PImage[] bars = new PImage[4];
 PImage[] btnpause = new PImage[2];
-PImage[] manual = new PImage[2];
+PImage[] manual = new PImage[3];
 PImage[] btnjuegos = new PImage[3];
 
 // imágenes juego 3
 PImage[] bully = new PImage[3];
-PImage[] prota = new PImage[5];
+PImage[] prota = new PImage[7];
 PFont fuente;
 PImage bullyParado;      
 PImage aliEspaldas;      
@@ -96,6 +96,7 @@ void setup() {
   // Manual
   manual[0] = loadImage("imagenes/UI/juego1.png");
   manual[1] = loadImage("imagenes/UI/juego2.png");
+  manual[2] = loadImage("imagenes/UI/juego3.png");
   btnext = loadImage("imagenes/UI/siguiente.png");
   btnback = loadImage("imagenes/UI/anterior.png");
   btnskip = loadImage("imagenes/UI/skip.png");
@@ -152,8 +153,10 @@ void setup() {
   prota[0] = loadImage("imagenes/personajes/protaAliviada.png");
   prota[1] = loadImage("imagenes/personajes/protaArrodillada.png");
   prota[2] = loadImage("imagenes/personajes/protaAsustada.png");
-  prota[3] = loadImage("imagenes/personajes/protacorre.png");
+  prota[3] = loadImage("imagenes/personajes/protaCorre.png");
   prota[4] = loadImage("imagenes/personajes/protaDepresiva.png");
+  prota[5] = loadImage("imagenes/personajes/protaLlora.png");
+  prota[6] = loadImage("imagenes/personajes/protaIra.png");  
   juego3 = loadImage("imagenes/fondo/juego3.png");
   bullyParado = loadImage("imagenes/personajes/bully_paradouu.png");
   aliEspaldas = loadImage("imagenes/personajes/protacaminadoarriba1.png");
@@ -317,18 +320,20 @@ void mousePressed() {
     return;
   }
 
-  // Botón pausa en pantalla 2 (juego 1)
+  // Botón pausa en pantalla 2 (juego 1) — solo si NO estamos en lore
   if (pantalla == 2) {
-    int tamaño = 100, espacio = 20, y = 80;
-    int x = width - (tamaño * 3) - 10;
-    int xPause = x + (tamaño + espacio) * 2;
-    int radio = tamaño / 2;
-    if (dist(mouseX, mouseY, xPause, y) < radio) {
-      pantallaOrigen = pantalla;
-      estadoPausa = 1;
-      opcionPausa = 0;
-      tipoPausa = 0;
-      return;
+    if (subEstado == 1) {  // solo en el juego, no en el lore
+      int tamaño = 100, espacio = 20, y = 80;
+      int x = width - (tamaño * 3) - 10;
+      int xPause = x + (tamaño + espacio) * 2;
+      int radio = tamaño / 2;
+      if (dist(mouseX, mouseY, xPause, y) < radio) {
+        pantallaOrigen = pantalla;
+        estadoPausa = 1;
+        opcionPausa = 0;
+        tipoPausa = 0;
+        return;
+      }
     }
 
 // Lore

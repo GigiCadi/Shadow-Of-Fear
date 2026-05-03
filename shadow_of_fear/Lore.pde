@@ -20,7 +20,15 @@ int indiceTexto = 0;
 int velocidadTexto = 2;
 int contadorTexto = 0;
 
+int btnX, btnY;
+int btnW = 210;
+int btnH = 60;
+boolean hoverBtn = false;
 
+int btnSkipX, btnSkipY;
+int btnSkipW = 210;
+int btnSkipH = 60;
+boolean hoverSkip = false;
 // AUDIO JUEGOS
 
 //SoundFile musicaJuego2;
@@ -82,9 +90,7 @@ void mostrarLore() {
   textSize(22);
   text(textoVisible, 100, height - 250, width - 200, 200);
   
-// =======================
 // BOTÓN SIGUIENTE
-// =======================
 
 btnX = width - btnW - 10;
 btnY = height - btnH - 40;
@@ -108,15 +114,13 @@ if (hoverBtn) {
 
   noTint();
 }
-
-// 🌑 SOMBRA REAL (esto te faltaba)
 if (hoverBtn) {
   tint(0, 120);
   image(btnext, btnX + 5, btnY + 5, btnW, btnH);
   noTint();
 }
 
-// 🎮 BOTÓN
+// BOTÓN
 if (hoverBtn) {
   tint(255, 255);
   image(btnext, btnX, btnY - 3, btnW, btnH);
@@ -125,9 +129,7 @@ if (hoverBtn) {
   image(btnext, btnX, btnY, btnW, btnH);
 }
 
-// =======================
-// BOTÓN SKIP (arriba derecha)
-// =======================
+// BOTÓN SKIP 
 
 btnSkipX = width - btnSkipW - 20;
 btnSkipY = 20;
@@ -135,7 +137,6 @@ btnSkipY = 20;
 hoverSkip = mouseX > btnSkipX && mouseX < btnSkipX + btnSkipW &&
             mouseY > btnSkipY && mouseY < btnSkipY + btnSkipH;
 
-// ✨ glow
 if (hoverSkip) {
   tint(255, 255, 255, 90);
 
@@ -147,14 +148,12 @@ if (hoverSkip) {
   noTint();
 }
 
-// 🌑 sombra
 if (hoverSkip) {
   tint(0, 120);
   image(btnskip, btnSkipX + 4, btnSkipY + 4, btnSkipW, btnSkipH);
   noTint();
 }
 
-// botón
 if (hoverSkip) {
   image(btnskip, btnSkipX, btnSkipY - 2, btnSkipW, btnSkipH);
 } else {
