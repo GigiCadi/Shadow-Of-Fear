@@ -58,7 +58,7 @@ lores[0][3] = loadImage("imagenes/Lore/c4.png");
 "No les bastaba burlarse en clase ahora también tenian que hacerlo por chat...";
   
   textosLore[0][3] = "Dejé de ver reels y empecé a leer ataques.\n"+
-"Palabras de burla, que me hiriron...\n"+
+"Palabras de burla, que me hirieron...\n"+
 "Y aun así… no podía dejar de mirar la pantalla.\n"+
 "\n"+
 "Ahora ¿que hago con esto?...";
@@ -128,6 +128,7 @@ if (hoverBtn) {
 } else {
   image(btnext, btnX, btnY, btnW, btnH);
 }
+
 
 // BOTÓN SKIP 
 

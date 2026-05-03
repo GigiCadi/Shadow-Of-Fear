@@ -56,7 +56,7 @@ void pantallaCodigo() {
   
   // Botón volver
   imageMode(CENTER);
-  image(btnvolver, width - 140, 40, 250, 64);
+  dibujarBotonConSombra(btnvolver, width - 140, 40, 250, 64);
 }
 
 void controlarCodigo() {

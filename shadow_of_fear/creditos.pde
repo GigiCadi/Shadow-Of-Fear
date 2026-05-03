@@ -14,7 +14,7 @@ void pantallaCreditos() {
   float yVolver = 60;
   
   if (btnvolver != null) {
-    image(btnvolver, xVolver, yVolver, tamanoVolverX, tamanoVolverY);
+    dibujarBotonConSombra(btnvolver, xVolver, yVolver, tamanoVolverX, tamanoVolverY);
   } else {
     fill(101, 70, 155);
     noStroke();

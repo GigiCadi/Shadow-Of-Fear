@@ -10,9 +10,9 @@ void pantallaManual() {
   
   image(manual[paginaManual], 0, 0, width, height);
   imageMode(CENTER);
-  image(btnext,   width - 140, height - 40, 250, 64);
-  image(btnback,  140,         height - 40, 250, 64);
-  image(btnvolver, width - 140, 40,         250, 64);
+  dibujarBotonConSombra(btnext,   width - 140, height - 40, 250, 64);
+  dibujarBotonConSombra(btnback,  140,         height - 40, 250, 64);
+  dibujarBotonConSombra(btnvolver, width - 140, 40,         250, 64);
 }
 
 void controlarManual() {

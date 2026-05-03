@@ -641,6 +641,7 @@ void clicFinalJuego2() {
 if (derrota != null && derrota.isPlaying()) {
   derrota.stop();
 }
+detenerTodaMusica();
 detenerAudiosFinales();
     pantalla = 1;
   }
@@ -677,7 +678,7 @@ void controlarFinalJuego2Teclado() {
 // ================================================================
 void j2_keyPressed() {
   if (keyCode == ESC) {
-    if (j2_estado != 0) { j2_estado=0; j2_iniciado=false; pantalla=1; }
+    if (j2_estado != 0) { j2_estado=0; j2_iniciado=false; pantalla=1; detenerTodaMusica(); }
     else { 
       pantallaOrigen=5;
       estadoPausa=1;
@@ -779,6 +780,7 @@ void controlarPausaJuego2Teclado() {
     }
     else if (opcionPausa == 2) {
       estadoPausa = 0;
+      detenerTodaMusica(); 
       pantalla = 1;
     }
   }

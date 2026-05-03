@@ -11,7 +11,7 @@ int j3_opcionSeleccionada = 0;
 boolean j3_esperandoInput = true;
 boolean j3_mostrandoRespuesta = false;
 int j3_timerRespuesta = 0;
-final int J3_TIEMPO_RESPUESTA = 90;
+final int J3_TIEMPO_RESPUESTA = 130;
 
 // DATOS DEL JUEGO
 String[] j3_dialogosBully = {

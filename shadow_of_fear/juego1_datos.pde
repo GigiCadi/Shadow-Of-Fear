@@ -13,7 +13,7 @@ String[] mensajesFacil = {
 };
 
 String[] respuestasFacil = {
-  "Eres unico",
+  "Eres unica",
   "Todos te quieren",
   "Encajas",
   "Eres capaz",
@@ -24,7 +24,7 @@ String[] respuestasFacil = {
 };
 
 String[] bancoPalabrasFacil = {
-  "unico",
+  "unica",
   "todos",
   "capaz",
   "hermosa",

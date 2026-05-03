@@ -1,9 +1,9 @@
 void pantallaNiveles() {
   imageMode(CENTER);
   image(fondoniveles, width/2,height/2, width, height);
-  image(btnjuegos[0],   width/2, height/2 - 130, 621, 126);
-  image(btnjuegos[1],  width/2,  height/ 2 + 20, 621, 126);
-  image(btnjuegos[2], width/2, height/2 + 170, 621, 126);
+  dibujarBotonConSombra(btnjuegos[0],   width/2, height/2 - 130, 621, 126);
+  dibujarBotonConSombra(btnjuegos[1],  width/2,  height/ 2 + 20, 621, 126);
+  dibujarBotonConSombra(btnjuegos[2], width/2, height/2 + 170, 621, 126);
 }
 void controlarNiveles() {
   // Botón juego 1

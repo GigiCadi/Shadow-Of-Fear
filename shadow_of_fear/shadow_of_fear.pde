@@ -153,7 +153,7 @@ void setup() {
   prota[0] = loadImage("imagenes/personajes/protaAliviada.png");
   prota[1] = loadImage("imagenes/personajes/protaArrodillada.png");
   prota[2] = loadImage("imagenes/personajes/protaAsustada.png");
-  prota[3] = loadImage("imagenes/personajes/protaCorre.png");
+  prota[3] = loadImage("imagenes/personajes/protacorre.png");
   prota[4] = loadImage("imagenes/personajes/protaDepresiva.png");
   prota[5] = loadImage("imagenes/personajes/protaLlora.png");
   prota[6] = loadImage("imagenes/personajes/protaIra.png");  
@@ -185,6 +185,8 @@ void setup() {
   derrota  = new SoundFile(this, "musica/derrota.mp3");
   musicaNivel2 = new SoundFile(this, "musica/nivel2.mp3");
   caida = new SoundFile(this, "musica/caida.mp3");
+  extra = new SoundFile(this, "musica/extra.mp3");
+  musicaNivel3 = new SoundFile(this, "musica/nivel3.mp3");
 }
 
 // ============================================================
@@ -257,7 +259,7 @@ void actualizarTransicion() {
 void keyPressed() {
   boolean escPresionado = (keyCode == ESC);
   if (keyCode == ESC) key = 0;
-    if (keyCode == UP || keyCode == DOWN || keyCode == ' ' || keyCode == ENTER || keyCode == ESC) {
+    if (keyCode == UP || keyCode == DOWN || keyCode == ' ' || keyCode == ENTER || keyCode == ESC || keyCode == LEFT || keyCode == RIGHT) {
   playClick();
 }
    // 🎮 CONTROL LORE CON TECLADO
