@@ -21,7 +21,7 @@ boolean j2_mov  = false;
 int j2_frameA   = 0;
 int j2_timerA   = 0;
 final int   J2_VEL_ANIM = 8;
-final float J2_SPD      = 4.0;
+final float J2_SPD      = 3.7;
 final int   J2_SW       = 52;
 final int   J2_SH       = 68;
 
@@ -35,25 +35,31 @@ float b2_x, b2_y;
 int   b2_dir    = 3;
 int   b2_frameA = 0;
 int   b2_timerA = 0;
-final int   B2_VEL_ANIM = 14;
-final float B2_SPD      = 2.0;
+final int   B2_VEL_ANIM = 12;
+final float B2_SPD      = 2.5;
 final int   B2_SW       = 52;
 final int   B2_SH       = 68;
 int       b2_wp  = 0;
 float[][] b2_wps;
 
 // ----- Plátanos -----
-final int   J2_N_PLAT = 8;
+final int   J2_N_PLAT = 12;
 float[]     j2_px  = new float[J2_N_PLAT];
 float[]     j2_py  = new float[J2_N_PLAT];
 boolean[]   j2_pOn = new boolean[J2_N_PLAT];
-int[]       j2_pTimer = new int[J2_N_PLAT];  // ← NUEVO: timer para reaparición
-final int   J2_PLAT_RESPAWN = 600;           // ← NUEVO: frames hasta reaparecer (10 segundos si va a 60 FPS)
-final float J2_PLAT_R = 14;
+int[]       j2_pTimer = new int[J2_N_PLAT]; 
+final int   J2_PLAT_RESPAWN = 600;         
+final float J2_PLAT_R = 24;
 
 // ----- Rector -----
 float j2_rx, j2_ry;
+float rectorOfficeX, rectorOfficeY;
+final float rectorOfficeW = 230;
+final float rectorOfficeH = 200;
 final float J2_RECT_R = 28;
+final float RECTOR_OFFICE_X = width - 500;
+final float RECTOR_OFFICE_Y = height - 250;
+
 
 // ================================================================
 // PAREDES — coordenadas absolutas en píxeles (de vercolisiones)
@@ -124,7 +130,6 @@ final float[][] J2_WALL_ABS = {
 };
 
 // Límites del área jugable en píxeles absolutos
-// Tomados del borde del mapa (rectángulo exterior en vercolisiones)
 final float MAP_ABS_X0 = 280;
 final float MAP_ABS_X1 = 1272;
 final float MAP_ABS_Y0 = 20;
@@ -139,6 +144,11 @@ final float MAP_Y1 = 0.950f;
 float mx(float f) { return MAP_X0 * width  + f * (MAP_X1 - MAP_X0) * width;  }
 float my(float f) { return MAP_Y0 * height + f * (MAP_Y1 - MAP_Y0) * height; }
 
+
+final float MARGEN_PARED = 18;        // Distancia mínima a las paredes
+final float RADIO_SEPARACION = 40;    // Distancia mínima entre plátanos
+final float RADIO_EXCLUIR_RECTOR = 50; // Evitar zona del rector
+final float RADIO_EXCLUIR_SPAWN = 55;  // Evitar zona de inicio del jugador
 // ================================================================
 // INICIALIZAR
 // ================================================================
@@ -184,43 +194,42 @@ void iniciarJuego2() {
     {394,  217},   // WP9  cierra loop
   };
 
-  // ================================================================
-  // PLÁTANOS - Posiciones aleatorias dentro de zonas caminables
-  // ================================================================
-  
-  // Banco de posiciones válidas (todas dentro de pasillos)
-  float[][] posicionesValidas = {
-    // Pasillo superior
-    {480, 217}, {550, 217}, {620, 217}, {690, 217}, {760, 217}, 
-    {830, 217}, {900, 217}, {970, 217},
+int intentosMaximos = 500; // Para evitar bucles infinitos
+for (int i = 0; i < J2_N_PLAT; i++) {
+  boolean encontrado = false;
+  int intentos = 0;
+  while (!encontrado && intentos < intentosMaximos) {
+    float randX = random(MAP_ABS_X0 + MARGEN_PARED, MAP_ABS_X1 - MARGEN_PARED);
+    float randY = random(MAP_ABS_Y0 + MARGEN_PARED, MAP_ABS_Y1 - MARGEN_PARED);
     
-    // Pasillo derecho
-    {1040, 260}, {1040, 300}, {1040, 340}, {1040, 380}, {1040, 420},
-    {1040, 460}, {1040, 500}, {1040, 540},
-    
-    // Pasillo inferior
-    {450, 573}, {520, 573}, {590, 573}, {660, 573}, {730, 573},
-    {800, 573}, {870, 573}, {940, 573},
-    
-    // Pasillo izquierdo
-    {394, 250}, {394, 290}, {394, 330}, {394, 370}, {394, 410},
-    {394, 450}, {394, 490}, {394, 530}
-  };
-  
-  // Mezclar aleatoriamente
-  for (int i = 0; i < posicionesValidas.length; i++) {
-    int j = (int) random(posicionesValidas.length);
-    float[] temp = posicionesValidas[i];
-    posicionesValidas[i] = posicionesValidas[j];
-    posicionesValidas[j] = temp;
+    // Comprobar si el punto es válido (paredes, rector, spawn)
+    if (puntoValidoBanana(randX, randY)) {
+      // Comprobar distancia a los plátanos ya colocados
+      boolean cercaOtro = false;
+      for (int j = 0; j < i; j++) {
+        float dx = randX - j2_px[j];
+        float dy = randY - j2_py[j];
+        if (sqrt(dx*dx + dy*dy) < RADIO_SEPARACION) {
+          cercaOtro = true;
+          break;
+        }
+      }
+      if (!cercaOtro) {
+        j2_px[i] = randX;
+        j2_py[i] = randY;
+        j2_pOn[i] = true;
+        j2_pTimer[i] = 0;
+        encontrado = true;
+      }
+    }
+    intentos++;
   }
-  
-  // Asignar las primeras J2_N_PLAT posiciones
-  for (int i = 0; i < J2_N_PLAT && i < posicionesValidas.length; i++) {
-    j2_px[i] = posicionesValidas[i][0];
-    j2_py[i] = posicionesValidas[i][1];
+  if (!encontrado) {
+    j2_px[i] = 500 + (i * 50);
+    j2_py[i] = 217;
     j2_pOn[i] = true;
   }
+}
 
   estadoPausa = 0;
   estadoFinal = 0;
@@ -242,8 +251,7 @@ void nivelJuego2() {
   dibujarUIJuego2();
 
   if (j2_estado != 0) dibujarFinalJuego2();
-
-  if (DEBUG_MODE) debugColisiones();
+  
 }
 
 // ================================================================
@@ -294,9 +302,9 @@ void moverJugadorJ2() {
 // AABB — usa coordenadas absolutas directamente
 // ================================================================
 boolean colisionaParedJ2(float px, float py) {
-  float hw  = J2_SW * 0.16;
-  float top = py + J2_SH * 0.27;
-  float bot = py + J2_SH * 0.49;
+  float hw  = J2_SW * 0.18;
+  float top = py + J2_SH * 0.32;
+  float bot = py + J2_SH * 0.45;
   float lft = px - hw;
   float rgt = px + hw;
 
@@ -309,6 +317,51 @@ boolean colisionaParedJ2(float px, float py) {
   return false;
 }
 
+// Comprueba si un punto (x,y) está dentro de alguna pared
+boolean puntoEnPared(float x, float y) {
+  for (float[] w : J2_WALL_ABS) {
+    // w = [x, y, ancho, alto]
+    if (x >= w[0] && x <= w[0] + w[2] &&
+        y >= w[1] && y <= w[1] + w[3]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+boolean puntoValidoBanana(float x, float y) {
+  //Límites del mapa con margen
+  if (x < MAP_ABS_X0 + MARGEN_PARED || x > MAP_ABS_X1 - MARGEN_PARED ||
+      y < MAP_ABS_Y0 + MARGEN_PARED || y > MAP_ABS_Y1 - MARGEN_PARED) {
+    return false;
+  }
+  
+  //Distancia a paredes (no estar dentro ni cerca)
+  for (float[] w : J2_WALL_ABS) {
+    float left = w[0] - MARGEN_PARED;
+    float right = w[0] + w[2] + MARGEN_PARED;
+    float top = w[1] - MARGEN_PARED;
+    float bottom = w[1] + w[3] + MARGEN_PARED;
+    if (x > left && x < right && y > top && y < bottom) {
+      return false;
+    }
+  }
+  
+  //Excluir sala del rector (rectángulo)
+  if (x > width - 500 && x < width - 500 + 230 &&
+      y > height - 250 && y < height - 250 + 200) {
+    return false;
+  }
+  
+  //Excluir zona de inicio del jugador (círculo alrededor de 395, 470)
+  float dxS = x - 395;
+  float dyS = y - 470;
+  if (sqrt(dxS*dxS + dyS*dyS) < RADIO_EXCLUIR_SPAWN) {
+    return false;
+  }
+  
+  return true;
+}
 // ================================================================
 // MOVIMIENTO DEL BULLY
 // ================================================================
@@ -341,7 +394,7 @@ void verificarColisionesJ2() {
         j2_cong = true; 
         j2_timerCong = J2_CONG_MAX; 
         j2_pOn[i] = false;
-        j2_pTimer[i] = J2_PLAT_RESPAWN;  // ← NUEVO: iniciar timer de reaparición
+        j2_pTimer[i] = J2_PLAT_RESPAWN;  // iniciar timer de reaparición
         if (caida != null) {
     caida.stop();   // evita solapamiento
     caida.play();
@@ -351,7 +404,7 @@ void verificarColisionesJ2() {
     }
   }
   
-  // ← NUEVO: actualizar timers de reaparición
+  // actualizar timers de reaparición
   for (int i = 0; i < J2_N_PLAT; i++) {
     if (!j2_pOn[i] && j2_pTimer[i] > 0) {
       j2_pTimer[i]--;
@@ -457,12 +510,11 @@ void dibujarElementosJ2() {
   
   // Dibujar jugador con tamaño según estado
   if (j2_cong) {
-    image(spriteJugadorJ2(), j2_x, j2_y, J2_SW + 10, J2_SH + 8);  // un poco más grande cuando está mareada
+    image(spriteJugadorJ2(), j2_x, j2_y, J2_SW + 10, J2_SH + 8);  
   } else {
     image(spriteJugadorJ2(), j2_x, j2_y, J2_SW, J2_SH);
   }
 
-  // Efecto visual de mareo (amarillo) en lugar de congelamiento (azul)
   if (j2_cong) {
     pushStyle();
     
@@ -503,7 +555,7 @@ void dibujarElementosJ2() {
     
     // Texto de tiempo mareado
     noStroke();
-    fill(255, 200, 80, 230);
+    fill(53, 31, 64, 230);
     textFont(fuente); 
     textSize(12); 
     textAlign(CENTER, CENTER);
@@ -512,17 +564,17 @@ void dibujarElementosJ2() {
     String tiempoTexto = nf(segundos, 1, 1) + "s";
     
     // Fondo del texto
-    fill(80, 50, 20, 180);
+    fill(72, 50, 118, 200);
     rect(j2_x - textWidth(tiempoTexto)/2 - 10, j2_y - J2_SH*0.5 - 20, textWidth(tiempoTexto) + 20, 22, 8);
     
-    fill(255, 220, 100);
-    text(tiempoTexto, j2_x, j2_y - J2_SH*0.5 - 14);
+    fill(147, 150, 201);
+    text(tiempoTexto, j2_x, j2_y - J2_SH*0.5 - 10);
     
     // Texto "¡RESBALASTE!" que aparece al inicio y se desvanece
     if (j2_timerCong > 240) {
-      fill(255, 180, 60, 200 - j2_timerCong);
+      fill(51, 29, 62, 200 - j2_timerCong);
       textSize(10);
-      text("¡RESBALASTE!", j2_x, j2_y - J2_SH*0.5 - 35);
+      text("¡RESBALASTE!", j2_x, j2_y - J2_SH*0.5 - 32);
     }
     
     popStyle();
@@ -536,11 +588,12 @@ void dibujarUIJuego2() {
   dibujarUI();
   if (j2_cong && j2_estado == 0) {
     noStroke();
-    fill(30, 100, 200, 190);
+    fill(72, 50, 118);
     rect(width/2-240, 16, 480, 46, 8);
-    fill(200, 230, 255);
+    fill(147, 150, 201);
     textFont(fuente); textSize(12); textAlign(CENTER, CENTER);
     text("¡RESBALASTE CON UN PLÁTANO!   "+nf(j2_timerCong/60.0,1,1)+"s", width/2, 39);
+    ;
   }
 }
 
@@ -700,65 +753,6 @@ void j2_keyReleased() {
   if (keyCode==LEFT  || key=='a' || key=='A') j2_kLeft  = false;
   if (keyCode==RIGHT || key=='d' || key=='D') j2_kRight = false;
 }
-
-// ================================================================
-// VISUAL DEBUG — pon DEBUG_MODE = true arriba para activar
-// ================================================================
-void debugColisiones() {
-  pushStyle();
-
-  // Paredes absolutas — ROJO
-  noFill(); stroke(255, 50, 50, 200); strokeWeight(1.5);
-  for (float[] w : J2_WALL_ABS) rect(w[0], w[1], w[2], w[3]);
-
-  // Ruta del bully — AMARILLO
-  stroke(255, 210, 0, 220); strokeWeight(1.5);
-  for (int i = 0; i < b2_wps.length; i++) {
-    float[] a = b2_wps[i];
-    float[] b = b2_wps[(i+1) % b2_wps.length];
-    line(a[0], a[1], b[0], b[1]);
-  }
-  noStroke();
-  for (int i = 0; i < b2_wps.length; i++) {
-    fill(255, 210, 0);
-    ellipse(b2_wps[i][0], b2_wps[i][1], 9, 9);
-    fill(255, 240, 100);
-    textSize(10); textAlign(CENTER, BOTTOM);
-    text("WP"+i, b2_wps[i][0], b2_wps[i][1] - 6);
-  }
-
-  // Radio bully — NARANJA
-  noFill(); stroke(255, 140, 0, 200); strokeWeight(1.5);
-  ellipse(b2_x, b2_y, 92, 92);
-
-  // Plátanos — VERDE
-  for (int i = 0; i < J2_N_PLAT; i++) {
-    if (j2_pOn[i]) {
-      noFill(); stroke(60, 220, 60, 200); strokeWeight(1.5);
-      ellipse(j2_px[i], j2_py[i], (J2_PLAT_R+18)*2, (J2_PLAT_R+18)*2);
-      noStroke(); fill(150, 255, 150);
-      ellipse(j2_px[i], j2_py[i], 7, 7);
-    }
-  }
-
-  // Rector — AZUL
-  noFill(); stroke(80, 150, 255, 220); strokeWeight(1.5);
-  ellipse(j2_rx, j2_ry, (J2_RECT_R+20)*2, (J2_RECT_R+20)*2);
-
-  // Hitbox pies jugador — MAGENTA
-  float hw = J2_SW * 0.32;
-  noFill(); stroke(255, 80, 255, 230); strokeWeight(1.5);
-  rect(j2_x - hw, j2_y + J2_SH*0.27, hw*2, J2_SH*0.22);
-
-  // Coordenadas del mouse en píxeles absolutos
-  noStroke(); fill(20, 20, 20, 180);
-  rect(MAP_ABS_X0 + 4, MAP_ABS_Y0 + 4, 260, 16, 3);
-  fill(100, 255, 200); textSize(10); textAlign(LEFT, TOP);
-  text("Mouse: "+mouseX+", "+mouseY, MAP_ABS_X0+6, MAP_ABS_Y0+6);
-
-  popStyle();
-}
-
 void controlarPausaJuego2Teclado() {
   String[] opciones = {"Continuar", "Reiniciar", "Volver al menú"};
   

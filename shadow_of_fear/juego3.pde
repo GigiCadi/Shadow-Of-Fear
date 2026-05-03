@@ -15,10 +15,10 @@ final int J3_TIEMPO_RESPUESTA = 130;
 
 // DATOS DEL JUEGO
 String[] j3_dialogosBully = {
-  "Oye, Alimaña... ¿a dónde con tanta prisa? A ver si tan valiente ahora sin el rector",
-  "¿En serio creíste que te ibas a salvar? Ilusa.",
-  "Me causas asco, no debiste haber nacido si quiera",
-  "Da igual lo que hagas. Nadie va a salvarte.",
+  "Morton: Oye, Alimaña... ¿a dónde con tanta prisa? A ver si tan valiente ahora sin el rector",
+  "Morton: ¿En serio creíste que te ibas a salvar? Ilusa.",
+  "Morton: Me causas asco, no debiste haber nacido si quiera",
+  "Morton: Da igual lo que hagas. Nadie va a salvarte.",
   "Ali cierra los ojos. Recuerda lo que le dijo su mamá...",
   "Un vecino baja corriendo las escaleras del edificio. Morton se asusta y retrocede."
 };
@@ -42,10 +42,10 @@ int[][] j3_valoresOpciones = {
 };
 
 String[][] j3_reaccionesBully = {
-  {"\"Detente si no quieres que te vaya peor\"", "\"Jaja, no eres tan cobarde como pensé\"", "\"Además de estúpida, sorda\""},
-  {"\"¿De verdad crees que vas a escapar?\"", "\"Fácil, que la basura como tú desaparezca\"", "\"¿Por qué tan callada? Si hace un rato estabas de sapa con el director\""},
-  {"\"Debería romperte la boca a ver si dices lo mismo\"", "\"Ay tontita, ¿no te miras al espejo?\"", "\"¿Por qué? Porque la basura como tú lo merece\""},
-  {"\"¿Me vas a pegar? Dale, atrévete\"", "\"Eso es lo único que sabes hacer\"", "\"Cállate alimaña tonta\""},
+  {"\"Morton: Detente si no quieres que te vaya peor\"", "\"Morton: Jaja, no eres tan cobarde como pensé\"", "\"Morton: Además de estúpida, sorda\""},
+  {"\"Morton: ¿De verdad crees que vas a escapar?\"", "\"Morton: Fácil, que la basura como tú desaparezca\"", "\"Morton: ¿Por qué tan callada? Si hace un rato estabas de sapa con el director\""},
+  {"\"Debería romperte la boca a ver si dices lo mismo\"", "\"Morton: Ay tontita, ¿no te miras al espejo?\"", "\"Morton: ¿Por qué? Porque la basura como tú lo merece\""},
+  {"\"¿Me vas a pegar? Dale, atrévete\"", "\"Morton: Eso es lo único que sabes hacer\"", "\"Morton: Cállate alimaña tonta\""},
   {"\"Una ventana se abre. Alguien grita: '¿Quién está ahí?'\"", "\"Morton la alcanza y la detiene\"", "\"Morton se recupera y la persigue\""},
   {"\"Morton huye. El vecino acompaña a Ali a casa\"", "\"Morton se ríe y se va. Ali se queda sola\"", "\"El vecino se va confundido\""}
 };
@@ -66,8 +66,8 @@ int[] j3_protaSprite = {
 
 int[][] j3_protaSpriteReaccion = {
   {3, 2, 2},   // momento 1: A=Acelerar→Corre  B=Volverse→Asustada  C=Hacerse sorda→Asustada
-  {3, 6, 4},   // momento 2: A=Buscar salida→Corre  B=Preguntar→Ira  C=Silencio→Depresiva
-  {6, 4, 6},   // momento 3: A=Insultar→Ira  B=Decir que no→Depresiva  C=Preguntar por qué→Asustada
+  {3, 2, 4},   // momento 2: A=Buscar salida→Corre  B=Preguntar→Asustada  C=Silencio→Depresiva
+  {6, 4, 2},   // momento 3: A=Insultar→asustada  B=Decir que no→Depresiva  C=Preguntar por qué→Asustada
   {6, 5, 2},   // momento 4: A=Enfrentar con odio→Ira  B=Llorar→Llora  C=Razonar→Asustada
   {0, 3, 3},   // momento 5: A=Gritar ayuda→Aliviada  B=Huir→Corre  C=Empujar y correr→Corre
   {0, 4, 4}    // momento 6: A=Decir verdad→Aliviada  B=No pasa nada→Depresiva  C=Silencio→Depresiva
@@ -169,18 +169,9 @@ void dibujarContenidoJuego3() {
   
   if (j3_bullySprite[index] >= 0 && bully[j3_bullySprite[index]] != null) {
     imageMode(CENTER);
-    image(bully[j3_bullySprite[index]], centroX - 220, centroY + 60, 220, 270);
+    image(bully[j3_bullySprite[index]], centroX, centroY + 140, 620, 710);
   }
   int spriteProta;
-  if (j3_mostrandoRespuesta && j3_timerRespuesta > 0) {
-    spriteProta = j3_protaSpriteReaccion[index][j3_opcionSeleccionada];
-  } else {
-    spriteProta = j3_protaSprite[index];
-  }
-  if (spriteProta >= 0 && prota[spriteProta] != null) {
-    imageMode(CENTER);
-    image(prota[spriteProta], centroX + 220, centroY + 60, 200, 250);
-  }
   
   // Fondo UI
   fill(0, 0, 0, 200);
@@ -188,14 +179,14 @@ void dibujarContenidoJuego3() {
   rect(0, yFranja, width, altoFranja);
   
   // Línea divisoria
-  float xDivisor = width * 0.45;
+  float xDivisor = width/2 - 200;
   stroke(150, 100, 200);
   strokeWeight(1);
   line(xDivisor, yFranja + 20, xDivisor, height - 20);
   noStroke();
   
   // Opciones
-  float xIzq = xDivisor - 580;
+  float xIzq = xDivisor - 530;
   float yTitulo = yFranja + 35;
   
   fill(245, 235, 255);
@@ -222,7 +213,7 @@ void dibujarContenidoJuego3() {
   // Diálogo del bully
   float xDer = xDivisor + 40;
   float yDer = yFranja + 50;
-  float anchoTexto = width - xDer - 60;
+  float anchoTexto = width - xDer - 380;
   
   fill(245, 235, 255);
   textSize(16);
@@ -237,6 +228,15 @@ void dibujarContenidoJuego3() {
   float yLinea = yDer;
   for (int i = 0; i < lineas.length; i++) {
     text(lineas[i], xDer, yLinea + i * 28);
+  }
+    if (j3_mostrandoRespuesta && j3_timerRespuesta > 0) {
+    spriteProta = j3_protaSpriteReaccion[index][j3_opcionSeleccionada];
+  } else {
+    spriteProta = j3_protaSprite[index];
+  }
+  if (spriteProta >= 0 && prota[spriteProta] != null) {
+    imageMode(CENTER);
+    image(prota[spriteProta], width-180, height-120, 400, 450);
   }
   
   // Timer para respuesta

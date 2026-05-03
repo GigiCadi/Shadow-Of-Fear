@@ -153,7 +153,7 @@ void setup() {
   prota[0] = loadImage("imagenes/personajes/protaAliviada.png");
   prota[1] = loadImage("imagenes/personajes/protaArrodillada.png");
   prota[2] = loadImage("imagenes/personajes/protaAsustada.png");
-  prota[3] = loadImage("imagenes/personajes/protacorre.png");
+  prota[3] = loadImage("imagenes/personajes/protaCorre.png");
   prota[4] = loadImage("imagenes/personajes/protaDepresiva.png");
   prota[5] = loadImage("imagenes/personajes/protaLlora.png");
   prota[6] = loadImage("imagenes/personajes/protaIra.png");  
