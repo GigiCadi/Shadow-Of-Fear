@@ -49,7 +49,7 @@ float[]     j2_py  = new float[J2_N_PLAT];
 boolean[]   j2_pOn = new boolean[J2_N_PLAT];
 int[]       j2_pTimer = new int[J2_N_PLAT]; 
 final int   J2_PLAT_RESPAWN = 600;         
-final float J2_PLAT_R = 24;
+final float J2_PLAT_R = 25;
 
 // ----- Rector -----
 float j2_rx, j2_ry;
@@ -302,7 +302,7 @@ void moverJugadorJ2() {
 // AABB — usa coordenadas absolutas directamente
 // ================================================================
 boolean colisionaParedJ2(float px, float py) {
-  float hw  = J2_SW * 0.18;
+  float hw  = J2_SW * 0.1;
   float top = py + J2_SH * 0.32;
   float bot = py + J2_SH * 0.45;
   float lft = px - hw;
