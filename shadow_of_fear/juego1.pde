@@ -144,6 +144,7 @@ void mezclarMensajes() {
 // INICIAR NIVEL
 // ==========================
 void iniciarNivel1() {  
+  detenerAudiosFinales();
   estadoEmocion = 0;
   indiceMensaje = 0;
   nivel1Terminado = false;
@@ -736,6 +737,7 @@ if (indiceMensaje >= mensajes.length) {
 void reiniciarNivel1() {
   reiniciarModoActual();
 }
+
 
 // ==========================
 // CONTROL NIVEL 1 (TECLADO)

@@ -1,6 +1,6 @@
 PImage logo, fondo1, fondo2, fondo3, fondoJuego2, pc, web, btneliminar, btnreemplazar, emotionbar,
       wordbank, btnext, btnback, btnvolver, fondoniveles, platano, reptor, protamareada, fondoVictoria,
-      fondoDerrota, juego3;
+      fondoDerrota, juego3, btnskip;
 PImage[] emojis = new PImage[5];
 PImage[] bars = new PImage[4];
 PImage[] btnpause = new PImage[2];
@@ -34,12 +34,6 @@ PImage[] bullyleft = new PImage[2];
 PImage[] bullyright = new PImage[2];
 
 float tiempo = 0;
-
-// Sonido
-import processing.sound.*;
-SoundFile musicaMenu;
-SoundFile musicaNivel1;
-SoundFile sonidoVoz;
 
 // Control de pantallas
 int pantalla = 0;
@@ -104,6 +98,7 @@ void setup() {
   manual[1] = loadImage("imagenes/UI/juego2.png");
   btnext = loadImage("imagenes/UI/siguiente.png");
   btnback = loadImage("imagenes/UI/anterior.png");
+  btnskip = loadImage("imagenes/UI/skip.png");
   btnvolver = loadImage("imagenes/UI/volver.png");
 
   // Botones niveles
@@ -182,6 +177,11 @@ void setup() {
   musicaMenu = new SoundFile(this, "musica/menu.mp3");
   musicaNivel1 = new SoundFile(this, "musica/nivel1.mp3");
   sonidoVoz = new SoundFile(this, "musica/voz.mp3");
+  click = new SoundFile(this, "musica/click.mp3");
+  victoria = new SoundFile(this, "musica/victoria.mp3");
+  derrota  = new SoundFile(this, "musica/derrota.mp3");
+  musicaNivel2 = new SoundFile(this, "musica/nivel2.mp3");
+  caida = new SoundFile(this, "musica/caida.mp3");
 }
 
 // ============================================================
@@ -249,34 +249,32 @@ void actualizarTransicion() {
 }
 
 // ============================================================
-// Música (automática, sin control del usuario)
-// ============================================================
-void controlarMusica() {
-  if (musicaMenu == null) return;
-
-  // Pantalla de inicio o menú principal
-  if (pantalla == 0 || pantalla == 1) {
-    if (!musicaMenu.isPlaying()) musicaMenu.loop();
-    if (musicaNivel1.isPlaying()) musicaNivel1.stop();
-  }
-  // Nivel 1 en juego (subEstado == 1)
-  else if (pantalla == 2 && subEstado == 1) {
-    if (musicaMenu.isPlaying()) musicaMenu.stop();
-    if (!musicaNivel1.isPlaying()) musicaNivel1.loop();
-  }
-  // Cualquier otra pantalla (incluyendo lore, otros juegos, créditos, etc.)
-  else {
-    if (musicaMenu.isPlaying()) musicaMenu.stop();
-    if (musicaNivel1.isPlaying()) musicaNivel1.stop();
-  }
-}
-
-// ============================================================
 // Teclado y ratón
 // ============================================================
 void keyPressed() {
   boolean escPresionado = (keyCode == ESC);
   if (keyCode == ESC) key = 0;
+    if (keyCode == UP || keyCode == DOWN || keyCode == ' ' || keyCode == ENTER || keyCode == ESC) {
+  playClick();
+}
+   // 🎮 CONTROL LORE CON TECLADO
+  if (pantalla == 2 && subEstado == 0) {
+
+    if (keyCode == RIGHT || keyCode == ENTER || keyCode == RETURN || key == ' ') {
+
+      // Si el texto no ha terminado → mostrarlo completo
+      if (indiceTexto < textoCompleto.length()) {
+        textoVisible = textoCompleto;
+        indiceTexto = textoCompleto.length();
+      } 
+      else {
+        // avanzar a la siguiente página
+        avanzarLore();
+      }
+      playClick(); 
+    }
+    return; 
+  }
 
   if (estadoPausa == 1) {
     if (tipoPausa == 0) controlarPausaJuego1Teclado();
@@ -305,6 +303,7 @@ void keyPressed() {
 }
 
 void mousePressed() {
+  playClick();
   if (enTransicion) return;
 
   if (estadoFinal != 0) {
@@ -332,22 +331,38 @@ void mousePressed() {
       return;
     }
 
-    // Lore
-    if (subEstado == 0) {
-      if (indiceTexto < textoCompleto.length()) {
-        textoVisible = textoCompleto;
-        indiceTexto = textoCompleto.length();
-        return;
-      }
-      paginaLore++;
-      if (paginaLore >= 4) {
-        subEstado = 1;
-        paginaLore = 0;
-        return;
-      }
-      cargarTextoLore();
-      return;
+// Lore
+if (pantalla == 2 && subEstado == 0) {
+    // SKIP LORE
+  if (hoverSkip) {
+
+    // saltar directo al juego
+    subEstado = 1;
+    paginaLore = 0;
+
+    if (sonidoVoz != null && sonidoVoz.isPlaying()) {
+      sonidoVoz.stop();
     }
+
+    playClick();
+    return;
+  }
+
+  // SOLO si hace click en el botón
+  if (hoverBtn) {
+
+    if (indiceTexto < textoCompleto.length()) {
+      textoVisible = textoCompleto;
+      indiceTexto = textoCompleto.length();
+    } else {
+      avanzarLore();
+    }
+
+    playClick();
+  }
+
+  return;
+}
     // Juego
     if (subEstado == 1) mouseNivel1();
     return;
@@ -407,6 +422,8 @@ void mousePressed() {
     controlarCodigo();
     return;
   }
+  
+
 }
 
 void keyReleased() {

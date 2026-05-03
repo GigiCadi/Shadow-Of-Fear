@@ -59,7 +59,40 @@ void pantallaCreditos() {
       image(popupNashed, width/2, height/2, anchoPopup, altoPopup);
     }
   }
+  float anchoBoton = width * 0.15;
+float altoBoton = anchoBoton * 0.35;
+
+float xRuth = width * 0.25;
+float yRuth = height * 0.7;
+
+float xGilarys = width * 0.5;
+float yGilarys = height * 0.7;
+
+float xNashed = width * 0.75;
+float yNashed = height * 0.7;
+
+// detectar hover
+boolean hoverRuth = mouseX > xRuth - anchoBoton/2 && mouseX < xRuth + anchoBoton/2 &&
+                    mouseY > yRuth - altoBoton/2 && mouseY < yRuth + altoBoton/2;
+
+boolean hoverGilarys = mouseX > xGilarys - anchoBoton/2 && mouseX < xGilarys + anchoBoton/2 &&
+                       mouseY > yGilarys - altoBoton/2 && mouseY < yGilarys + altoBoton/2;
+
+boolean hoverNashed = mouseX > xNashed - anchoBoton/2 && mouseX < xNashed + anchoBoton/2 &&
+                      mouseY > yNashed - altoBoton/2 && mouseY < yNashed + altoBoton/2;
   
+// mostrar flechas encima de los nombres
+if (hoverRuth) {
+  dibujarFlecha(xRuth, yRuth - 120);
+}
+
+if (hoverGilarys) {
+  dibujarFlecha(xGilarys, yGilarys - 120);
+}
+
+if (hoverNashed) {
+  dibujarFlecha(xNashed, yNashed - 120);
+}  
   popStyle();
 }
 
@@ -137,4 +170,21 @@ void controlarCreditosTeclado() {
       pantalla = 1;  // Volver al menú
     }
   }
+}
+
+void dibujarFlecha(float x, float y) {
+  stroke(255);
+  strokeWeight(3);
+  fill(180, 120, 255);
+
+  float w = 30;
+  float h = 40;
+
+  triangle(
+    x, y,
+    x - w, y - h,
+    x + w, y - h
+  );
+
+  noStroke();
 }

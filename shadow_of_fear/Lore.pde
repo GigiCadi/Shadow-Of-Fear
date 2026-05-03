@@ -81,12 +81,90 @@ void mostrarLore() {
   textAlign(LEFT, TOP);
   textSize(22);
   text(textoVisible, 100, height - 250, width - 200, 200);
+  
+// =======================
+// BOTÓN SIGUIENTE
+// =======================
+
+btnX = width - btnW - 10;
+btnY = height - btnH - 40;
+
+hoverBtn = mouseX > btnX && mouseX < btnX + btnW &&
+           mouseY > btnY && mouseY < btnY + btnH;
+
+// ✨ GLOW BLANCO
+if (hoverBtn) {
+  tint(255, 255, 255, 90);
+
+  image(btnext, btnX - 4, btnY, btnW, btnH);
+  image(btnext, btnX + 4, btnY, btnW, btnH);
+  image(btnext, btnX, btnY - 3, btnW, btnH);
+  image(btnext, btnX, btnY + 3, btnW, btnH);
+
+  image(btnext, btnX - 3, btnY - 2, btnW, btnH);
+  image(btnext, btnX + 3, btnY - 2, btnW, btnH);
+  image(btnext, btnX - 3, btnY + 2, btnW, btnH);
+  image(btnext, btnX + 3, btnY + 2, btnW, btnH);
+
+  noTint();
+}
+
+// 🌑 SOMBRA REAL (esto te faltaba)
+if (hoverBtn) {
+  tint(0, 120);
+  image(btnext, btnX + 5, btnY + 5, btnW, btnH);
+  noTint();
+}
+
+// 🎮 BOTÓN
+if (hoverBtn) {
+  tint(255, 255);
+  image(btnext, btnX, btnY - 3, btnW, btnH);
+  noTint();
+} else {
+  image(btnext, btnX, btnY, btnW, btnH);
+}
+
+// =======================
+// BOTÓN SKIP (arriba derecha)
+// =======================
+
+btnSkipX = width - btnSkipW - 20;
+btnSkipY = 20;
+
+hoverSkip = mouseX > btnSkipX && mouseX < btnSkipX + btnSkipW &&
+            mouseY > btnSkipY && mouseY < btnSkipY + btnSkipH;
+
+// ✨ glow
+if (hoverSkip) {
+  tint(255, 255, 255, 90);
+
+  image(btnskip, btnSkipX - 4, btnSkipY, btnSkipW, btnSkipH);
+  image(btnskip, btnSkipX + 4, btnSkipY, btnSkipW, btnSkipH);
+  image(btnskip, btnSkipX, btnSkipY - 3, btnSkipW, btnSkipH);
+  image(btnskip, btnSkipX, btnSkipY + 3, btnSkipW, btnSkipH);
+
+  noTint();
+}
+
+// 🌑 sombra
+if (hoverSkip) {
+  tint(0, 120);
+  image(btnskip, btnSkipX + 4, btnSkipY + 4, btnSkipW, btnSkipH);
+  noTint();
+}
+
+// botón
+if (hoverSkip) {
+  image(btnskip, btnSkipX, btnSkipY - 2, btnSkipW, btnSkipH);
+} else {
+  image(btnskip, btnSkipX, btnSkipY, btnSkipW, btnSkipH);
+}
 }
 // ========================================
 // ACTUALIZAR TEXTO (EFECTO ESCRITURA)
 // ========================================
 void actualizarTexto() {
-  // Verificar que el sonido existe antes de usarlo
   if (indiceTexto < textoCompleto.length()) {
     contadorTexto++;
     
@@ -94,10 +172,12 @@ void actualizarTexto() {
       textoVisible += textoCompleto.charAt(indiceTexto);
       indiceTexto++;
       contadorTexto = 0;
-      
-      // Verificar que sonidoVoz no sea null antes de reproducir
-      if (sonidoVoz != null && !sonidoVoz.isPlaying()) {
+
+      delayVoz++;
+
+      if (delayVoz >= intervaloVoz && sonidoVoz != null) {
         sonidoVoz.play();
+        delayVoz = 0;
       }
     }
   }

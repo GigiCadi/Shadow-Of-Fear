@@ -60,16 +60,49 @@ void completarModoJuego1(int modo) {
   if (modo == MODO_DIFICIL) verNivelesDesbloqueado = true;
 }
 
-void terminarModoJuego1(boolean victoria) {
+void terminarModoJuego1(boolean gano) {
+
+  // evitar que se dispare varias veces
+  if (estadoFinal != 0) return;
+detenerAudioGeneral();
+
   nivel1Terminado = true;
-  if (victoria) {
+
+  // 🔇 DETENER TODA LA MÚSICA
+  if (musicaNivel1 != null && musicaNivel1.isPlaying()) {
+    musicaNivel1.stop();
+  }
+
+  if (musicaMenu != null && musicaMenu.isPlaying()) {
+    musicaMenu.stop();
+  }
+
+  if (sonidoVoz != null && sonidoVoz.isPlaying()) {
+    sonidoVoz.stop();
+  }
+
+  // 🎯 SONIDOS DE FINAL
+  if (gano) {
     completarModoJuego1(modoActual);
+
+    if (victoria != null) {
+      victoria.stop();
+      victoria.play();
+    }
+
     generarMensajeFinal(2);
     estadoFinal = 2;
+
   } else {
+    if (derrota != null) {
+      derrota.stop();
+      derrota.play();
+    }
+
     generarMensajeFinal(1);
     estadoFinal = 1;
   }
+
   opcionFinalJuego1 = 0;
   prepararMenuFinalJuego1();
 }

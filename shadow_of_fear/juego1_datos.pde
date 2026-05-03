@@ -2,12 +2,12 @@
 // MODO FÁCIL
 // ==========================
 String[] mensajesFacil = {
-  "Eres raro",
+  "Eres rara",
   "Nadie te quiere",
   "No encajas",
   "Eres inutil",
-  "Eres feo",
-  "Eres tonto",
+  "Eres fea",
+  "Eres tonta",
   "No vales",
   "Eres debil"
 };
@@ -17,7 +17,7 @@ String[] respuestasFacil = {
   "Todos te quieren",
   "Encajas",
   "Eres capaz",
-  "Eres hermoso",
+  "Eres hermosa",
   "Eres inteligente",
   "Vales",
   "Eres fuerte"
@@ -27,7 +27,7 @@ String[] bancoPalabrasFacil = {
   "unico",
   "todos",
   "capaz",
-  "hermoso",
+  "hermosa",
   "inteligente",
   "fuerte",
   "vales"
@@ -76,7 +76,7 @@ String[] bancoPalabrasNormal = {
   "capaz",
   "fuerte",
   "todos",
-  "valioso",
+  "valiosa",
   "importante",
   "respetan",
   "puedes"

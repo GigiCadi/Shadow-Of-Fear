@@ -143,6 +143,7 @@ float my(float f) { return MAP_Y0 * height + f * (MAP_Y1 - MAP_Y0) * height; }
 // INICIALIZAR
 // ================================================================
 void iniciarJuego2() {
+  detenerAudiosFinales();
   j2_estado    = 0;
   j2_iniciado  = true;
   j2_cong      = false;
@@ -341,6 +342,11 @@ void verificarColisionesJ2() {
         j2_timerCong = J2_CONG_MAX; 
         j2_pOn[i] = false;
         j2_pTimer[i] = J2_PLAT_RESPAWN;  // ← NUEVO: iniciar timer de reaparición
+        if (caida != null) {
+    caida.stop();   // evita solapamiento
+    caida.play();
+  }
+  break;
       }
     }
   }
@@ -354,11 +360,44 @@ void verificarColisionesJ2() {
       }
     }
   }
+  //derrota
+  if (dist(j2_x, j2_y, b2_x, b2_y) < 46 && j2_estado == 0) { 
+  j2_estado = 1;
+  detenerAudioGeneral();
+  if (musicaNivel2 != null && musicaNivel2.isPlaying()) {
+    musicaNivel2.stop();
+  }
+  if (musicaMenu != null && musicaMenu.isPlaying()) {
+    musicaMenu.stop();
+  }
+  if (sonidoVoz != null && sonidoVoz.isPlaying()) {
+    sonidoVoz.stop();
+  }
+  if (derrota != null){
+    derrota.stop();
+    derrota.play();
+  }
   
-  if (dist(j2_x, j2_y, b2_x, b2_y) < 46) { j2_estado = 1; return; }
-  if (dist(j2_x, j2_y, j2_rx, j2_ry) < J2_RECT_R + 20) j2_estado = 2;
+return; 
 }
-
+  if (dist(j2_x, j2_y, j2_rx, j2_ry) < J2_RECT_R + 20 && j2_estado == 0) {
+    j2_estado = 2;
+    detenerAudioGeneral();
+    if (musicaNivel2 != null && musicaNivel2.isPlaying()) {
+    musicaNivel2.stop();
+  }
+  if (musicaMenu != null && musicaMenu.isPlaying()) {
+    musicaMenu.stop();
+  }
+  if (sonidoVoz != null && sonidoVoz.isPlaying()) {
+    sonidoVoz.stop();
+  }
+    if (victoria != null){
+      victoria.stop();
+      victoria.play();
+    }
+}
+}
 // ================================================================
 // ANIMACIONES
 // ================================================================
@@ -596,6 +635,13 @@ void clicFinalJuego2() {
     j2_estado = 0;
     j2_iniciado = false;
     estadoPausa = 0;
+    if (victoria != null && victoria.isPlaying()) {
+  victoria.stop();
+}
+if (derrota != null && derrota.isPlaying()) {
+  derrota.stop();
+}
+detenerAudiosFinales();
     pantalla = 1;
   }
 }
@@ -617,6 +663,7 @@ void controlarFinalJuego2Teclado() {
     if (opcionFinalJuego2 == 0) {
       iniciarJuego2();
     } else if (opcionFinalJuego2 == 1) {
+      detenerAudiosFinales();
       j2_estado = 0;
       j2_iniciado = false;
       estadoPausa = 0;
