@@ -13,6 +13,10 @@ PImage[] prota = new PImage[7];
 PFont fuente;
 PImage bullyParado;      
 PImage aliEspaldas;      
+// Fondos para finales del juego 3
+PImage fondoFinalBueno;
+PImage fondoFinalMedio;
+PImage fondoFinalMalo;
 // Pantalla de créditos
 PImage fondoCreditos;
 PImage popupRuth, popupGilarys, popupNashed;
@@ -22,6 +26,11 @@ int popupActual = 0; // 0=ruth, 1=gilarys, 2=nashed
 //codigo 
 PImage fondoCodigo;
 PImage personajeRuth;
+PImage personajeRuth2;
+PImage personajeGigi;
+PImage personajeGigi2;
+PImage personajeNashed;
+PImage personajeNashedCreditos;
 
 // vectores animaciones
 PImage[] protaup = new PImage[3];
@@ -117,6 +126,11 @@ void setup() {
   popupRuth = loadImage("imagenes/fondo/popup_ruth.png");
   popupGilarys = loadImage("imagenes/fondo/popup_gigi.png");
   popupNashed = loadImage("imagenes/fondo/popup_nashed.png");
+  personajeRuth2 = loadImage("imagenes/personajes/ruth_codigo2.png");
+  personajeGigi = loadImage("imagenes/personajes/gigi_codigo.png");
+  personajeGigi2 = loadImage("imagenes/personajes/gigi_codigo3.png");
+  personajeNashed = loadImage("imagenes/personajes/nashed_codigo2.png");
+  personajeNashedCreditos = loadImage("imagenes/personajes/nashed_creditos1.png");
 
   // Sprites protagonista
   protaup[0] = loadImage("imagenes/personajes/protacaminadoarriba1.png");
@@ -153,13 +167,18 @@ void setup() {
   prota[0] = loadImage("imagenes/personajes/protaAliviada.png");
   prota[1] = loadImage("imagenes/personajes/protaArrodillada.png");
   prota[2] = loadImage("imagenes/personajes/protaAsustada.png");
-  prota[3] = loadImage("imagenes/personajes/protaCorre.png");
+  prota[3] = loadImage("imagenes/personajes/protacorre.png");
   prota[4] = loadImage("imagenes/personajes/protaDepresiva.png");
   prota[5] = loadImage("imagenes/personajes/protaLlora.png");
   prota[6] = loadImage("imagenes/personajes/protaIra.png");  
   juego3 = loadImage("imagenes/fondo/juego3.png");
   bullyParado = loadImage("imagenes/personajes/bully_paradouu.png");
   aliEspaldas = loadImage("imagenes/personajes/protacaminadoarriba1.png");
+  // Fondos para finales del juego 3
+fondoFinalBueno = loadImage("imagenes/fondo/final_bueno.jpeg");
+fondoFinalMedio = loadImage("imagenes/fondo/final_medio.jpeg");
+fondoFinalMalo = loadImage("imagenes/fondo/final_malo.jpeg");
+ 
   
   //codigo
   fondoCodigo = loadImage("imagenes/fondo/fondo_codigo.jpeg");

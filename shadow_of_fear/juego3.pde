@@ -303,14 +303,35 @@ void evaluarFinalJuego3() {
     j3_estado = 3;
   }
 }
-
 // ================================================================
 // PANTALLA FINAL
 // ================================================================
 void dibujarFinalJuego3() {
   pushStyle();
   
-  fill(0, 190);
+  // ============================================================
+  // IMAGEN DE FONDO SEGÚN EL FINAL (completamente nítida)
+  // ============================================================
+  imageMode(CORNER);
+  
+  if (j3_estado == 3 && fondoFinalBueno != null) {
+    tint(255, 255);  // Sin opacidad, completamente nítida
+    image(fondoFinalBueno, 0, 0, width, height);
+    noTint();
+  } 
+  else if (j3_estado == 2 && fondoFinalMedio != null) {
+    tint(255, 255);  // Sin opacidad
+    image(fondoFinalMedio, 0, 0, width, height);
+    noTint();
+  } 
+  else if (j3_estado == 1 && fondoFinalMalo != null) {
+    tint(255, 255);  // Sin opacidad
+    image(fondoFinalMalo, 0, 0, width, height);
+    noTint();
+  }
+  
+  // Capa oscura semitransparente (mínima para que el texto sea legible)
+  fill(0, 120);
   rect(0, 0, width, height);
   
   textFont(fuente);
@@ -370,7 +391,6 @@ void dibujarFinalJuego3() {
   
   popStyle();
 }
-
 // ================================================================
 // CONTROL POR MOUSE
 // ================================================================
