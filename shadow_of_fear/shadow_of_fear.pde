@@ -51,6 +51,7 @@ int dificultadNivel1 = 1;
 int pantallaOrigen = 0;
 int tipoPausa = 0; // 0=juego1, 1=juego2, 2=juego3
 
+
 // Transición
 boolean enTransicion = false;
 boolean mitadTransicion = false;
@@ -193,7 +194,7 @@ fondoFinalMalo = loadImage("imagenes/fondo/final_malo.jpeg");
   // Inicializar progreso y lore
   inicializarProgresoJuego1();
   imagenes();
-  cargarTextoLore();
+  iniciarLoreInicio();
 
   // Música
   musicaMenu = new SoundFile(this, "musica/menu.mp3");
@@ -214,8 +215,10 @@ fondoFinalMalo = loadImage("imagenes/fondo/final_malo.jpeg");
 void draw() {
   background(0);
   controlarMusica();
-
-  if (pantalla == 0) {
+    if (pantalla == -1) {
+    mostrarLore();
+    
+  } else if (pantalla == 0) {
     pantallaInicio();
   } else if (pantalla == 1) {
     menuPrincipal();
@@ -282,7 +285,7 @@ void keyPressed() {
   playClick();
 }
    // 🎮 CONTROL LORE CON TECLADO
-  if (pantalla == 2 && subEstado == 0) {
+  if ((pantalla == 2 || pantalla == -1) && subEstado == 0) {
 
     if (keyCode == RIGHT || keyCode == ENTER || keyCode == RETURN || key == ' ') {
 
@@ -327,88 +330,102 @@ void keyPressed() {
 }
 
 void mousePressed() {
+
   playClick();
+ // =========================
+  // PANTALLA INICIO
+  // =========================
+  if (pantalla == 0) {
+    iniciarTransicion(1);
+    return;
+  }
+
+  // =========================
+  // MENÚ PRINCIPAL
+  // =========================
+  if (pantalla == 1) {
+    controlarMenu();
+    return;
+  }
   if (enTransicion) return;
 
-  if (estadoFinal != 0) {
-    controlarMenuFinalJuego1Mouse();
-    return;
-  }
-  if (estadoPausa == 1) {
-    if (tipoPausa == 0) controlarPausaJuego1Mouse();
-    else if (tipoPausa == 1) controlarPausaJuego2Mouse();
-    else if (tipoPausa == 2) controlarPausaJuego3Mouse();
-    return;
-  }
+  // =========================
+  // LORE
+  // =========================
+  if ((pantalla == 2 || pantalla == -1) && subEstado == 0) {
 
-  // Botón pausa en pantalla 2 (juego 1) — solo si NO estamos en lore
-  if (pantalla == 2) {
-    if (subEstado == 1) {  // solo en el juego, no en el lore
-      int tamaño = 100, espacio = 20, y = 80;
-      int x = width - (tamaño * 3) - 10;
-      int xPause = x + (tamaño + espacio) * 2;
-      int radio = tamaño / 2;
-      if (dist(mouseX, mouseY, xPause, y) < radio) {
-        pantallaOrigen = pantalla;
-        estadoPausa = 1;
-        opcionPausa = 0;
-        tipoPausa = 0;
-        return;
+    if (hoverSkip) {
+      subEstado = 1;
+      paginaLore = 0;
+
+      if (sonidoVoz != null && sonidoVoz.isPlaying()) {
+        sonidoVoz.stop();
       }
+
+      return;
     }
 
-// Lore
-if (pantalla == 2 && subEstado == 0) {
-    // SKIP LORE
-  if (hoverSkip) {
-
-    // saltar directo al juego
-    subEstado = 1;
-    paginaLore = 0;
-
-    if (sonidoVoz != null && sonidoVoz.isPlaying()) {
-      sonidoVoz.stop();
+    if (hoverBtn) {
+      if (indiceTexto < textoCompleto.length()) {
+        textoVisible = textoCompleto;
+        indiceTexto = textoCompleto.length();
+      } else {
+        avanzarLore();
+      }
+      return;
     }
 
-    playClick();
     return;
   }
 
-  // SOLO si hace click en el botón
-  if (hoverBtn) {
+  // =========================
+  // JUEGO 1
+  // =========================
+  if (pantalla == 2 && subEstado == 1) {
 
-    if (indiceTexto < textoCompleto.length()) {
-      textoVisible = textoCompleto;
-      indiceTexto = textoCompleto.length();
-    } else {
-      avanzarLore();
+    // botón pausa
+    int tamaño = 100, espacio = 20, y = 80;
+    int x = width - (tamaño * 3) - 10;
+    int xPause = x + (tamaño + espacio) * 2;
+
+    if (dist(mouseX, mouseY, xPause, y) < tamaño / 2) {
+      pantallaOrigen = pantalla;
+      estadoPausa = 1;
+      opcionPausa = 0;
+      tipoPausa = 0;
+      return;
     }
 
-    playClick();
-  }
-
-  return;
-}
-    // Juego
-    if (subEstado == 1) mouseNivel1();
+    mouseNivel1();
     return;
   }
 
+  // =========================
+  // MENÚ NIVELES
+  // =========================
   if (pantalla == 3) {
     controlarNiveles();
     return;
   }
-  
+
+  // =========================
+  // MANUAL
+  // =========================
   if (pantalla == 4) {
     controlarManual();
     return;
   }
-  
+
+  // =========================
+  // JUEGO 2
+  // =========================
   if (pantalla == 5) {
+
     int sz = 100, esp = 15, yUI = 80;
     int xBase = width - (sz * 3);
     int xPause = xBase + (sz + esp) * 2;
-    if (dist(mouseX, mouseY, xPause, yUI) < sz/2) {
+
+    if (dist(mouseX, mouseY, xPause, yUI) < sz / 2) {
       if (j2_estado == 0) {
         pantallaOrigen = 5;
         estadoPausa = 1;
@@ -417,20 +434,33 @@ if (pantalla == 2 && subEstado == 0) {
       }
       return;
     }
-    if (j2_estado != 0) clicFinalJuego2();
+
+    if (j2_estado != 0) {
+      clicFinalJuego2();
+      return;
+    }
+
     return;
   }
-  
+
+  // =========================
+  // CRÉDITOS
+  // =========================
   if (pantalla == 6) {
     controlarCreditos();
     return;
   }
-  
+
+  // =========================
+  // JUEGO 3
+  // =========================
   if (pantalla == 7) {
+
     int sz = 100, esp = 15, yUI = 80;
     int xBase = width - (sz * 3);
     int xPause = xBase + (sz + esp) * 2;
-    if (dist(mouseX, mouseY, xPause, yUI) < sz/2) {
+
+    if (dist(mouseX, mouseY, xPause, yUI) < sz / 2) {
       if (j3_estado == 0) {
         pantallaOrigen = 7;
         estadoPausa = 1;
@@ -439,17 +469,18 @@ if (pantalla == 2 && subEstado == 0) {
       }
       return;
     }
+
     mouseJuego3();
     return;
   }
-  
-  // ← NUEVA PANTALLA 8 (CÓDIGO) - CORRECTA, FUERA DEL if (pantalla == 7)
+
+  // =========================
+  // CÓDIGO
+  // =========================
   if (pantalla == 8) {
     controlarCodigo();
     return;
   }
-  
-
 }
 
 void keyReleased() {

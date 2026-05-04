@@ -153,6 +153,7 @@ final float RADIO_EXCLUIR_SPAWN = 55;  // Evitar zona de inicio del jugador
 // INICIALIZAR
 // ================================================================
 void iniciarJuego2() {
+  reiniciarLore();
   detenerAudiosFinales();
   j2_estado    = 0;
   j2_iniciado  = true;
@@ -643,7 +644,8 @@ void dibujarFinalJuego2() {
     text("¡LLEGASTE A LA OFICINA!", width/2, height/2-110);
     fill(230, 245, 230);
     textSize(13);
-    text("Encontraste ayuda. Eres más valiente de lo que crees.", width/2, height/2-58);
+    text("Escapaste… pero más importante, elegiste no rendirte.\n"+ 
+    "Buscar ayuda no te hace débil, te hace valiente. Y hoy, ganaste.", width/2, height/2-58);
   } else if (j2_estado == 1) {
     fill(255, 80, 80);
     textSize(26);

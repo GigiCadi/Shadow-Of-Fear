@@ -454,8 +454,8 @@ void nivel1() {
   fill(101, 70, 155);
   dibujarComentariosScroll();
   imageMode(CENTER);
-  image(btneliminar, width/3, height - 70, 470, 94);
-  image(btnreemplazar, width - width/3, height - 70, 470, 94);
+  dibujarBotonConSombra(btneliminar, width/3, height - 70, 470, 94);
+  dibujarBotonConSombra(btnreemplazar, width - width/3, height - 70, 470, 94);
   image(wordbank, width, height/2, 700, 680);
   textAlign(CENTER, CENTER);
   textSize(20);
@@ -749,8 +749,9 @@ void generarUsuariosAnonimos() {
 }
 
 void iniciarJuego1Completo() {
+  reiniciarLore();
   juegoActual = 0;
-  pantalla = 2;
+  iniciarLoreJuego1();
   subEstado = 0;
   paginaLore = 0;
   cargarTextoLore();

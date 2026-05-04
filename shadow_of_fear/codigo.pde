@@ -238,16 +238,16 @@ void pantallaCodigo() {
   
   // Botón volver
   imageMode(CENTER);
-  image(btnvolver, width - 140, 40, 250, 64);
+  dibujarBotonConSombra(btnvolver, width - 140, 40, 250, 64);
   
   // Botón siguiente
   if (paginaCodigo < totalPaginasCodigo - 1) {
-    image(btnext, width - 140, height - 40, 250, 64);
+    dibujarBotonConSombra(btnext, width - 140, height - 40, 250, 64);
   }
   
   // Botón anterior
   if (paginaCodigo > 0) {
-    image(btnback, 140, height - 40, 250, 64);
+    dibujarBotonConSombra(btnback, 140, height - 40, 250, 64);
   }
 }
 

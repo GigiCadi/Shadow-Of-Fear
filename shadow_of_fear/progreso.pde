@@ -48,7 +48,7 @@ void iniciarModoJuego1(int modo) {
   generarUsuariosAnonimos();
   inicializarComentariosMostrados();
   cargarMensaje();
-  pantalla = 2;
+  iniciarLoreJuego1();
 }
 
 void reiniciarModoActual() {

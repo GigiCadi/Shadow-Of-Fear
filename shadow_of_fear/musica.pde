@@ -76,6 +76,7 @@ else if (pantalla == 5){
     if (!musicaNivel2.isPlaying()) musicaNivel2.loop();
     if (extra.isPlaying()) extra.stop();
     if (musicaNivel3.isPlaying()) musicaNivel3.stop();
+    if (click.isPlaying()) click.stop();
 }
 //extra
 else if (pantalla == 4 || pantalla == 6 || pantalla == 8){

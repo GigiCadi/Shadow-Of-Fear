@@ -81,6 +81,7 @@ String[] opcionesFinalJuego3 = {"Volver a intentar", "Volver al menú"};
 // INICIALIZAR
 // ================================================================
 void iniciarJuego3() {
+  reiniciarLore(); 
   j3_estado = 0;
   j3_iniciado = true;
   j3_moral = 0;
@@ -348,6 +349,9 @@ void dibujarFinalJuego3() {
     fill(255, 200, 100);
     textSize(14);
     text("\"El silencio alimenta el miedo. Habla con alguien\"", width/2, height/2 - 20);
+    if (musicaNivel3.isPlaying()) musicaNivel3.stop();
+    if (victoria.isPlaying()) victoria.stop();
+    if (!derrota.isPlaying()) derrota.loop();
   } 
   else if (j3_estado == 2) {
     fill(255, 200, 80);
@@ -360,6 +364,9 @@ void dibujarFinalJuego3() {
     fill(255, 200, 100);
     textSize(14);
     text("\"Pedir ayuda es el primer paso para sanar\"", width/2, height/2 - 20);
+    if (musicaNivel3.isPlaying()) musicaNivel3.stop();
+    if (!victoria.isPlaying()) victoria.loop();
+    if (derrota.isPlaying()) derrota.stop();
   } 
   else if (j3_estado == 3) {
     fill(120, 255, 160);
@@ -372,6 +379,10 @@ void dibujarFinalJuego3() {
     fill(255, 200, 100);
     textSize(14);
     text("\"Hablar con alguien de confianza rompe el ciclo del acoso\"", width/2, height/2 - 20);
+    if (musicaNivel3.isPlaying()) musicaNivel3.stop();
+   
+    if (!victoria.isPlaying()) victoria.loop();
+    if (derrota.isPlaying()) derrota.stop();
   }
   
   int yBase = height/2 + 60;
