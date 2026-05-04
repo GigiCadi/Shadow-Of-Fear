@@ -5,6 +5,7 @@ void pantallaInicio() {
   float x = width/2 - logo.width/2;
   float yCentro = height/2 - logo.height/2;
   // Texto
+  textAlign(CENTER, CENTER);
   fill(255);
   text("Presiona cualquier tecla para continuar", width/2, height - 50);
   // Animación flotante
