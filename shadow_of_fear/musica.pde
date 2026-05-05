@@ -95,6 +95,8 @@ else if (pantalla == 7){
     if (musicaNivel2.isPlaying()) musicaNivel2.stop();
     if (extra.isPlaying()) extra.stop();
     if (!musicaNivel3.isPlaying()) musicaNivel3.loop();
+    if (derrota.isPlaying()) derrota.stop();
+    if (victoria.isPlaying()) victoria.stop();
 }
   // Otros casos
   else {

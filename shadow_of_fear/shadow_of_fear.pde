@@ -354,26 +354,24 @@ void mousePressed() {
   // =========================
   if ((pantalla == 2 || pantalla == -1) && subEstado == 0) {
 
-    if (hoverSkip) {
-      subEstado = 1;
-      paginaLore = 0;
+   if (hoverSkip) {
 
-      if (sonidoVoz != null && sonidoVoz.isPlaying()) {
-        sonidoVoz.stop();
-      }
+  if (tipoLore == 0) {
+    // 🔥 Lore inicial → ir al inicio del juego
+    iniciarTransicion(0); // pantalla inicio
+  } else {
+    // 🎮 Lore del juego 1 → iniciar nivel
+    subEstado = 1;
+    paginaLore = 0;
+    iniciarNivel1();
+  }
 
-      return;
-    }
+  if (sonidoVoz != null && sonidoVoz.isPlaying()) {
+    sonidoVoz.stop();
+  }
 
-    if (hoverBtn) {
-      if (indiceTexto < textoCompleto.length()) {
-        textoVisible = textoCompleto;
-        indiceTexto = textoCompleto.length();
-      } else {
-        avanzarLore();
-      }
-      return;
-    }
+  return;
+}
 
     return;
   }

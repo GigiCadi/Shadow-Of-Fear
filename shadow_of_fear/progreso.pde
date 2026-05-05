@@ -42,13 +42,14 @@ void iniciarModoJuego1(int modo) {
   estadoFinal = 0;
   estadoPausa = 0;
   opcionFinalJuego1 = 0;
+  subEstado = 1; // Ir directo al juego, sin lore
   iniciarNivel1();
   cargarDatosModoJuego1(modoActual);
   mezclarMensajes();
   generarUsuariosAnonimos();
   inicializarComentariosMostrados();
   cargarMensaje();
-  iniciarLoreJuego1();
+  pantalla = 2;
 }
 
 void reiniciarModoActual() {

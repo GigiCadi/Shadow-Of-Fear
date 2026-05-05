@@ -89,7 +89,6 @@ void ejecutarOpcion() {
 
   // Iniciar juego
   if (opcionSeleccionada == 0) {
-    iniciarModoJuego1(MODO_FACIL);
     iniciarJuego1Completo(); 
   }
 

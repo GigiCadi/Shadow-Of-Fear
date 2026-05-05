@@ -749,10 +749,9 @@ void generarUsuariosAnonimos() {
 }
 
 void iniciarJuego1Completo() {
-  reiniciarLore();
-  juegoActual = 0;
-  iniciarLoreJuego1();
+  iniciarModoJuego1(MODO_FACIL);
   subEstado = 0;
+  tipoLore = 1;
   paginaLore = 0;
   cargarTextoLore();
 }

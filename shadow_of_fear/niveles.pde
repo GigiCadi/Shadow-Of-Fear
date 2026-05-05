@@ -11,13 +11,10 @@ void controlarNiveles() {
       mouseX > width/2 - 310 && mouseX < width/2 + 310 &&
       mouseY > (height/2 - 130) - 63 && mouseY < (height/2 - 130) + 63) {
     
-    // Verificar que todo está cargado antes de cambiar
     if (fuente == null) {
       return;
     }
-    
-    iniciarModoJuego1(MODO_FACIL);
-    // iniciarJuego1Completo();  // ← Comenta esta línea si causa problema
+    iniciarJuego1Completo();  // ← Comenta esta línea si causa problema
     return;
   }
   
