@@ -28,7 +28,7 @@ Controlas a Ali, una chica que debe enfrentar distintas situaciones de acoso, to
 |----------------|-------------------------------------------------|
 | **Sistema**     | Windows / macOS / Linux (cualquiera que ejecute Processing) |
 | **Procesador**  | 2 GHz                                           |
-| **Memoria RAM** | 4 GB                                            |
+| **Memoria RAM** | 20 GB                                            |
 | **Gráficos**    | Cualquier tarjeta compatible con OpenGL 2.0    |
 | **Resolución**  | 1366×768 o superior (se ajusta automáticamente) |
 | **Software**    | [Processing 4](https://processing.org/download) |
