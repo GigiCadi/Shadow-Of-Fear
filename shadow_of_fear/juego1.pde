@@ -388,15 +388,8 @@ void dibujarComentariosScroll() {
   }
 }
 
-// ==========================
-// DIBUJAR NIVEL
-// ==========================
-void nivel1() {
-  println("=== nivel1() inicio ===");
-  
-  // ========================================
+void nivel1() {  
   // VERIFICACIONES DE SEGURIDAD
-  // ========================================
   if (fondo3 == null) {
     return;
   }
