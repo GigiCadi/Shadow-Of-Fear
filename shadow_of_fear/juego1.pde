@@ -316,18 +316,6 @@ void programarSiguienteMensaje() {
 }
 
 void dibujarComentariosScroll() {
-  // Verificaciones de seguridad
-  if (mensajes == null || mensajes.length == 0) {
-    return;
-  }
-  
-  if (comentariosMostrados == null) {
-    return;
-  }
-  
-  if (usuariosComentarios == null) {
-    return;
-  }
 
   int inicio = max(0, indiceMensaje - (maxMensajesVisibles - 1));
   int fin = min(indiceMensaje, mensajes.length - 1);
@@ -388,53 +376,7 @@ void dibujarComentariosScroll() {
   }
 }
 
-void nivel1() {  
-  // VERIFICACIONES DE SEGURIDAD
-  if (fondo3 == null) {
-    return;
-  }
-  if (pc == null) {
-    return;
-  }
-  if (web == null) {
-    return;
-  }
-  if (btneliminar == null) {
-    return;
-  }
-  if (btnreemplazar == null) {
-    return;
-  }
-  if (wordbank == null) {
-    return;
-  }
-  if (emotionbar == null) {
-    return;
-  }
-  if (emojis == null || emojis[0] == null) {
-    return;
-  }
-  if (fuente == null) {
-    return;
-  }
-  if (mensajes == null) {
-    return;
-  }
-  if (comentariosMostrados == null) {
-    return;
-  }
-  if (usuariosComentarios == null) {
-    return;
-  }
-  if (bancoPalabras == null) {
-    return;
-  }
-  if (bars == null || bars[0] == null) {
-    return;
-  }
-  if (btnpause == null || btnpause[0] == null) {
-    return;
-  }
+void nivel1() { 
   
   
   // ========================================

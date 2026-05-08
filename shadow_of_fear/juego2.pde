@@ -28,7 +28,7 @@ final int   J2_SH       = 68;
 // ----- Congelamiento -----
 boolean j2_cong      = false;
 int     j2_timerCong = 0;
-final int J2_CONG_MAX = 300;
+final int J2_CONG_MAX = 280;
 
 // ----- Bully -----
 float b2_x, b2_y;
@@ -43,7 +43,7 @@ int       b2_wp  = 0;
 float[][] b2_wps;
 
 // ----- Plátanos -----
-final int   J2_N_PLAT = 12;
+final int   J2_N_PLAT = 20;
 float[]     j2_px  = new float[J2_N_PLAT];
 float[]     j2_py  = new float[J2_N_PLAT];
 boolean[]   j2_pOn = new boolean[J2_N_PLAT];
@@ -146,7 +146,7 @@ float my(float f) { return MAP_Y0 * height + f * (MAP_Y1 - MAP_Y0) * height; }
 
 
 final float MARGEN_PARED = 18;        // Distancia mínima a las paredes
-final float RADIO_SEPARACION = 40;    // Distancia mínima entre plátanos
+final float RADIO_SEPARACION = 60;    // Distancia mínima entre plátanos
 final float RADIO_EXCLUIR_RECTOR = 50; // Evitar zona del rector
 final float RADIO_EXCLUIR_SPAWN = 55;  // Evitar zona de inicio del jugador
 // ================================================================
@@ -181,19 +181,24 @@ void iniciarJuego2() {
   b2_timerA = 0;
   b2_wp     = 0;
 
-  // Waypoints del bully - coordenadas de PIES (centro sprite = pie_y - 27)
-  b2_wps = new float[][] {
-    {394,  217},   // WP0  esquina sup-izq
-    {710,  217},   // WP1  pasillo sup centro
-    {1040, 217},   // WP2  esquina sup-der
-    {1040, 395},   // WP3  pasillo der alto
-    {1040, 573},   // WP4  esquina inf-der
-    {834,  573},   // WP5  pasillo inf der
-    {614,  573},   // WP6  pasillo inf centro
-    {394,  573},   // WP7  esquina inf-izq
-    {394,  395},   // WP8  pasillo izq medio
-    {394,  217},   // WP9  cierra loop
-  };
+// Waypoints del bully - SOLO EN PASILLOS (ruta completa del perímetro)
+b2_wps = new float[][] {
+  // Superior (y = 217)
+  {394, 217}, {460, 217}, {530, 217}, {600, 217}, {670, 217},
+  {740, 217}, {810, 217}, {880, 217}, {950, 217}, {1040, 217},
+  
+  // Derecho (x = 1040)
+  {1040, 260}, {1040, 300}, {1040, 340}, {1040, 380}, {1040, 420},
+  {1040, 460}, {1040, 500}, {1040, 540}, {1040, 573},
+  
+  // Inferior (y = 573)
+  {960, 573}, {880, 573}, {800, 573}, {720, 573}, {640, 573},
+  {560, 573}, {480, 573}, {394, 573},
+  
+  // Izquierdo (x = 394)
+  {394, 530}, {394, 490}, {394, 450}, {394, 410}, {394, 370},
+  {394, 330}, {394, 290}, {394, 260}, {394, 217}  // cierra el ciclo
+};
 
 int intentosMaximos = 500; // Para evitar bucles infinitos
 for (int i = 0; i < J2_N_PLAT; i++) {
@@ -300,7 +305,7 @@ void moverJugadorJ2() {
 }
 
 // ================================================================
-// AABB — usa coordenadas absolutas directamente
+//  usa coordenadas absolutas directamente
 // ================================================================
 boolean colisionaParedJ2(float px, float py) {
   float hw  = J2_SW * 0.1;
