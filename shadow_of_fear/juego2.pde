@@ -170,7 +170,8 @@ void iniciarJuego2() {
   j2_timerA = 0;
 
   // Rector: oficina de orientación
-  j2_ry = 680;
+  j2_rx = width - 420;  
+  j2_ry = height - 180; 
 
   // Bully: empieza en pasillo superior
   b2_x      = 394;

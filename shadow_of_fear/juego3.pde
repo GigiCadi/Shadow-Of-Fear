@@ -61,7 +61,7 @@ int[] j3_protaSprite = {
   4,  
   4,  
   0,  
-  0  
+  0  };
 
 int[][] j3_protaSpriteReaccion = {
   {3, 2, 2},   // momento 1: A=Acelerar→Corre  B=Volverse→Asustada  C=Hacerse sorda→Asustada
