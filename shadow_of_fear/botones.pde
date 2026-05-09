@@ -4,7 +4,7 @@ void dibujarBotonConSombra(PImage img, float x, float y, float w, float h) {
   boolean hover = mouseX > x - w/2 && mouseX < x + w/2 &&
                   mouseY > y - h/2 && mouseY < y + h/2;
 
-  float offset = hover ? 3 : 6; // se acerca al hacer hover
+  float offset = hover ? 3 : 6; 
   float escala = hover ? 1.05 : 1;
 
   // sombra

@@ -180,7 +180,7 @@ void pantallaCodigo() {
     }
   }
   
-  // Página 4: Nashed (nashed_creditos1) - misma posición que Ruth (izquierda abajo)
+  // Página 4
   if (paginaCodigo == 4) {
     if (personajeNashedCreditos != null) {
       float tamanoX = width * 0.55;

@@ -44,7 +44,7 @@ void controlarManual() {
   }
 }
 
-// Nueva función para controlar manual con teclado
+//  función para controlar manual con teclado
 void controlarManualTeclado() {
   if (keyCode == RIGHT) {
     paginaManual++;

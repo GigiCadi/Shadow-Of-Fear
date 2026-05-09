@@ -121,7 +121,7 @@ btnY = height - btnH - 40;
 hoverBtn = mouseX > btnX && mouseX < btnX + btnW &&
            mouseY > btnY && mouseY < btnY + btnH;
 
-// ✨ GLOW BLANCO
+
 if (hoverBtn) {
   tint(255, 255, 255, 90);
 
@@ -220,7 +220,7 @@ void avanzarLore() {
     cargarTextoLore();
   } else {
 
-    // 👇 AQUÍ ESTÁ LA CLAVE
+    
     if (tipoLore == 0) {
       pantalla = -1;
       iniciarTransicion(0); // ir a pantalla inicio

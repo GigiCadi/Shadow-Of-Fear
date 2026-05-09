@@ -338,7 +338,7 @@ void dibujarComentariosScroll() {
     if (m == indiceMensaje && palabrasActuales != null) {
       palabrasMostrar = palabrasActuales;
     } else {
-      // Verificar que comentariosMostrados[m] no sea null
+     
       if (comentariosMostrados[m] == null) {
         continue;
       }
@@ -439,9 +439,9 @@ void dibujarFeedbackJuego1() {
   if (esBien) {
     anchoCaja = 320;
   } else {
-    // Calcular ancho dinámico según el texto
+    // Calcular ancho 
     float anchoTexto = textWidth(feedback);
-    // Añadir padding de 60 píxeles
+   
     anchoCaja = anchoTexto + 80;
     // Limitar ancho máximo y mínimo
     anchoCaja = constrain(anchoCaja, 400, 800);
@@ -608,9 +608,6 @@ void reemplazarPalabra() {
 
 String obtenerPalabraCorrectaDelBanco() {
   // Busca cuál palabra del banco aparece en la respuesta correcta
-  // pero NO en el mensaje original, para evitar falsos positivos.
-  // Esto resuelve casos donde la respuesta tiene distinta longitud
-  // que el mensaje original (ej: "No tienes nada..." -> "Tienes algo...").
   String respuestaNorm = normalizar(respuestas[indiceMensaje]);
   String mensajeNorm   = normalizar(mensajes[indiceMensaje]);
 
@@ -621,7 +618,7 @@ String obtenerPalabraCorrectaDelBanco() {
     if (enRespuesta && !enOriginal) return palabra;
   }
 
-  // Fallback: metodo original por indice (funciona cuando las longitudes coinciden)
+  
   String[] palabrasRespuesta = split(respuestas[indiceMensaje], " ");
   int indiceCorrecto = palabraCorrecta[indiceMensaje];
   if (indiceCorrecto >= 0 && indiceCorrecto < palabrasRespuesta.length) {

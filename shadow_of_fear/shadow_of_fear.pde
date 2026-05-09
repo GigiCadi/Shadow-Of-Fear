@@ -284,7 +284,7 @@ void keyPressed() {
     if (keyCode == UP || keyCode == DOWN || keyCode == ' ' || keyCode == ENTER || keyCode == ESC || keyCode == LEFT || keyCode == RIGHT) {
   playClick();
 }
-   // 🎮 CONTROL LORE CON TECLADO
+   //  CONTROL LORE CON TECLADO
   if ((pantalla == 2 || pantalla == -1) && subEstado == 0) {
 
     if (keyCode == RIGHT || keyCode == ENTER || keyCode == RETURN || key == ' ') {
@@ -357,10 +357,10 @@ void mousePressed() {
    if (hoverSkip) {
 
   if (tipoLore == 0) {
-    // 🔥 Lore inicial → ir al inicio del juego
+    // Lore inicial → ir al inicio del juego
     iniciarTransicion(0); // pantalla inicio
   } else {
-    // 🎮 Lore del juego 1 → iniciar nivel
+    // Lore del juego 1 → iniciar nivel
     subEstado = 1;
     paginaLore = 0;
     iniciarNivel1();

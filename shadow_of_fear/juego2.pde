@@ -62,7 +62,7 @@ final float RECTOR_OFFICE_Y = height - 250;
 
 
 // ================================================================
-// PAREDES — coordenadas absolutas en píxeles (de vercolisiones)
+// PAREDES — coordenadas 
 // ================================================================
 final float[][] J2_WALL_ABS = {
   {300,  20,  970,  90},
@@ -135,7 +135,7 @@ final float MAP_ABS_X1 = 1272;
 final float MAP_ABS_Y0 = 20;
 final float MAP_ABS_Y1 = 830;
 
-// Estas funciones se mantienen para compatibilidad con waypoints y posiciones iniciales
+
 final float MAP_X0 = 0.198f;
 final float MAP_X1 = 0.824f;
 final float MAP_Y0 = 0.020f;
@@ -169,8 +169,7 @@ void iniciarJuego2() {
   j2_frameA = 1;
   j2_timerA = 0;
 
-  // Rector: oficina de orientación (abajo derecha del mapa)
-  j2_rx = 1130;
+  // Rector: oficina de orientación
   j2_ry = 680;
 
   // Bully: empieza en pasillo superior
@@ -342,7 +341,7 @@ boolean puntoValidoBanana(float x, float y) {
     return false;
   }
   
-  //Distancia a paredes (no estar dentro ni cerca)
+  //Distancia a paredes 
   for (float[] w : J2_WALL_ABS) {
     float left = w[0] - MARGEN_PARED;
     float right = w[0] + w[2] + MARGEN_PARED;
@@ -402,7 +401,7 @@ void verificarColisionesJ2() {
         j2_pOn[i] = false;
         j2_pTimer[i] = J2_PLAT_RESPAWN;  // iniciar timer de reaparición
         if (caida != null) {
-    caida.stop();   // evita solapamiento
+    caida.stop();   
     caida.play();
   }
   break;
@@ -576,7 +575,7 @@ void dibujarElementosJ2() {
     fill(147, 150, 201);
     text(tiempoTexto, j2_x, j2_y - J2_SH*0.5 - 10);
     
-    // Texto "¡RESBALASTE!" que aparece al inicio y se desvanece
+    // Texto 
     if (j2_timerCong > 240) {
       fill(51, 29, 62, 200 - j2_timerCong);
       textSize(10);

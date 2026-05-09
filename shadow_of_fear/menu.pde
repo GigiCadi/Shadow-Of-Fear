@@ -106,7 +106,7 @@ void ejecutarOpcion() {
   if (opcionSeleccionada == 3) {
     pantalla = 6;  
   }
-  // Configuración
+  // Codigo
   if (opcionSeleccionada == 4) {
     pantalla = 8;  
   }

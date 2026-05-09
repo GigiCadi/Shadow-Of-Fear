@@ -7,7 +7,7 @@ void dibujarUI() {
   int espacio = 15;
   int y = 80;
   int x = width - (tamaño * 3);
-  // Solo el botón de pausa
+  //  botón de pausa
   image(btnpause[estadoPausa], x + (tamaño + espacio) * 2, y, tamaño, tamaño);
   popStyle();
 }
@@ -165,11 +165,11 @@ void dibujarFinal() {
 
     // Color de cada opción del menú final.
     if (!opcionesFinalActivasJuego1[i]) {
-      fill(110, 95, 140);       // morado grisáceo para opciones bloqueadas
+      fill(110, 95, 140);       
     } else if (i == opcionFinalJuego1) {
-      fill(190, 165, 255);      // lila claro para opción seleccionada
+      fill(190, 165, 255);      
     } else {
-      fill(245, 235, 255);      // lila muy claro para opciones normales
+      fill(245, 235, 255);      
     }
 
     String texto = "";

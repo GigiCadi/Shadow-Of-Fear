@@ -56,13 +56,12 @@ int[] j3_bullySprite = {0, 0, 2, 2, 1, 0};
 
 // Sprite base de Ali por momento (mientras escucha al bully y elige)
 int[] j3_protaSprite = {
-  2,  // index 0 — "Alimaña ¿a dónde?"          → Asustada
-  2,  // index 1 — "¿En serio creíste escapar?"  → Asustada
-  4,  // index 2 — "Me causas asco"              → Depresiva
-  4,  // index 3 — "Da igual lo que hagas"       → Depresiva
-  0,  // index 4 — "Ali cierra los ojos..."      → Aliviada
-  0   // index 5 — "Un vecino baja corriendo..."  → Aliviada
-};
+  2,  
+  2,  
+  4,  
+  4,  
+  0,  
+  0  
 
 int[][] j3_protaSpriteReaccion = {
   {3, 2, 2},   // momento 1: A=Acelerar→Corre  B=Volverse→Asustada  C=Hacerse sorda→Asustada
@@ -157,7 +156,7 @@ void dibujarContenidoJuego3() {
     popStyle();
     return;
   }
-  // DIÁLOGOS Y OPCIONES (momento 1 en adelante)
+  // DIÁLOGOS Y OPCIONES 
   int index = j3_momentoActual - 1;
   
   if (index < 0 || index >= j3_dialogosBully.length) {
@@ -311,27 +310,27 @@ void dibujarFinalJuego3() {
   pushStyle();
   
   // ============================================================
-  // IMAGEN DE FONDO SEGÚN EL FINAL (completamente nítida)
+  // IMAGEN DE FONDO SEGÚN EL FINAL 
   // ============================================================
   imageMode(CORNER);
   
   if (j3_estado == 3 && fondoFinalBueno != null) {
-    tint(255, 255);  // Sin opacidad, completamente nítida
+    tint(255, 255);  
     image(fondoFinalBueno, 0, 0, width, height);
     noTint();
   } 
   else if (j3_estado == 2 && fondoFinalMedio != null) {
-    tint(255, 255);  // Sin opacidad
+    tint(255, 255);  
     image(fondoFinalMedio, 0, 0, width, height);
     noTint();
   } 
   else if (j3_estado == 1 && fondoFinalMalo != null) {
-    tint(255, 255);  // Sin opacidad
+    tint(255, 255);  
     image(fondoFinalMalo, 0, 0, width, height);
     noTint();
   }
   
-  // Capa oscura semitransparente (mínima para que el texto sea legible)
+  // Capa oscura semitransparente 
   fill(0, 120);
   rect(0, 0, width, height);
   

@@ -166,7 +166,6 @@ void cargarDatosModoJuego1(int modo) {
 
 // ==========================
 // COPIAR ARRAYS
-// Esto evita que mezclarMensajes() dañe los datos originales.
 // ==========================
 String[] copiarStringArray(String[] original) {
   String[] copia = new String[original.length];

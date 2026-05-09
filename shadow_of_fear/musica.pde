@@ -14,12 +14,12 @@ SoundFile victoria;
 SoundFile derrota;
 SoundFile caida;
 // ============================================================
-// Música (automática, sin control del usuario)
+// Música 
 // ============================================================
 void controlarMusica() {
     if (musicaMenu == null) return;
 
-  // 🚨 BLOQUE TOTAL SI HAY FINAL
+  // BLOQUE TOTAL SI HAY FINAL
   if (estadoFinal != 0 || j2_estado != 0) {
 
     // apagar TODAS las músicas de fondo
